@@ -1,10 +1,17 @@
-import React from 'react'
-import { Link as RouterLink } from 'react-router-dom'
-import { Avatar, Box, Button, Divider, List, Typography } from '@material-ui/core'
-import { useTheme } from '@material-ui/core/styles'
-import Link from '@material-ui/core/Link'
+import React from "react";
+import { Link as RouterLink } from "react-router-dom";
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  List,
+  Typography,
+} from "@material-ui/core";
+import { useTheme } from "@material-ui/core/styles";
+import Link from "@material-ui/core/Link";
 
-import NavItem from '../NavItem'
+import NavItem from "../NavItem";
 import {
   BarChart as BarChartIcon,
   Lock as LockIcon,
@@ -12,108 +19,112 @@ import {
   Settings as SettingsIcon,
   AccountCircle as UserIcon,
   People as UsersIcon,
-} from '@material-ui/icons'
-import IconButton from '@material-ui/core/IconButton'
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import ChevronRightIcon from '@material-ui/icons/ChevronRight'
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
-import { selectAuth } from '../../features/auth/authSlice'
-import { selectSetting, toggleThis } from '../../features/settings/settingsSlice'
-import { DrawerHeader } from '../DashboardSidebar'
-import CustomDialog from '../modals/CustomDialog'
-import ChangePassword from '../account/ChangePassword'
-import { logout } from '../../features/auth/authReducers'
+} from "@material-ui/icons";
+import IconButton from "@material-ui/core/IconButton";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectAuth } from "../../features/auth/authSlice";
+import {
+  selectSetting,
+  toggleThis,
+} from "../../features/settings/settingsSlice";
+import { DrawerHeader } from "../DashboardSidebar";
+import CustomDialog from "../modals/CustomDialog";
+import ChangePassword from "../account/ChangePassword";
+import { logout } from "../../features/auth/authReducers";
 const items = [
   {
-    href: '/app/dashboard',
+    href: "/app/dashboard",
     icon: <BarChartIcon />,
-    title: 'Dashboard',
+    title: "Dashboard",
   },
   {
-    href: '/app/users',
+    href: "/app/users",
     icon: <UsersIcon />,
-    title: 'Users',
+    title: "Users",
   },
   {
-    href: '/app/profile',
+    href: "/app/profile",
     icon: <UserIcon />,
-    title: 'Account',
+    title: "Account",
   },
 
   {
-    href: '/app/settings',
+    href: "/app/settings",
     icon: <SettingsIcon />,
-    title: 'Settings',
+    title: "Settings",
   },
   {
-    href: '',
+    href: "",
     icon: <LockIcon />,
-    title: 'Change Password',
-    click: 'changePassword',
+    title: "Change Password",
+    click: "changePassword",
   },
   {
-    href: '',
+    href: "",
     icon: <ExitToAppIcon />,
-    title: 'Logout',
-    click: 'logout',
+    title: "Logout",
+    click: "logout",
   },
-]
+];
 
 const SidebarContent = () => {
-  const dispatch = useAppDispatch()
-  const [open, setOpen] = React.useState(false)
+  const dispatch = useAppDispatch();
+  const [open, setOpen] = React.useState(false);
 
-  const theme = useTheme()
-  const { me } = useAppSelector(selectAuth)
-  const { isDrawerOpen, isMobileDrawerOpen, isMiniMode } = useAppSelector(selectSetting)
+  const theme = useTheme();
+  const { user } = useAppSelector(selectAuth);
+  const { isDrawerOpen, isMobileDrawerOpen, isMiniMode } =
+    useAppSelector(selectSetting);
   const handleDrawerToggle = () => {
-    dispatch(toggleThis({ type: 'Mobile', newValue: false }))
-  }
+    dispatch(toggleThis({ type: "Mobile", newValue: false }));
+  };
   const handleDrawerClose = () => {
-    dispatch(toggleThis({ type: 'Drawer', newValue: false }))
-    dispatch(toggleThis({ type: 'Mobile', newValue: false }))
-    dispatch(toggleThis({ type: 'Mini', newValue: true }))
-  }
+    dispatch(toggleThis({ type: "Drawer", newValue: false }));
+    dispatch(toggleThis({ type: "Mobile", newValue: false }));
+    dispatch(toggleThis({ type: "Mini", newValue: true }));
+  };
   const changePasswordHandler = () => {
-    setOpen(true)
-  }
+    setOpen(true);
+  };
   const dialogClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
   const signOut = () => {
-    dispatch(logout())
-  }
-  const voidFunction = () => {}
+    dispatch(logout());
+  };
+  const voidFunction = () => {};
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
       }}
     >
       <DrawerHeader>
         {isDrawerOpen || isMobileDrawerOpen ? (
           <Box
             sx={{
-              width: '100%',
+              width: "100%",
               p: 1,
             }}
           >
             <div
               style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'center',
+                width: "100%",
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "center",
               }}
             >
               <Avatar
                 component={RouterLink}
                 alt="avatar"
-                src={me ? me.avatar : ''}
+                src={user ? user.avatar : ""}
                 sx={{
-                  cursor: 'pointer',
+                  cursor: "pointer",
                   width: 64,
                   height: 64,
                 }}
@@ -121,18 +132,25 @@ const SidebarContent = () => {
               />
               <Box sx={{ flexGrow: 1 }} />
 
-              <IconButton style={{ color: 'white' }} onClick={handleDrawerClose}>
-                {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              <IconButton
+                style={{ color: "white" }}
+                onClick={handleDrawerClose}
+              >
+                {theme.direction === "rtl" ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
               </IconButton>
             </div>
             <div
               style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                flexDirection: 'column',
+                display: "flex",
+                alignItems: "flex-start",
+                flexDirection: "column",
                 marginTop: 18,
                 marginBottom: 8,
-                color: 'white',
+                color: "white",
               }}
             >
               <Typography
@@ -141,9 +159,9 @@ const SidebarContent = () => {
                   fontWeight: 500,
                 }}
               >
-                {me && me.name}
+                {user && user.name}
               </Typography>
-              <Typography variant="h6">{me && me.email}</Typography>
+              <Typography variant="h6">{user && user.email}</Typography>
             </div>
           </Box>
         ) : (
@@ -153,9 +171,9 @@ const SidebarContent = () => {
                 <Avatar
                   component={RouterLink}
                   alt="avatar"
-                  src={me ? me.avatar : ''}
+                  src={user ? user.avatar : ""}
                   sx={{
-                    cursor: 'pointer',
+                    cursor: "pointer",
                     width: 64,
                     height: 64,
                   }}
@@ -178,7 +196,7 @@ const SidebarContent = () => {
               icon={item.icon}
               onClick={
                 !item.href
-                  ? item.click === 'changePassword'
+                  ? item.click === "changePassword"
                     ? changePasswordHandler
                     : signOut
                   : voidFunction
@@ -192,25 +210,37 @@ const SidebarContent = () => {
         sx={{
           m: 2,
           p: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
         <Box
           sx={{
-            display: 'flex',
-            width: '100%',
-            justifyContent: 'space-between',
+            display: "flex",
+            width: "100%",
+            justifyContent: "space-between",
           }}
         >
-          <Link color={'primary'} href={'https://pinnasofts.com/'} target={'_blank'}>
+          <Link
+            color={"primary"}
+            href={"https://pinnasofts.com/"}
+            target={"_blank"}
+          >
             Home
           </Link>
-          <Link color={'primary'} href={'https://pinnasofts.com/about'} target={'_blank'}>
+          <Link
+            color={"primary"}
+            href={"https://pinnasofts.com/about"}
+            target={"_blank"}
+          >
             About Us
           </Link>
-          <Link color={'primary'} href={'https://pinnasofts.com/blog'} target={'_blank'}>
+          <Link
+            color={"primary"}
+            href={"https://pinnasofts.com/blog"}
+            target={"_blank"}
+          >
             Blog
           </Link>
         </Box>
@@ -253,7 +283,7 @@ const SidebarContent = () => {
         <ChangePassword />
       </CustomDialog>
     </Box>
-  )
-}
+  );
+};
 
-export default SidebarContent
+export default SidebarContent;

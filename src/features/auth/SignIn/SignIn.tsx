@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
 
 import Container from "@material-ui/core/Container";
@@ -42,6 +42,8 @@ export const SignIn = () => {
   // const location = useLocation()
   const theme = useTheme();
   if (user) {
+    return <Navigate to="/app" />;
+
     // let { from } = location.search || { from: { pathname: '/app/dashboard' } }
     // navigate(from)
   }

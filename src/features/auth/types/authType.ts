@@ -37,7 +37,7 @@ enum UserStatus {
 }
 
 export type AuthState = {
-  user: AuthenticatedUser | undefined;
+  user: AuthUser | undefined;
   me: AuthProfile | undefined;
   loading: "idle" | "pending";
   currentRequestId: undefined | string;
@@ -69,7 +69,7 @@ export type AuthSuccess = {
 };
 
 export type AuthenticatedUser = {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   isAdmin: string;

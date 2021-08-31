@@ -6,6 +6,7 @@ export const SIGN_IN = gql`
       id
       name
       email
+      avatar
       isAdmin
       token
     }
@@ -18,6 +19,7 @@ export const SIGN_IN_GOOGLE = gql`
       id
       name
       email
+      avatar
       isAdmin
       token
     }

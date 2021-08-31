@@ -23,6 +23,7 @@ import {
   VerifyAuth,
   VerifyResendAuth,
 } from "./types/authType";
+import { PROFILE } from "../../app/services/userService/queries";
 //import { sleep } from '../../utils/sleep';
 
 export const uploadFile = createAsyncThunk<
@@ -45,7 +46,7 @@ export const uploadFile = createAsyncThunk<
 
     const { data } = await axios.post("/api/uploads", image, config);
 
-    //const pr = await profile(user!._id)
+    //const pr = await profile(user!.id)
     //console.log(data)
     return data;
   } catch (error) {
@@ -70,7 +71,7 @@ export const uploadFileMulter = createAsyncThunk<
 
   try {
     const formData = new FormData();
-    formData.append("id", user!._id);
+    formData.append("id", user!.id.toString());
     formData.append("image", image);
 
     const config = {
@@ -207,7 +208,7 @@ export const changePassword = createAsyncThunk<
 
     const { data } = await axios.post(
       "/api/users/profile/edit/password",
-      { ...editProfile, userId: user?._id },
+      { ...editProfile, userId: user?.id },
       config
     );
     return data;
@@ -278,35 +279,35 @@ export const signIn = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
-// export const profileApollo = createAsyncThunk<
-//   any,
-//   string,
-//   { rejectValue: AuthError }
-// >("auth/profile", async (id, thunkAPI) => {
-//   const { rejectWithValue } = thunkAPI;
+export const profileApollo = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("auth/profile", async (id, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
 
-//   try {
-//     const response = await apolloClient.query({
-//       query: PROFILE,
-//       variables: { id: id },
-//     });
+  try {
+    const response = await apolloClient.query({
+      query: PROFILE,
+      variables: { id: id },
+    });
 
-//     if (response && response.data && response.data.getUserProfile) {
-//       return response.data.getUserProfile as GetProfile_getUserProfile;
-//     }
-//   } catch (error) {
-//     const { code, stack } = error;
-//     const message =
-//       error.response && error.response.data.message
-//         ? error.response.data.message
-//         : error.message;
-//     return rejectWithValue({ code, message, id: uuidv4(), stack });
-//   }
-// });
+    if (response && response.data && response.data.getUserProfile) {
+      return response.data.getUserProfile as AuthUser;
+    }
+  } catch (error) {
+    const { code, stack } = error;
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 
 export const profile = createAsyncThunk<
   any,
-  string,
+  number,
   { rejectValue: AuthError }
 >("auth/profile", async (id, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
@@ -352,10 +353,13 @@ export const google = createAsyncThunk<
       mutation: SIGN_IN_GOOGLE,
       variables: { idToken: idToken },
     });
-
-    if (response && response.data && response.data.authUser) {
-      localStorage.setItem("userInfo", JSON.stringify(response.data.authUser));
-      return response.data.authUser as AuthUser;
+    console.log(response);
+    if (response && response.data && response.data.googleLogin) {
+      localStorage.setItem(
+        "userInfo",
+        JSON.stringify(response.data.googleLogin)
+      );
+      return response.data.googleLogin as AuthUser;
     }
     // const config = {
     //   headers: {

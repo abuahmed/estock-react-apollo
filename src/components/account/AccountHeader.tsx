@@ -33,15 +33,13 @@ function AccountHeader() {
       setImage(URL.createObjectURL(event.target.files[0]));
 
       //let values = me
-      //values = { ...values, avatar: `/public/images/${user?._id}.jpg` } as AuthProfile
+      //values = { ...values, avatar: `/public/images/${user?.id}.jpg` } as AuthProfile
       const reader = new FileReader();
       reader.readAsDataURL(event.target.files[0]);
       reader.onloadend = () => {
         var base64EncodedImage = reader.result;
         dispatch(
-          uploadFile(
-            JSON.stringify({ id: user!._id, data: base64EncodedImage })
-          )
+          uploadFile(JSON.stringify({ id: user!.id, data: base64EncodedImage }))
         );
       };
       reader.onerror = () => {
