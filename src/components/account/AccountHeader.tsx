@@ -19,13 +19,13 @@ import Paper from "@material-ui/core/Paper";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import { AuthProfile } from "../../features/auth/types/authType";
+import { AuthUser } from "../../features/auth/types/authType";
 
 function AccountHeader() {
   const classes = useStyles();
   const [image, setImage] = useState("");
 
-  const { user, me } = useAppSelector(selectAuth);
+  const { user } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -52,10 +52,10 @@ function AccountHeader() {
 
   const removeImage = () => {
     setImage("");
-    let prof = me;
-    prof = { ...prof, avatar: "" } as AuthProfile;
+    let prof = user;
+    prof = { ...prof, avatar: "" } as AuthUser;
     dispatch(updateProfile(prof));
-    dispatch(deleteFile(me?.avatar as string));
+    dispatch(deleteFile(user?.avatar as string));
   };
 
   return (
@@ -99,7 +99,7 @@ function AccountHeader() {
             >
               <Avatar
                 alt="avatar"
-                src={image ? image : me ? me.avatar : ""}
+                src={image ? image : user ? user.avatar : ""}
                 sx={{
                   height: 200,
                   width: 200,
@@ -130,11 +130,11 @@ function AccountHeader() {
             noWrap
             width="200px"
           >
-            {me && me.name}
+            {user && user.name}
           </Typography>
-          <Typography variant="h6">{me && me.email}</Typography>
+          <Typography variant="h6">{user && user.email}</Typography>
 
-          {(image || (me && me.avatar)) && (
+          {(image || (user && user.avatar)) && (
             <>
               <Box component="div" pt={3} pb={2}>
                 <Button

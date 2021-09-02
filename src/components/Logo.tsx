@@ -1,5 +1,7 @@
 //import react from 'react'
 
-const Logo = () => <img alt="Logo" src="/static/logo.svg" />
+const Logo = () => (
+  <img alt="Logo" height="50px" width="50px" src="/logo.png" />
+);
 
-export default Logo
+export default Logo;

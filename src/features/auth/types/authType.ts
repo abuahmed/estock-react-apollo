@@ -38,7 +38,7 @@ enum UserStatus {
 
 export type AuthState = {
   user: AuthUser | undefined;
-  me: AuthProfile | undefined;
+  //me: AuthProfile | undefined;
   loading: "idle" | "pending";
   currentRequestId: undefined | string;
   fileUploadUri: undefined | string;
@@ -75,12 +75,12 @@ export type AuthenticatedUser = {
   isAdmin: string;
   token: string;
 };
-export type AuthProfile = {
-  name: string;
-  email: string;
-  avatar: string;
-  bio: string;
-};
+// export type AuthProfile = {
+//   name: string;
+//   email: string;
+//   avatar: string;
+//   bio: string;
+// };
 export type UpdatePassword = {
   userId: string;
   oldPassword: string;

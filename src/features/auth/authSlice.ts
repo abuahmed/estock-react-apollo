@@ -12,7 +12,6 @@ import {
 import { RootState } from "../../app/store";
 import {
   AuthError,
-  AuthProfile,
   AuthState,
   AuthUser,
   ForgotAuth,
@@ -156,7 +155,7 @@ export const signUp = createAsyncThunk<
 
 export const updateProfile = createAsyncThunk<
   any,
-  AuthProfile,
+  AuthUser,
   { rejectValue: AuthError }
 >("auth/updateProfile", async (editProfile, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;

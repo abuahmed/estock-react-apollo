@@ -18,7 +18,7 @@ import { AuthState } from "./types/authType";
 
 const initialState: AuthState = {
   user: undefined,
-  me: undefined,
+  //me: undefined,
   loading: "idle",
   currentRequestId: undefined,
   fileUploadUri: undefined,
@@ -33,7 +33,7 @@ export const authSlice = createSlice({
     logout: (state) => {
       localStorage.removeItem("userInfo");
       state.user = undefined;
-      state.me = undefined;
+      //state.me = undefined;
     },
     resetSuccess: (state) => {
       state.success = undefined;
@@ -77,7 +77,7 @@ export const authSlice = createSlice({
     });
     builder.addCase(profile.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.me = payload;
+      state.user = payload;
       state.error = undefined;
     });
     builder.addCase(profile.rejected, (state, { payload }) => {
@@ -90,7 +90,7 @@ export const authSlice = createSlice({
     });
     builder.addCase(updateProfile.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.me = payload;
+      state.user = payload;
       state.fileUploadUri = undefined;
       state.error = undefined;
     });
@@ -195,7 +195,7 @@ export const authSlice = createSlice({
     });
     builder.addCase(uploadFile.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.me = payload;
+      state.user = payload;
       state.error = undefined;
     });
     builder.addCase(uploadFile.rejected, (state, { payload }) => {

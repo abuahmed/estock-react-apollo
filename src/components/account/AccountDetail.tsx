@@ -16,12 +16,12 @@ import { updateProfile, selectAuth } from "../../features/auth/authSlice";
 
 import Toast from "../Layout/Toast";
 import useStyles from "./styles";
-import { AuthProfile } from "../../features/auth/types/authType";
+import { AuthUser } from "../../features/auth/types/authType";
 
 export const AccountDetail = () => {
   const classes = useStyles();
 
-  const { error, fileUploadUri, me } = useAppSelector(selectAuth);
+  const { error, fileUploadUri, user } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
 
   return (
@@ -33,7 +33,7 @@ export const AccountDetail = () => {
       }}
     >
       <Formik
-        initialValues={me as AuthProfile}
+        initialValues={user as AuthUser}
         validationSchema={profileUpdateSchema}
         onSubmit={(values, actions) => {
           actions.setSubmitting(false);
@@ -43,7 +43,7 @@ export const AccountDetail = () => {
           dispatch(updateProfile(values));
         }}
       >
-        {(props: FormikProps<AuthProfile>) => (
+        {(props: FormikProps<AuthUser>) => (
           <Form>
             <Box m={1}>
               <Grid container spacing={3}>
