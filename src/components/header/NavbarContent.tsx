@@ -81,7 +81,7 @@ function NavbarContent() {
       </Toolbar>
 
       <div style={{ display: "flex" }}>
-        <IconButton color="inherit" style={{ marginLeft: 0 }}>
+        {/* <IconButton color="inherit" style={{ marginLeft: 0 }}>
           <Badge badgeContent={4} color="secondary">
             <MailIcon />
           </Badge>
@@ -90,7 +90,7 @@ function NavbarContent() {
           <Badge badgeContent={17} color="secondary">
             <NotificationsIcon />
           </Badge>
-        </IconButton>
+        </IconButton> */}
 
         <IconButton
           edge="end"

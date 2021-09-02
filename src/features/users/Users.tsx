@@ -1,46 +1,46 @@
-import { useEffect } from 'react'
-import { Helmet } from 'react-helmet'
+import { useEffect } from "react";
+import { Helmet } from "react-helmet";
 
-import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 //import { useDispatch, useSelector } from 'react-redux'
 
 // Slices
-import { fetchUsers, selectUsers } from './usersSlice'
-import { selectAuth } from '../auth/authSlice'
-import Grid from '@material-ui/core/Grid'
-import { makeStyles } from '@material-ui/core/styles'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TableRow from '@material-ui/core/TableRow'
-import Paper from '@material-ui/core/Paper'
-import Skeleton from '@material-ui/core/Skeleton'
-import Typography from '@material-ui/core/Typography'
-import Box from '@material-ui/core/Box'
-import Button from '@material-ui/core/Button'
-import { changePageTitle } from '../settings/settingsSlice'
+import { fetchUsers, selectUsers } from "./usersSlice";
+import { selectAuth } from "../auth/authSlice";
+import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import Skeleton from "@material-ui/core/Skeleton";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import { changePageTitle } from "../settings/settingsSlice";
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
-})
+});
 // Components
 //import { SimpleGrid } from '@chakra-ui/core/dist'
 
 export const Users = () => {
-  const classes = useStyles()
+  const classes = useStyles();
 
-  const dispatch = useAppDispatch()
-  const { entities: users, loading } = useAppSelector(selectUsers)
+  const dispatch = useAppDispatch();
+  const { entities: users, loading } = useAppSelector(selectUsers);
   //const { user } = useAppSelector(selectAuth)
 
   useEffect(() => {
-    dispatch(fetchUsers('all'))
-    dispatch(changePageTitle('Users List'))
-  }, [])
+    dispatch(fetchUsers("all"));
+    dispatch(changePageTitle("Users List"));
+  }, []);
   //const notify = () => toast('Wow so easy!')
 
   // if (!user) {
@@ -49,7 +49,7 @@ export const Users = () => {
   return (
     <>
       <Helmet>
-        <title>Users | Mern Starter</title>
+        <title>Users | Pinna Stock</title>
       </Helmet>
       <Grid container justifyContent="flex-start">
         <TableContainer component={Paper}>
@@ -63,7 +63,7 @@ export const Users = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loading === 'pending' ? (
+              {loading === "pending" ? (
                 <TableRow>
                   <TableCell>
                     <Skeleton variant="rectangular" height={10} width={100} />
@@ -88,7 +88,7 @@ export const Users = () => {
                       {row.name}
                     </TableCell>
                     <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.isAdmin ? 'YES' : 'NO'}</TableCell>
+                    <TableCell>{row.isAdmin ? "YES" : "NO"}</TableCell>
                     <TableCell>
                       <Box
                         display="flex"
@@ -112,5 +112,5 @@ export const Users = () => {
         </TableContainer>
       </Grid>
     </>
-  )
-}
+  );
+};

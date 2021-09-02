@@ -1,48 +1,48 @@
-import React from 'react'
-import { Helmet } from 'react-helmet'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { Form, FormikProps, Formik } from 'formik'
+import React from "react";
+import { Helmet } from "react-helmet";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Form, FormikProps, Formik } from "formik";
 
-import Card from '@material-ui/core/Card'
-import CardContent from '@material-ui/core/CardContent'
-import Button from '@material-ui/core/Button'
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Button from "@material-ui/core/Button";
 
-import Box from '@material-ui/core/Box'
-import Typography from '@material-ui/core/Typography'
+import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 
-import InputAdornment from '@material-ui/core/InputAdornment'
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import { useAppSelector, useAppDispatch } from '../../../app/hooks'
-import { forgot, selectAuth } from '../authSlice'
-import { FormikTextField } from '../../../components/Layout/FormikTextField'
+import InputAdornment from "@material-ui/core/InputAdornment";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import { useAppSelector, useAppDispatch } from "../../../app/hooks";
+import { forgot, selectAuth } from "../authSlice";
+import { FormikTextField } from "../../../components/Layout/FormikTextField";
 
-import AuthSkeleton from '../AuthSkeleton'
-import { forgotSchema } from '../validation'
-import Toast from '../../../components/Layout/Toast'
-import commonStyles from '../../commonStyles'
-import useStyles from './styles'
+import AuthSkeleton from "../AuthSkeleton";
+import { forgotSchema } from "../validation";
+import Toast from "../../../components/Layout/Toast";
+import commonStyles from "../../commonStyles";
+import useStyles from "./styles";
 
 export const Forgot = () => {
-  const cclasses = commonStyles()
-  const classes = useStyles()
-  const { loading, error, user, success } = useAppSelector(selectAuth)
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
+  const cclasses = commonStyles();
+  const classes = useStyles();
+  const { loading, error, user, success } = useAppSelector(selectAuth);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   if (user) {
-    return <Navigate to="/" />
+    return <Navigate to="/" />;
   }
   if (success) {
-    navigate('/login')
+    navigate("/login");
   }
   interface Values {
-    email: string
+    email: string;
   }
 
   return (
     <>
       <Helmet>
-        <title>Forgot Password | Mern Starter</title>
+        <title>Forgot Password | Pinna Stock</title>
       </Helmet>
       <Card className={classes.card}>
         <CardContent>
@@ -52,18 +52,18 @@ export const Forgot = () => {
           <Typography variant="h6" className={cclasses.subGreeting}>
             Type your Email
           </Typography>
-          {loading === 'pending' ? (
+          {loading === "pending" ? (
             <AuthSkeleton />
           ) : (
             <>
               <Formik
                 initialValues={{
-                  email: '',
+                  email: "",
                 }}
                 validationSchema={forgotSchema}
                 onSubmit={(values, actions) => {
-                  actions.setSubmitting(false)
-                  dispatch(forgot(values))
+                  actions.setSubmitting(false);
+                  dispatch(forgot(values));
                 }}
               >
                 {(props: FormikProps<Values>) => (
@@ -106,5 +106,5 @@ export const Forgot = () => {
         </CardContent>
       </Card>
     </>
-  )
-}
+  );
+};

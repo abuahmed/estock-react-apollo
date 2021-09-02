@@ -1,29 +1,33 @@
-import React from 'react'
-import { Helmet } from 'react-helmet'
-import { Grid, Paper, Typography, Button } from '@material-ui/core'
-import { Link } from 'react-router-dom'
-import classnames from 'classnames'
+import React from "react";
+import { Helmet } from "react-helmet";
+import { Grid, Paper, Typography, Button } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import classnames from "classnames";
 
 // styles
-import useStyles from './styles'
+import useStyles from "./styles";
 
 // logo
 //import logo from './logo.svg'
-import Logo from '../../components/Logo'
+import Logo from "../../components/Logo";
 
 export default function Home() {
-  const classes = useStyles()
+  const classes = useStyles();
 
   return (
     <>
       <Helmet>
-        <title>Home | Mern Starter</title>
+        <title>Home | Pinna Stock</title>
       </Helmet>
       <Grid container className={classes.container}>
         <div className={classes.logotype}>
           <Logo />
-          <Typography variant="h3" color="primary" className={classes.logotypeText}>
-            Mern Starter
+          <Typography
+            variant="h3"
+            color="primary"
+            className={classes.logotypeText}
+          >
+            Pinna Stock
           </Typography>
         </div>
         <Paper classes={{ root: classes.paperRoot }}>
@@ -48,5 +52,5 @@ export default function Home() {
         </Paper>
       </Grid>
     </>
-  )
+  );
 }

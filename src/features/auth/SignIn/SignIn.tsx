@@ -56,7 +56,7 @@ export const SignIn = () => {
   return (
     <>
       <Helmet>
-        <title>Sign In | Mern Starter</title>
+        <title>Sign In | Pinna Stock</title>
       </Helmet>
       <Box
         sx={{

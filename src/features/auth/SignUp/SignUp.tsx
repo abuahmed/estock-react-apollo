@@ -1,69 +1,69 @@
-import React from 'react'
-import { Helmet } from 'react-helmet'
-import { Navigate, useNavigate, Link } from 'react-router-dom'
-import { Form, FormikProps, Formik } from 'formik'
-import Button from '@material-ui/core/Button'
-import Grid from '@material-ui/core/Grid'
-import Box from '@material-ui/core/Box'
-import Container from '@material-ui/core/Container'
-import Typography from '@material-ui/core/Typography'
-import { useTheme } from '@material-ui/core/styles'
+import React from "react";
+import { Helmet } from "react-helmet";
+import { Navigate, useNavigate, Link } from "react-router-dom";
+import { Form, FormikProps, Formik } from "formik";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
+import { useTheme } from "@material-ui/core/styles";
 
-import useStyles from './styles'
-import { FormikTextField } from '../../../components/Layout/FormikTextField'
-import AuthSkeleton from '../AuthSkeleton'
+import useStyles from "./styles";
+import { FormikTextField } from "../../../components/Layout/FormikTextField";
+import AuthSkeleton from "../AuthSkeleton";
 
-import { registerSchema } from '../validation'
+import { registerSchema } from "../validation";
 
-import { useAppSelector, useAppDispatch } from '../../../app/hooks'
-import { signUp, selectAuth } from '../authSlice'
-import { resetSuccess } from '../authReducers'
-import Toast from '../../../components/Layout/Toast'
-import Google from '../Google'
-import Facebook from '../Facebook'
-import commonStyles from '../../commonStyles'
+import { useAppSelector, useAppDispatch } from "../../../app/hooks";
+import { signUp, selectAuth } from "../authSlice";
+import { resetSuccess } from "../authReducers";
+import Toast from "../../../components/Layout/Toast";
+import Google from "../Google";
+import Facebook from "../Facebook";
+import commonStyles from "../../commonStyles";
 
 export const SignUp = () => {
-  const cclasses = commonStyles()
-  const classes = useStyles()
-  const theme = useTheme()
+  const cclasses = commonStyles();
+  const classes = useStyles();
+  const theme = useTheme();
 
-  const { loading, error, success, user } = useAppSelector(selectAuth)
-  const dispatch = useAppDispatch()
+  const { loading, error, success, user } = useAppSelector(selectAuth);
+  const dispatch = useAppDispatch();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   if (user) {
-    return <Navigate to="/app" />
+    return <Navigate to="/app" />;
   }
   if (success) {
     //return <Navigate to='/' />;
-    dispatch(resetSuccess())
-    navigate('/login')
+    dispatch(resetSuccess());
+    navigate("/login");
   }
   // function redirectToLogin() {
   //   history.push('/login');
   // }
 
   interface Values {
-    name: string
-    email: string
-    password: string
-    confirmPassword: string
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
   }
 
   return (
     <>
       <Helmet>
-        <title>Sign Up | Mern Starter</title>
+        <title>Sign Up | Pinna Stock</title>
       </Helmet>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          justifyContent: 'center',
-          textAlign: 'center',
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          justifyContent: "center",
+          textAlign: "center",
           paddingTop: theme.spacing(1),
           paddingBottom: theme.spacing(1),
           backgroundColor: theme.palette.background.paper,
@@ -78,28 +78,32 @@ export const SignUp = () => {
               Create your account
             </Typography>
             {/* {success && redirectToLogin} */}
-            {loading === 'pending' ? (
+            {loading === "pending" ? (
               <AuthSkeleton />
             ) : (
               <>
                 <Formik
                   initialValues={{
-                    name: '',
-                    email: '',
-                    password: '',
-                    confirmPassword: '',
+                    name: "",
+                    email: "",
+                    password: "",
+                    confirmPassword: "",
                   }}
                   validationSchema={registerSchema}
                   onSubmit={(values, actions) => {
-                    actions.setSubmitting(false)
-                    dispatch(signUp(values))
+                    actions.setSubmitting(false);
+                    dispatch(signUp(values));
                   }}
                 >
                   {(props: FormikProps<Values>) => (
                     <Form>
                       <FormikTextField formikKey="name" label="Name" />
                       <FormikTextField formikKey="email" label="Email" />
-                      <FormikTextField formikKey="password" label="Password" type="password" />
+                      <FormikTextField
+                        formikKey="password"
+                        label="Password"
+                        type="password"
+                      />
                       <FormikTextField
                         formikKey="confirmPassword"
                         label="Confirm Password"
@@ -130,7 +134,9 @@ export const SignUp = () => {
                 {/* <Divider className={classes.divider} /> */}
                 <div className={cclasses.formDividerContainer}>
                   <div className={cclasses.formDivider} />
-                  <Typography className={cclasses.formDividerWord}>or</Typography>
+                  <Typography className={cclasses.formDividerWord}>
+                    or
+                  </Typography>
                   <div className={cclasses.formDivider} />
                 </div>
                 <Grid container spacing={3}>
@@ -147,5 +153,5 @@ export const SignUp = () => {
         </Container>
       </Box>
     </>
-  )
-}
+  );
+};

@@ -25,7 +25,7 @@ export const Profile = () => {
   return (
     <div>
       <Helmet>
-        <title>{title} | Mern Starter</title>
+        <title>{title} | Pinna Stock</title>
       </Helmet>
       <Box sx={{ mt: 2 }} />
       <Box
