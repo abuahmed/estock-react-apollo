@@ -6,17 +6,33 @@ export const GET_ALL_Users = gql`
       id
       name
       email
+      avatar
+    }
+  }
+`;
+
+export const GET_SELECTED_USER = gql`
+  query GetUser($id: ID!) {
+    User(input: { id: $id }) {
+      name
+      email
+      avatar
+      roles {
+        id
+      }
     }
   }
 `;
 
 export const PROFILE = gql`
-  query GetProfile($id: Number!) {
+  query GetUserProfile($id: Number!) {
     getUserProfile(input: { id: $id }) {
       name
       email
       avatar
-      bio
+      roles {
+        id
+      }
     }
   }
 `;

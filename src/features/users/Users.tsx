@@ -20,7 +20,13 @@ import Skeleton from "@material-ui/core/Skeleton";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
+import { Link, NavLink as RouterLink } from "react-router-dom";
+
 import { changePageTitle } from "../settings/settingsSlice";
+import Avatar from "@material-ui/core/Avatar";
+import { IconButton, Stack } from "@material-ui/core";
+import { Edit } from "@material-ui/icons";
+import Delete from "@material-ui/icons/Delete";
 
 const useStyles = makeStyles({
   table: {
@@ -46,6 +52,8 @@ export const Users = () => {
   // if (!user) {
   //   return <Redirect to="/login" />
   // }
+
+  const DeleteUser = (id: number) => {};
   return (
     <>
       <Helmet>
@@ -56,6 +64,7 @@ export const Users = () => {
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell>Picture</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Is Admin</TableCell>
@@ -83,26 +92,38 @@ export const Users = () => {
                 </TableRow>
               ) : (
                 users.map((row) => (
-                  <TableRow key={row.name}>
+                  <TableRow key={row.id}>
+                    <TableCell>
+                      <Avatar
+                        alt="avatar"
+                        src={row.avatar}
+                        sx={{
+                          width: 64,
+                          height: 64,
+                        }}
+                      />
+                    </TableCell>
                     <TableCell component="th" scope="row">
                       {row.name}
                     </TableCell>
                     <TableCell>{row.email}</TableCell>
                     <TableCell>{row.isAdmin ? "YES" : "NO"}</TableCell>
                     <TableCell>
-                      <Box
-                        display="flex"
-                        flexDirection="row"
-                        justifyContent="center"
-                        alignItems="center"
-                      >
-                        <Button variant="contained" color="primary">
-                          Edit
-                        </Button>
-                        <Button variant="contained" color="secondary">
-                          Delete
-                        </Button>
-                      </Box>
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <IconButton
+                          color="primary"
+                          component={RouterLink}
+                          to={"/app/user/" + row.id}
+                        >
+                          <Edit />
+                        </IconButton>
+                        <IconButton
+                          color="secondary"
+                          onClick={() => DeleteUser(row.id)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </Stack>
                     </TableCell>
                   </TableRow>
                 ))
