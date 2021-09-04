@@ -15,7 +15,7 @@ export type AuthUser = {
   verifiedAt: Date;
   token: string;
   expiredAt: Date;
-  roles: [Role];
+  roles: Role[];
 };
 
 export type Role = {
@@ -27,6 +27,7 @@ export type Role = {
   displayName: string;
   description: string;
   descriptionShort: string;
+  isPrivileged: boolean;
 };
 
 enum UserStatus {

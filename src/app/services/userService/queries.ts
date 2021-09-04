@@ -11,14 +11,24 @@ export const GET_ALL_Users = gql`
   }
 `;
 
+export const GET_ALL_Roles = gql`
+  query GetRoles {
+    GetRoles {
+      id
+      displayName
+    }
+  }
+`;
+
 export const GET_SELECTED_USER = gql`
-  query GetUser($id: ID!) {
-    User(input: { id: $id }) {
+  query GetSelectedUser($id: Int!) {
+    GetUser(input: { id: $id }) {
       name
       email
       avatar
       roles {
         id
+        displayName
       }
     }
   }

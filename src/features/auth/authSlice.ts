@@ -48,7 +48,7 @@ export const uploadFile = createAsyncThunk<
     //const pr = await profile(user!.id)
     //console.log(data)
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -83,7 +83,7 @@ export const uploadFileMulter = createAsyncThunk<
     const { data } = await axios.post("/api/uploads", formData, config);
 
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -117,7 +117,7 @@ export const deleteFile = createAsyncThunk<
     );
 
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -143,7 +143,7 @@ export const signUp = createAsyncThunk<
 
     const { data } = await axios.post("/api/users", newUser, config);
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -177,7 +177,7 @@ export const updateProfile = createAsyncThunk<
       config
     );
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -211,7 +211,7 @@ export const changePassword = createAsyncThunk<
       config
     );
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -239,7 +239,7 @@ export const signInApollo = createAsyncThunk<
       return response.data.authUser as AuthUser;
     }
     //return [];
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -269,7 +269,7 @@ export const signIn = createAsyncThunk<
     );
     localStorage.setItem("userInfo", JSON.stringify(data));
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -294,7 +294,7 @@ export const profileApollo = createAsyncThunk<
     if (response && response.data && response.data.getUserProfile) {
       return response.data.getUserProfile as AuthUser;
     }
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -326,7 +326,7 @@ export const profile = createAsyncThunk<
     const { data } = await axios.post("/api/users/profile", { id }, config);
     //console.log(data)
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -369,7 +369,7 @@ export const google = createAsyncThunk<
     // const { data } = await axios.post("/api/users/google", { idToken }, config);
     // localStorage.setItem("userInfo", JSON.stringify(data));
     // return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -414,7 +414,7 @@ export const facebook = createAsyncThunk<
     // );
     // localStorage.setItem("userInfo", JSON.stringify(data));
     // return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -444,7 +444,7 @@ export const forgot = createAsyncThunk<
       config
     );
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -473,7 +473,7 @@ export const reset = createAsyncThunk<
       config
     );
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -502,7 +502,7 @@ export const verify = createAsyncThunk<
       config
     );
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message
@@ -530,7 +530,7 @@ export const resend = createAsyncThunk<
       config
     );
     return data;
-  } catch (error) {
+  } catch (error: any) {
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message

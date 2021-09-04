@@ -16,10 +16,16 @@ import { profileUpdateSchema } from "../auth/validation";
 import Toast from "../../components/Layout/Toast";
 import Button from "@material-ui/core/Button";
 import { updateProfile } from "../auth/authSlice";
-import { Divider } from "@material-ui/core";
+import { Divider, Switch } from "@material-ui/core";
+
 import AuthSkeleton from "../auth/AuthSkeleton";
 import { changePageTitle } from "../settings/settingsSlice";
-
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 // type Props = {
 //   user: UserType;
 // };
@@ -76,8 +82,36 @@ export const User = () => {
 
                 <Divider orientation="horizontal" sx={{ m: "10px" }} />
 
+                <TableContainer component={Paper}>
+                  <Table size="small" aria-label="a dense table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Role</TableCell>
+                        <TableCell>Permission</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {selectedUser &&
+                        selectedUser.roles &&
+                        selectedUser.roles.map((role) => {
+                          return (
+                            <TableRow key={role.id}>
+                              <TableCell>{role.displayName}</TableCell>
+                              <TableCell>
+                                <Switch
+                                  checked={role.isPrivileged}
+                                  name="isPrivileged"
+                                />
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+
                 {error && <Toast severity="error">{error.message}</Toast>}
-                <Box component="div" pb={3} mt={3}>
+                {/* <Box component="div" pb={3} mt={3}>
                   <Button
                     type="submit"
                     color="secondary"
@@ -86,7 +120,7 @@ export const User = () => {
                   >
                     <SaveIcon /> Save Changes
                   </Button>
-                </Box>
+                </Box> */}
               </Box>
             </Form>
           )}
