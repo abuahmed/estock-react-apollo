@@ -9,7 +9,13 @@ import { addUserRoles, getUser, selectUsers } from "./usersSlice";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Toast from "../../components/Layout/Toast";
-import { Divider, Switch, TextField } from "@material-ui/core";
+import {
+  Divider,
+  Skeleton,
+  Switch,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 
 import AuthSkeleton from "../auth/AuthSkeleton";
 import { changePageTitle } from "../settings/settingsSlice";
@@ -19,6 +25,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import { Helmet } from "react-helmet";
 
 export const User = () => {
   const { id } = useParams() as {
@@ -46,34 +53,44 @@ export const User = () => {
   useEffect(() => {
     if (id) {
       dispatch(getUser(parseInt(id)));
-      dispatch(changePageTitle("User Detail"));
+      dispatch(changePageTitle(`List Of Roles`));
     }
   }, []);
 
   return (
-    <Paper
-      elevation={3}
-      style={{
-        position: "relative",
-        borderRadius: 18,
-      }}
-    >
-      {loading === "pending" ? (
-        <AuthSkeleton />
-      ) : (
+    <>
+      <Helmet>
+        <title> {`${selectedUser?.name.toUpperCase()} Roles`}</title>
+      </Helmet>
+      <Paper
+        elevation={3}
+        style={{
+          position: "relative",
+          borderRadius: 18,
+        }}
+      >
         <Box m={1}>
-          <Grid container spacing={3}>
+          <Grid container spacing={3} sx={{ px: "16px" }}>
             <Grid item md={6} xs={12}>
-              <TextField value={selectedUser?.name} label="Name" disabled />
+              <Typography
+                color="primary"
+                variant="h2"
+                component="h2"
+                sx={{ textTransform: "uppercase" }}
+              >
+                {selectedUser?.name}
+              </Typography>
             </Grid>
             <Grid item md={6} xs={12}>
-              <TextField value={selectedUser?.email} label="Email" disabled />
+              <Typography color="primary" variant="h4" component="h4">
+                {selectedUser?.email}
+              </Typography>
             </Grid>
           </Grid>
 
           <Divider orientation="horizontal" sx={{ m: "10px" }} />
 
-          <TableContainer component={Paper}>
+          <TableContainer>
             <Table size="small" aria-label="a dense table">
               <TableHead>
                 <TableRow>
@@ -85,7 +102,25 @@ export const User = () => {
                 {selectedUser &&
                   selectedUser.roles &&
                   selectedUser.roles.map((role) => {
-                    return (
+                    return loading === "pending" ? (
+                      <TableRow>
+                        <TableCell>
+                          <Skeleton
+                            variant="rectangular"
+                            height={10}
+                            width={100}
+                          />
+                        </TableCell>
+
+                        <TableCell>
+                          <Skeleton
+                            variant="rectangular"
+                            height={10}
+                            width={100}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ) : (
                       <TableRow key={role.id}>
                         <TableCell>{role.displayName}</TableCell>
                         <TableCell>
@@ -114,7 +149,7 @@ export const User = () => {
                   </Button>
                 </Box> */}
         </Box>
-      )}
-    </Paper>
+      </Paper>
+    </>
   );
 };

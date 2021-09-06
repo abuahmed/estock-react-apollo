@@ -58,13 +58,11 @@ export const getUser = createAsyncThunk<
   { rejectValue: AuthError }
 >("users/getUser", async (_id, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
-  console.log(_id);
   try {
     const response = await apolloClient.query({
       query: GET_SELECTED_USER,
       variables: { id: _id },
     });
-    console.log(response);
 
     const rolesResponse = await apolloClient.query({
       query: GET_ALL_Roles,
@@ -122,7 +120,6 @@ export const addUserRoles = createAsyncThunk<
       dispatch(getUser(arg[0]));
     }
   } catch (error: any) {
-    console.log(error.errors.message);
     const { code, stack } = error;
     const message =
       error.response && error.response.data.message

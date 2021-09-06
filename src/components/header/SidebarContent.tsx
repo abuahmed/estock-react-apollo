@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   Avatar,
@@ -16,9 +16,18 @@ import {
   BarChart as BarChartIcon,
   Lock as LockIcon,
   ExitToApp as ExitToAppIcon,
+  SellOutlined as SalesIcon,
   Settings as SettingsIcon,
   AccountCircle as UserIcon,
   People as UsersIcon,
+  List as ListIcon,
+  Inventory2Outlined,
+  ShoppingCartOutlined,
+  ShoppingBagOutlined,
+  InventoryOutlined,
+  DescriptionOutlined,
+  BusinessOutlined,
+  PeopleOutline,
 } from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -33,45 +42,11 @@ import { DrawerHeader } from "../DashboardSidebar";
 import CustomDialog from "../modals/CustomDialog";
 import ChangePassword from "../account/ChangePassword";
 import { logout } from "../../features/auth/authReducers";
-const items = [
-  {
-    href: "/app/dashboard",
-    icon: <BarChartIcon />,
-    title: "Dashboard",
-  },
-  {
-    href: "/app/users",
-    icon: <UsersIcon />,
-    title: "Users",
-  },
-  {
-    href: "/app/profile",
-    icon: <UserIcon />,
-    title: "Account",
-  },
-
-  {
-    href: "/app/settings",
-    icon: <SettingsIcon />,
-    title: "Settings",
-  },
-  {
-    href: "",
-    icon: <LockIcon />,
-    title: "Change Password",
-    click: "changePassword",
-  },
-  {
-    href: "",
-    icon: <ExitToAppIcon />,
-    title: "Logout",
-    click: "logout",
-  },
-];
 
 const SidebarContent = () => {
   const dispatch = useAppDispatch();
   const [open, setOpen] = React.useState(false);
+  const [roles, setRoles] = React.useState<string[]>([]);
 
   const theme = useTheme();
   const { user } = useAppSelector(selectAuth);
@@ -95,6 +70,10 @@ const SidebarContent = () => {
     dispatch(logout());
   };
   const voidFunction = () => {};
+  useEffect(() => {
+    setRoles(user?.roles.map((r) => r.displayName) as string[]);
+  }, []);
+
   return (
     <Box
       sx={{
@@ -188,7 +167,7 @@ const SidebarContent = () => {
       <Divider />
       <Box sx={{ px: 1, py: 0 }}>
         <List onClick={handleDrawerToggle}>
-          {items.map((item) => (
+          {getNavBarItems(roles).map((item) => (
             <NavItem
               href={item.href}
               key={item.title}
@@ -284,6 +263,103 @@ const SidebarContent = () => {
       </CustomDialog>
     </Box>
   );
+};
+
+const getNavBarItems = (roles: string[]) => {
+  interface Props {
+    href: string;
+    title: string;
+    icon: ReactNode;
+    click?: string | undefined;
+  }
+  let items = [
+    {
+      href: "/app/dashboard",
+      icon: <BarChartIcon />,
+      title: "View Dashboard",
+    },
+    {
+      href: "/app/onHand",
+      icon: <ListIcon />,
+      title: "OnHand Inventory",
+    },
+    {
+      href: "/app/sales",
+      icon: <ShoppingCartOutlined />,
+      title: "Sales",
+    },
+    {
+      href: "/app/purchase",
+      icon: <ShoppingBagOutlined />,
+      title: "Purchase",
+    },
+    {
+      href: "/app/physicalInventory",
+      icon: <Inventory2Outlined />,
+      title: "Physical Inventory",
+    },
+    {
+      href: "/app/items",
+      icon: <DescriptionOutlined />,
+      title: "Items",
+    },
+    {
+      href: "/app/customers",
+      icon: <PeopleOutline />,
+      title: "Customers",
+    },
+    {
+      href: "/app/vendors",
+      icon: <BusinessOutlined />,
+      title: "Vendors",
+    },
+    {
+      href: "/app/users",
+      icon: <UsersIcon />,
+      title: "Users",
+      click: "",
+    },
+  ];
+
+  let privilegedItems: Props[] = [];
+
+  items.forEach((item) => {
+    for (let index = 0; index < roles.length; index++) {
+      const rl = roles[index];
+      if (rl.includes(item.title)) {
+        privilegedItems.push(item);
+        break;
+      }
+    }
+  });
+
+  privilegedItems = privilegedItems.concat([
+    {
+      href: "/app/profile",
+      icon: <UserIcon />,
+      title: "My Account",
+    },
+
+    {
+      href: "",
+      icon: <LockIcon />,
+      title: "Change Password",
+      click: "changePassword",
+    },
+    {
+      href: "",
+      icon: <ExitToAppIcon />,
+      title: "Logout",
+      click: "logout",
+    },
+  ]);
+  return privilegedItems;
+
+  // {
+  //     href: "/app/settings",
+  //     icon: <SettingsIcon />,
+  //     title: "Settings",
+  //   },
 };
 
 export default SidebarContent;

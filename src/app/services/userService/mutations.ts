@@ -9,6 +9,10 @@ export const SIGN_IN = gql`
       avatar
       isAdmin
       token
+      roles {
+        id
+        displayName
+      }
     }
   }
 `;
@@ -22,6 +26,10 @@ export const SIGN_IN_GOOGLE = gql`
       avatar
       isAdmin
       token
+      roles {
+        id
+        displayName
+      }
     }
   }
 `;
@@ -34,6 +42,10 @@ export const SIGN_IN_FACEBOOK = gql`
       email
       isAdmin
       token
+      roles {
+        id
+        displayName
+      }
     }
   }
 `;

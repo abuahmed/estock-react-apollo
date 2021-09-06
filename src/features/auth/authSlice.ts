@@ -352,7 +352,6 @@ export const google = createAsyncThunk<
       mutation: SIGN_IN_GOOGLE,
       variables: { idToken: idToken },
     });
-    console.log(response);
     if (response && response.data && response.data.googleLogin) {
       localStorage.setItem(
         "userInfo",

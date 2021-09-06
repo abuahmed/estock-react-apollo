@@ -22,6 +22,13 @@ const routes = (isLoggedIn: Boolean) => [
     element: isLoggedIn ? <DashboardLayout /> : <Navigate to="/login" />,
     children: [
       { path: "dashboard", element: <Dashboard /> },
+      { path: "onHand", element: <Dashboard /> },
+      { path: "sales", element: <Dashboard /> },
+      { path: "purchase", element: <Dashboard /> },
+      { path: "physicalInventory", element: <Dashboard /> },
+      { path: "items", element: <Dashboard /> },
+      { path: "customers", element: <Dashboard /> },
+      { path: "vendors", element: <Dashboard /> },
       { path: "profile", element: <Profile /> },
       { path: "users", element: <Users /> },
       { path: "user/:id", element: <User /> },
