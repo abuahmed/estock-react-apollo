@@ -10,7 +10,7 @@ export type AuthUser = {
   salt: string;
   avatar: string;
   bio: string;
-  isAdmin: Boolean;
+  isAdmin: boolean;
   status: UserStatus;
   verifiedAt: Date;
   token: string;

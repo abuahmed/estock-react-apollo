@@ -23,6 +23,7 @@ export const GET_ALL_Roles = gql`
 export const GET_SELECTED_USER = gql`
   query GetSelectedUser($id: Int!) {
     GetUser(input: { id: $id }) {
+      id
       name
       email
       avatar

@@ -37,3 +37,18 @@ export const SIGN_IN_FACEBOOK = gql`
     }
   }
 `;
+
+export const Add_User_Roles = gql`
+  mutation addUserRoles($ids: [Int!]!) {
+    addUserRoles(input: { ids: $ids }) {
+      id
+      name
+      email
+      avatar
+      roles {
+        id
+        displayName
+      }
+    }
+  }
+`;

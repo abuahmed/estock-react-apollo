@@ -1,7 +1,7 @@
-import { ApolloError } from "@apollo/client";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../app/graphql";
+import { Add_User_Roles } from "../../app/services/userService/mutations";
 import {
   GET_ALL_Roles,
   GET_ALL_Users,
@@ -58,25 +58,26 @@ export const getUser = createAsyncThunk<
   { rejectValue: AuthError }
 >("users/getUser", async (_id, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
-
+  console.log(_id);
   try {
     const response = await apolloClient.query({
       query: GET_SELECTED_USER,
       variables: { id: _id },
     });
+    console.log(response);
 
     const rolesResponse = await apolloClient.query({
       query: GET_ALL_Roles,
     });
+
     const rlsRes = rolesResponse.data.GetRoles as Role[];
     if (response && response.data && response.data.GetUser) {
       const userData = response.data.GetUser as AuthUser;
       const rls = userData.roles as Role[];
-      const rolesRes: Role[] = new Array();
+      const rolesRes: Role[] = [];
       for (let index = 0; index < rlsRes.length; index++) {
         const element = { ...rlsRes[index] };
         if (rls.find((rl) => element.id === rl.id)) {
-          //console.log(element);
           element.isPrivileged = true;
         } else {
           element.isPrivileged = false;
@@ -104,7 +105,32 @@ export const getUser = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
+export const addUserRoles = createAsyncThunk<
+  any,
+  number[],
+  { rejectValue: AuthError }
+>("users/addUserRoles", async (arg, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
 
+  try {
+    const response = await apolloClient.mutate({
+      mutation: Add_User_Roles,
+      variables: { ids: arg },
+    });
+
+    if (response && response.data && response.data.addUserRoles) {
+      dispatch(getUser(arg[0]));
+    }
+  } catch (error: any) {
+    console.log(error.errors.message);
+    const { code, stack } = error;
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 export const fetchRoles = createAsyncThunk<
   any,
   string,
@@ -190,6 +216,21 @@ export const usersSlice = createSlice({
       state.loading = "idle";
       state.error = error;
     });
+
+    builder.addCase(addUserRoles.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(addUserRoles.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.selectedUser = payload;
+    });
+    builder.addCase(
+      addUserRoles.rejected,
+      (state, { payload, meta, error }) => {
+        state.loading = "idle";
+        state.error = error;
+      }
+    );
   },
 });
 

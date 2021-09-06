@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 // Slices
 import { fetchUsers, selectUsers } from "./usersSlice";
-import { selectAuth } from "../auth/authSlice";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
@@ -17,10 +16,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Skeleton from "@material-ui/core/Skeleton";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import { Link, NavLink as RouterLink } from "react-router-dom";
+import { NavLink as RouterLink } from "react-router-dom";
 
 import { changePageTitle } from "../settings/settingsSlice";
 import Avatar from "@material-ui/core/Avatar";
@@ -64,10 +60,9 @@ export const Users = () => {
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Picture</TableCell>
+                <TableCell>Photo</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Email</TableCell>
-                <TableCell>Is Admin</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -81,11 +76,6 @@ export const Users = () => {
                     <Skeleton variant="rectangular" height={10} width={100} />
                   </TableCell>
 
-                  <TableCell>
-                    <Typography variant="body1">
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </Typography>
-                  </TableCell>
                   <TableCell>
                     <Skeleton variant="rectangular" height={10} width={100} />
                   </TableCell>
@@ -107,7 +97,7 @@ export const Users = () => {
                       {row.name}
                     </TableCell>
                     <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.isAdmin ? "YES" : "NO"}</TableCell>
+
                     <TableCell>
                       <Stack direction="row" spacing={2} alignItems="center">
                         <IconButton

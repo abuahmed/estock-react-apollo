@@ -1,22 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Box from "@material-ui/core/Box";
-import SaveIcon from "@material-ui/icons/Save";
 
 // Slices
 // import { AuthUser as UserType } from "../auth/types/authType";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { getUser, selectUsers } from "./usersSlice";
-import { AuthState, AuthUser } from "../auth/types/authType";
+import { addUserRoles, getUser, selectUsers } from "./usersSlice";
 import Grid from "@material-ui/core/Grid";
-import { Form, Formik, FormikProps } from "formik";
-import { FormikTextField } from "../../components/Layout/FormikTextField";
 import Paper from "@material-ui/core/Paper";
-import { profileUpdateSchema } from "../auth/validation";
 import Toast from "../../components/Layout/Toast";
-import Button from "@material-ui/core/Button";
-import { updateProfile } from "../auth/authSlice";
-import { Divider, Switch } from "@material-ui/core";
+import { Divider, Switch, TextField } from "@material-ui/core";
 
 import AuthSkeleton from "../auth/AuthSkeleton";
 import { changePageTitle } from "../settings/settingsSlice";
@@ -26,26 +19,35 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-// type Props = {
-//   user: UserType;
-// };
 
 export const User = () => {
-  // const [selectedUser, setCurrentUser] = useState<AuthUser>();
   const { id } = useParams() as {
     id: string;
   };
   const { selectedUser, loading, error } = useAppSelector(selectUsers);
   const dispatch = useAppDispatch();
 
-  //let currentUser: AuthUser | undefined;
+  const handleChange =
+    (roleId: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      event.preventDefault();
+      let userRoles = selectedUser?.roles
+        .filter((r) => r.isPrivileged)
+        .map((rr) => rr.id);
+      if (event.target.checked) {
+        userRoles?.push(roleId);
+      } else {
+        userRoles = userRoles?.filter((ur) => ur !== roleId);
+      }
+      userRoles?.unshift(parseInt(id));
+
+      dispatch(addUserRoles(userRoles as number[]));
+    };
+
   useEffect(() => {
     if (id) {
       dispatch(getUser(parseInt(id)));
       dispatch(changePageTitle("User Detail"));
     }
-    //console.log(selectedUser);
-    //console.log(id);
   }, []);
 
   return (
@@ -59,59 +61,49 @@ export const User = () => {
       {loading === "pending" ? (
         <AuthSkeleton />
       ) : (
-        <Formik
-          initialValues={selectedUser as AuthUser}
-          validationSchema={profileUpdateSchema}
-          onSubmit={(values, actions) => {
-            actions.setSubmitting(false);
+        <Box m={1}>
+          <Grid container spacing={3}>
+            <Grid item md={6} xs={12}>
+              <TextField value={selectedUser?.name} label="Name" disabled />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField value={selectedUser?.email} label="Email" disabled />
+            </Grid>
+          </Grid>
 
-            dispatch(updateProfile(values));
-          }}
-        >
-          {(props: FormikProps<AuthUser>) => (
-            <Form>
-              <Box m={1}>
-                <Grid container spacing={3}>
-                  <Grid item md={6} xs={12}>
-                    <FormikTextField formikKey="name" label="Name" disabled />
-                  </Grid>
-                  <Grid item md={6} xs={12}>
-                    <FormikTextField formikKey="email" label="Bio" disabled />
-                  </Grid>
-                </Grid>
+          <Divider orientation="horizontal" sx={{ m: "10px" }} />
 
-                <Divider orientation="horizontal" sx={{ m: "10px" }} />
-
-                <TableContainer component={Paper}>
-                  <Table size="small" aria-label="a dense table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Role</TableCell>
-                        <TableCell>Permission</TableCell>
+          <TableContainer component={Paper}>
+            <Table size="small" aria-label="a dense table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Role</TableCell>
+                  <TableCell>Permission</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {selectedUser &&
+                  selectedUser.roles &&
+                  selectedUser.roles.map((role) => {
+                    return (
+                      <TableRow key={role.id}>
+                        <TableCell>{role.displayName}</TableCell>
+                        <TableCell>
+                          <Switch
+                            checked={role.isPrivileged}
+                            name="isPrivileged"
+                            onChange={handleChange(role.id)}
+                          />
+                        </TableCell>
                       </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {selectedUser &&
-                        selectedUser.roles &&
-                        selectedUser.roles.map((role) => {
-                          return (
-                            <TableRow key={role.id}>
-                              <TableCell>{role.displayName}</TableCell>
-                              <TableCell>
-                                <Switch
-                                  checked={role.isPrivileged}
-                                  name="isPrivileged"
-                                />
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
 
-                {error && <Toast severity="error">{error.message}</Toast>}
-                {/* <Box component="div" pb={3} mt={3}>
+          {error && <Toast severity="error">{error.message}</Toast>}
+          {/* <Box component="div" pb={3} mt={3}>
                   <Button
                     type="submit"
                     color="secondary"
@@ -121,10 +113,7 @@ export const User = () => {
                     <SaveIcon /> Save Changes
                   </Button>
                 </Box> */}
-              </Box>
-            </Form>
-          )}
-        </Formik>
+        </Box>
       )}
     </Paper>
   );
