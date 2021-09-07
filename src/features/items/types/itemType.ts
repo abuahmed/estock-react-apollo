@@ -54,5 +54,6 @@ export type ItemsState = {
   selectedItem: Item | null;
   loading: "idle" | "pending";
   currentRequestId: string | undefined;
+  success: any;
   error: any;
 };

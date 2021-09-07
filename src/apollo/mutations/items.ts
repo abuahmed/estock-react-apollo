@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { Item } from "../../features/items/types/itemType";
+import { Item } from "../../features/items/Item";
 export const ADD_UPDATE_ITEM = gql`
   mutation AddUpdateItem($item: Item!) {
     createItem(input: $item) {

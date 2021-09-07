@@ -18,7 +18,9 @@ export const GET_ALL_ITEMS = gql`
       }
       purchasePrice
       sellingPrice
-      safeQty      
+      safeQty
+    }
+  }
 `;
 
 export const GET_ALL_ITEM_CATEGORIES = gql`

@@ -69,29 +69,29 @@ export const User = () => {
           borderRadius: 18,
         }}
       >
-        <Box m={1}>
-          <Grid container spacing={3} sx={{ px: "16px" }}>
+        <Box m={1} px={2}>
+          <Grid container spacing={3}>
             <Grid item md={6} xs={12}>
               <Typography
                 color="primary"
-                variant="h2"
-                component="h2"
+                variant="h4"
+                component="div"
                 sx={{ textTransform: "uppercase" }}
               >
                 {selectedUser?.name}
               </Typography>
             </Grid>
             <Grid item md={6} xs={12}>
-              <Typography color="primary" variant="h4" component="h4">
+              <Typography color="primary" variant="h4" component="div">
                 {selectedUser?.email}
               </Typography>
             </Grid>
           </Grid>
 
-          <Divider orientation="horizontal" sx={{ m: "10px" }} />
+          <Divider variant="middle" sx={{ my: 2 }} />
 
-          <TableContainer>
-            <Table size="small" aria-label="a dense table">
+          <TableContainer component={Paper} elevation={8}>
+            <Table size="small" aria-label="a simple table">
               <TableHead>
                 <TableRow>
                   <TableCell>Role</TableCell>
