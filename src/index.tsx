@@ -10,7 +10,7 @@ import { store } from "./app/store";
 import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
 import { ApolloProvider } from "@apollo/client";
-import { apolloClient } from "./app/graphql";
+import { apolloClient } from "./apollo/graphql";
 
 ReactDOM.render(
   <React.StrictMode>

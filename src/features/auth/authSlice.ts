@@ -2,12 +2,12 @@ import React from "react";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { apolloClient } from "../../app/graphql";
+import { apolloClient } from "../../apollo/graphql";
 import {
   SIGN_IN,
   SIGN_IN_FACEBOOK,
   SIGN_IN_GOOGLE,
-} from "../../app/services/userService/mutations";
+} from "../../apollo/mutations";
 
 import { RootState } from "../../app/store";
 import {
@@ -22,7 +22,7 @@ import {
   VerifyAuth,
   VerifyResendAuth,
 } from "./types/authType";
-import { PROFILE } from "../../app/services/userService/queries";
+import { PROFILE } from "../../apollo/queries/users";
 //import { sleep } from '../../utils/sleep';
 
 export const uploadFile = createAsyncThunk<

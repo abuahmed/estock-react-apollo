@@ -2,9 +2,6 @@ import { useEffect } from "react";
 import { Helmet } from "react-helmet";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-//import { useDispatch, useSelector } from 'react-redux'
-
-// Slices
 import { fetchUsers, selectUsers } from "./usersSlice";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";

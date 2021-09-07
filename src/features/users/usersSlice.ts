@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
-import { apolloClient } from "../../app/graphql";
-import { Add_User_Roles } from "../../app/services/userService/mutations";
+import { apolloClient } from "../../apollo/graphql";
+import { Add_User_Roles } from "../../apollo/mutations/users";
 import {
   GET_ALL_Roles,
   GET_ALL_Users,
   GET_SELECTED_USER,
-} from "../../app/services/userService/queries";
+} from "../../apollo/queries";
 import { RootState } from "../../app/store";
 
 import { AuthError, AuthUser, Role } from "../auth/types/authType";
