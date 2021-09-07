@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
-import { Add_User_Roles } from "../../apollo/mutations/users";
+import { ADD_USER_ROLES } from "../../apollo/mutations/users";
 import {
-  GET_ALL_Roles,
-  GET_ALL_Users,
+  GET_ALL_ROLES,
+  GET_ALL_USERS,
   GET_SELECTED_USER,
 } from "../../apollo/queries";
 import { RootState } from "../../app/store";
@@ -37,7 +37,7 @@ export const fetchUsers = createAsyncThunk<
 
   try {
     const response = await apolloClient.query({
-      query: GET_ALL_Users,
+      query: GET_ALL_USERS,
     });
 
     if (response && response.data && response.data.Users) {
@@ -65,7 +65,7 @@ export const getUser = createAsyncThunk<
     });
 
     const rolesResponse = await apolloClient.query({
-      query: GET_ALL_Roles,
+      query: GET_ALL_ROLES,
     });
 
     const rlsRes = rolesResponse.data.GetRoles as Role[];
@@ -112,7 +112,7 @@ export const addUserRoles = createAsyncThunk<
 
   try {
     const response = await apolloClient.mutate({
-      mutation: Add_User_Roles,
+      mutation: ADD_USER_ROLES,
       variables: { ids: arg },
     });
 
@@ -137,7 +137,7 @@ export const fetchRoles = createAsyncThunk<
 
   try {
     const response = await apolloClient.query({
-      query: GET_ALL_Roles,
+      query: GET_ALL_ROLES,
     });
 
     if (response && response.data && response.data.GetRoles) {

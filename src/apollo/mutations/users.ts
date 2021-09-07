@@ -50,7 +50,7 @@ export const SIGN_IN_FACEBOOK = gql`
   }
 `;
 
-export const Add_User_Roles = gql`
+export const ADD_USER_ROLES = gql`
   mutation addUserRoles($ids: [Int!]!) {
     addUserRoles(input: { ids: $ids }) {
       id
