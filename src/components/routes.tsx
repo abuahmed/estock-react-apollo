@@ -11,7 +11,7 @@ import {
 import Dashboard from "../features/dashboard/Dashboard";
 import Error from "../features/error/Error";
 import LandingPage from "../features/home/LandingPage";
-import { Item } from "../features/items/Item";
+import { ItemEntry } from "../features/items/Item";
 import { Items } from "../features/items/Items";
 import { Users } from "../features/users";
 import { User } from "../features/users/User";
@@ -32,7 +32,7 @@ const routes = (isLoggedIn: Boolean) => [
       { path: "pI", element: <Dashboard /> },
       { path: "pI/:id", element: <User /> },
       { path: "items", element: <Items /> },
-      { path: "item/:id", element: <Item /> },
+      { path: "item/:id", element: <ItemEntry /> },
       { path: "customers", element: <Dashboard /> },
       { path: "vendors", element: <Dashboard /> },
       { path: "profile", element: <Profile /> },

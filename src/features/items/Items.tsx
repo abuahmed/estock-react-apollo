@@ -1,13 +1,12 @@
-import react, { useEffect } from "react";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 //import { useDispatch, useSelector } from 'react-redux'
 
 // Slices
-import { fetchItems, selectItems } from "./itemsSlice";
+import { fetchItems, removeItem, selectItems } from "./itemsSlice";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -19,15 +18,9 @@ import Skeleton from "@material-ui/core/Skeleton";
 import { NavLink as RouterLink } from "react-router-dom";
 
 import { changePageTitle } from "../settings/settingsSlice";
-import { IconButton, Stack } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import { Box, Button, IconButton, Stack } from "@material-ui/core";
+import { Add, Edit } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
-
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
 
 export const Items = () => {
   const dispatch = useAppDispatch();
@@ -38,12 +31,20 @@ export const Items = () => {
     dispatch(changePageTitle("Items List"));
   }, []);
 
-  const DeleteItem = (id: number) => {};
+  const DeleteItem = (id: number) => {
+    dispatch(removeItem(id));
+    //dispatch(fetchItems("all"));
+  };
   return (
     <>
       <Helmet>
         <title>Items List | Pinna Stock</title>
       </Helmet>
+      <Box component="div">
+        <Button color="secondary" component={RouterLink} to={"/app/item/0"}>
+          <Add /> Add New Item
+        </Button>
+      </Box>
       <Grid container justifyContent="flex-start">
         <TableContainer component={Paper}>
           <Table size="small" aria-label="a simple table">
@@ -52,6 +53,9 @@ export const Items = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Category</TableCell>
                 <TableCell>UOM</TableCell>
+                <TableCell>Purchase Price</TableCell>
+                <TableCell>Selling Price</TableCell>
+                <TableCell>Safe Qty.</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -70,15 +74,23 @@ export const Items = () => {
                   </TableCell>
                 </TableRow>
               ) : (
+                items &&
                 items.map((row) => (
                   <TableRow key={row.id}>
                     <TableCell component="th" scope="row">
                       {row.displayName}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {row.itemCategory.displayName}
+                      {row && row.itemCategory && row.itemCategory.displayName}
                     </TableCell>
-                    <TableCell>{row.unitOfMeasure.displayName}</TableCell>
+                    <TableCell>
+                      {row &&
+                        row.unitOfMeasure &&
+                        row.unitOfMeasure.displayName}
+                    </TableCell>
+                    <TableCell>{row.purchasePrice}</TableCell>
+                    <TableCell>{row.sellingPrice}</TableCell>
+                    <TableCell>{row.safeQty}</TableCell>
 
                     <TableCell>
                       <Stack direction="row" spacing={2} alignItems="center">
@@ -91,7 +103,9 @@ export const Items = () => {
                         </IconButton>
                         <IconButton
                           color="secondary"
-                          onClick={() => DeleteItem(row.id)}
+                          onClick={() =>
+                            DeleteItem(row ? (row.id as number) : 0)
+                          }
                         >
                           <Delete />
                         </IconButton>
