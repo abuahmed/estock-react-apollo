@@ -1,6 +1,6 @@
-import react, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Helmet } from "react-helmet";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
 import { NavLink as RouterLink } from "react-router-dom";
 
@@ -8,7 +8,6 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import { useTheme } from "@material-ui/core/styles";
 
 import ItemSkeleton from "./ItemSkeleton";
 
@@ -23,44 +22,38 @@ import {
   resetSuccess,
   getItem,
   resetSelectedItem,
+  fetchItemCategories,
+  fetchItemUoms,
 } from "./itemsSlice";
 import { Item as ItemType } from "./types/itemType";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
 import { changePageTitle } from "../settings/settingsSlice";
 import { Add, Backspace } from "@material-ui/icons";
+import { MenuItem, TextField } from "@material-ui/core";
 
-export const defaultItemValues = {};
 export const ItemEntry = () => {
-  const [currentItem, setCurrentItem] = useState<ItemType>({});
   const { id } = useParams() as {
     id: string;
   };
-  const { loading, error, success, selectedItem } = useAppSelector(selectItems);
+  const { loading, error, success, selectedItem, categories, uoms } =
+    useAppSelector(selectItems);
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
-
-  //let [defaultItemValues, setDefaultItemValues] = useState({ displayName: "" });
   useEffect(() => {
     if (id && id !== "0") {
       dispatch(getItem(parseInt(id)));
+    } else {
+      resetFields();
     }
-    // else {
-    //   dispatch(resetSelectedItem());
-    // }
+    dispatch(fetchItemCategories("all"));
+    dispatch(fetchItemUoms("all"));
     dispatch(changePageTitle(`Item Detail`));
   }, []);
 
-  // if (selectedItem) {
-  //   setCurrentItem(selectedItem);
-  // } else {
-  //   setCurrentItem({ displayName: "" });
-  // }
   if (success) {
-    //return <Navigate to='/' />;
+    dispatch(resetSelectedItem());
     dispatch(resetSuccess());
-    navigate("/app/items");
   }
   function resetFields() {
     dispatch(resetSelectedItem());
@@ -101,7 +94,41 @@ export const ItemEntry = () => {
                   {(props: FormikProps<ItemType>) => (
                     <Form>
                       <FormikTextField formikKey="displayName" label="Name" />
+                      <TextField
+                        fullWidth
+                        sx={{ mt: 1 }}
+                        variant="outlined"
+                        name="itemCategoryId"
+                        id="itemCategoryId"
+                        select
+                        label="Item Category"
+                        value={props.values.itemCategoryId}
+                        onChange={props.handleChange}
+                      >
+                        {categories.map((option) => (
+                          <MenuItem key={option.id} value={option.id}>
+                            {option.displayName}
+                          </MenuItem>
+                        ))}
+                      </TextField>
 
+                      <TextField
+                        fullWidth
+                        sx={{ mt: 1 }}
+                        variant="outlined"
+                        name="unitOfMeasureId"
+                        id="unitOfMeasureId"
+                        select
+                        label="Unit Of Measure"
+                        value={props.values.unitOfMeasureId}
+                        onChange={props.handleChange}
+                      >
+                        {uoms.map((option) => (
+                          <MenuItem key={option.id} value={option.id}>
+                            {option.displayName}
+                          </MenuItem>
+                        ))}
+                      </TextField>
                       <FormikTextField
                         formikKey="description"
                         label="Description"
@@ -122,6 +149,7 @@ export const ItemEntry = () => {
                         label="Safe Qty."
                         type={"number"}
                       />
+
                       <br />
                       {error && <Toast severity="error">{error.message}</Toast>}
                       <Box component="div" mt={1}>

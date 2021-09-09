@@ -22,6 +22,8 @@ export const ADD_UPDATE_ITEM = gql`
     $id: Int
     $displayName: String!
     $description: String
+    $itemCategoryId: Int
+    $unitOfMeasureId: Int
     $code: String
     $purchasePrice: Float
     $sellingPrice: Float
@@ -32,6 +34,8 @@ export const ADD_UPDATE_ITEM = gql`
         id: $id
         displayName: $displayName
         description: $description
+        itemCategory: { id: $itemCategoryId }
+        unitOfMeasure: { id: $unitOfMeasureId }
         code: $code
         purchasePrice: $purchasePrice
         sellingPrice: $sellingPrice

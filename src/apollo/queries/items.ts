@@ -8,10 +8,12 @@ export const GET_ALL_ITEMS = gql`
       description
       code
       pictureUrl
+      itemCategoryId
       itemCategory {
         id
         displayName
       }
+      unitOfMeasureId
       unitOfMeasure {
         id
         displayName
@@ -49,10 +51,12 @@ export const GET_SELECTED_ITEM = gql`
       description
       code
       pictureUrl
+      itemCategoryId
       itemCategory {
         id
         displayName
       }
+      unitOfMeasureId
       unitOfMeasure {
         id
         displayName

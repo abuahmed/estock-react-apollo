@@ -27,13 +27,12 @@ export const Items = () => {
   const { items, loading } = useAppSelector(selectItems);
 
   useEffect(() => {
-    dispatch(fetchItems("all"));
+    if (items.length == 0) dispatch(fetchItems("all"));
     dispatch(changePageTitle("Items List"));
   }, []);
 
   const DeleteItem = (id: number) => {
     dispatch(removeItem(id));
-    //dispatch(fetchItems("all"));
   };
   return (
     <>
@@ -53,6 +52,7 @@ export const Items = () => {
                 <TableCell>Name</TableCell>
                 <TableCell>Category</TableCell>
                 <TableCell>UOM</TableCell>
+                <TableCell>Code</TableCell>
                 <TableCell>Purchase Price</TableCell>
                 <TableCell>Selling Price</TableCell>
                 <TableCell>Safe Qty.</TableCell>
@@ -88,6 +88,7 @@ export const Items = () => {
                         row.unitOfMeasure &&
                         row.unitOfMeasure.displayName}
                     </TableCell>
+                    <TableCell>{row.code}</TableCell>
                     <TableCell>{row.purchasePrice}</TableCell>
                     <TableCell>{row.sellingPrice}</TableCell>
                     <TableCell>{row.safeQty}</TableCell>

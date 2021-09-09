@@ -11,7 +11,7 @@ import {
 import Dashboard from "../features/dashboard/Dashboard";
 import Error from "../features/error/Error";
 import LandingPage from "../features/home/LandingPage";
-import { ItemEntry } from "../features/items/Item";
+import { ItemEntry } from "../features/items/ItemEntry";
 import { Items } from "../features/items/Items";
 import { Users } from "../features/users";
 import { User } from "../features/users/User";

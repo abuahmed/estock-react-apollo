@@ -1,16 +1,14 @@
 export type Category = {
-  id: number;
-  uuid: string;
-  isEnabled: boolean;
-  createdByUserId: number;
-  modifiedByUserId: number;
-  dateRecordCreated: Date;
-  dateLastModified: Date;
-  displayName: string;
-  description: string;
-  type: CategoryType;
-  parentCategory: Category;
-  childCategories: [Category];
+  id?: number;
+  uuid?: string;
+  isEnabled?: boolean;
+  createdByUserId?: number;
+  modifiedByUserId?: number;
+  displayName?: string;
+  description?: string;
+  type?: CategoryType;
+  parentCategory?: Category;
+  childCategories?: [Category];
 };
 
 enum CategoryType {
