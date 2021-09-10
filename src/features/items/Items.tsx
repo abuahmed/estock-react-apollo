@@ -18,7 +18,7 @@ import Skeleton from "@material-ui/core/Skeleton";
 import { NavLink as RouterLink } from "react-router-dom";
 
 import { changePageTitle } from "../settings/settingsSlice";
-import { Box, Button, IconButton, Stack } from "@material-ui/core";
+import { Box, Button, IconButton, Stack, Typography } from "@material-ui/core";
 import { Add, Edit } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 
@@ -45,6 +45,9 @@ export const Items = () => {
         </Button>
       </Box>
       <Grid container justifyContent="flex-start">
+        <Typography variant="h4" component="div">
+          {items.length} Items
+        </Typography>
         <TableContainer component={Paper}>
           <Table size="small" aria-label="a simple table">
             <TableHead>

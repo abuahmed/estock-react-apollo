@@ -1,7 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
-import { ADD_UPDATE_ITEM, REMOVE_ITEM } from "../../apollo/mutations";
+import {
+  ADD_UPDATE_ITEM,
+  ADD_UPDATE_ITEM_CATEGORY,
+  ADD_UPDATE_ITEM_UOM,
+  REMOVE_CATEGORY,
+  REMOVE_ITEM,
+  REMOVE_UOM,
+} from "../../apollo/mutations";
 import {
   GET_ALL_ITEMS,
   GET_ALL_ITEM_CATEGORIES,
@@ -12,7 +19,7 @@ import {
 import { RootState } from "../../app/store";
 
 import { AuthError } from "../auth/types/authType";
-import { Category, Item, ItemsState } from "./types/itemType";
+import { Category, CategoryType, Item, ItemsState } from "./types/itemType";
 
 export const fetchItems = createAsyncThunk<
   any,
@@ -73,7 +80,6 @@ export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
   "items/addItem",
   async (arg, thunkAPI) => {
     const { rejectWithValue, getState, dispatch } = thunkAPI;
-    //console.log(arg);
     try {
       let item = { ...arg };
       item.itemCategory = {
@@ -112,14 +118,84 @@ export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
   }
 );
 
+export const addItemCategory = createAsyncThunk<
+  any,
+  Category,
+  { rejectValue: AuthError }
+>("items/addItemCategory", async (arg, thunkAPI) => {
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  try {
+    //console.log(arg);
+    const response = await apolloClient.mutate({
+      mutation: ADD_UPDATE_ITEM_CATEGORY,
+      variables: {
+        ...arg,
+      },
+    });
+
+    if (response && response.data && response.data.createItemCategory) {
+      const {
+        items: { categories, uoms },
+      } = getState() as { items: ItemsState };
+      let restItems = [...categories];
+      if (arg.type === CategoryType.UnitOfMeasure) restItems = [...uoms];
+      const addedItem = (await response.data.createItemCategory) as Category;
+      if (arg && arg.id) {
+        restItems = restItems.filter((it) => it.id !== arg.id);
+      }
+      restItems.push(addedItem);
+      return restItems;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    dispatch(setSelectedItem(arg));
+
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+// export const addItemUom = createAsyncThunk<
+//   any,
+//   Category,
+//   { rejectValue: AuthError }
+// >("items/addItemUom", async (arg, thunkAPI) => {
+//   const { rejectWithValue, getState, dispatch } = thunkAPI;
+//   try {
+//     const response = await apolloClient.mutate({
+//       mutation: ADD_UPDATE_ITEM_UOM,
+//       variables: {
+//         ...arg,
+//       },
+//     });
+
+//     if (response && response.data && response.data.createItemUom) {
+//       const {
+//         items: { uoms },
+//       } = getState() as { items: ItemsState };
+//       let restItems = [...uoms];
+//       const addedItem = (await response.data.createItemUom) as Category;
+//       if (arg && arg.id) {
+//         restItems = restItems.filter((it) => it.id !== arg.id);
+//       }
+//       restItems.push(addedItem);
+//       return restItems;
+//     }
+//   } catch (error: any) {
+//     const { code, stack } = error;
+//     const message = error.message;
+//     dispatch(setSelectedItem(arg));
+
+//     return rejectWithValue({ code, message, id: uuidv4(), stack });
+//   }
+// });
+
 export const removeItem = createAsyncThunk<
   any,
   number,
   { rejectValue: AuthError }
 >("items/removeItem", async (id, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
-  //const { id, displayName, purchasePrice } = arg;
-  //console.log("arg", { ...arg });
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_ITEM,
@@ -134,6 +210,67 @@ export const removeItem = createAsyncThunk<
       restItems = restItems.filter((item) => item.id !== id);
       dispatch(setItems(restItems));
       return restItems as Item[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message =
+      error.errors && error.errors[0].message
+        ? error.errors[0].message
+        : error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+export const removeItemCategory = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("items/removeItemCategory", async (id, thunkAPI) => {
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: REMOVE_CATEGORY,
+      variables: { id },
+    });
+
+    if (response && response.data && response.data.removeCategory) {
+      const {
+        items: { categories },
+      } = getState() as { items: ItemsState };
+      let restCategories = [...categories];
+
+      restCategories = restCategories.filter((item) => item.id !== id);
+      return restCategories as Category[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message =
+      error.errors && error.errors[0].message
+        ? error.errors[0].message
+        : error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+export const removeItemUom = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("items/removeItemUom", async (id, thunkAPI) => {
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: REMOVE_CATEGORY,
+      variables: { id },
+    });
+
+    if (response && response.data && response.data.removeUom) {
+      const {
+        items: { uoms },
+      } = getState() as { items: ItemsState };
+      let restUoms = [...uoms];
+      restUoms = restUoms.filter((item) => item.id !== id);
+      return restUoms as Category[];
     }
   } catch (error: any) {
     const { code, stack } = error;
@@ -305,17 +442,17 @@ export const itemsSlice = createSlice({
       state.error = error;
     });
 
-    // builder.addCase(addItemCategory.pending, (state) => {
-    //   state.loading = "pending";
-    // });
-    // builder.addCase(addItemCategory.fulfilled, (state, { payload }) => {
-    //   state.loading = "idle";
-    //   state.categories = payload;
-    // });
-    // builder.addCase(addItemCategory.rejected, (state, { payload }) => {
-    //   state.loading = "idle";
-    //   state.error = payload;
-    // });
+    builder.addCase(addItemCategory.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(addItemCategory.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.categories = payload;
+    });
+    builder.addCase(addItemCategory.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
 
     // builder.addCase(addItemUom.pending, (state) => {
     //   state.loading = "pending";
@@ -328,6 +465,30 @@ export const itemsSlice = createSlice({
     //   state.loading = "idle";
     //   state.error = payload;
     // });
+
+    builder.addCase(removeItemCategory.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(removeItemCategory.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.categories = payload;
+    });
+    builder.addCase(removeItemCategory.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
+
+    builder.addCase(removeItemUom.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(removeItemUom.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.uoms = payload;
+    });
+    builder.addCase(removeItemUom.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
   },
 });
 

@@ -11,7 +11,7 @@ export type Category = {
   childCategories?: [Category];
 };
 
-enum CategoryType {
+export enum CategoryType {
   ItemCategory,
   UnitOfMeasure,
   Bank,

@@ -61,3 +61,43 @@ export const ADD_UPDATE_ITEM = gql`
     }
   }
 `;
+
+export const ADD_UPDATE_ITEM_CATEGORY = gql`
+  mutation AddUpdateItemCategory(
+    $id: Int
+    $displayName: String
+    $type: String
+  ) {
+    createItemCategory(
+      input: { id: $id, displayName: $displayName, type: $type }
+    ) {
+      id
+      displayName
+    }
+  }
+`;
+
+export const ADD_UPDATE_ITEM_UOM = gql`
+  mutation AddUpdateItemUom($id: Int, $displayName: String) {
+    createItemUom(input: { id: $id, displayName: $displayName }) {
+      id
+      displayName
+    }
+  }
+`;
+
+export const REMOVE_CATEGORY = gql`
+  mutation removeItemCategory($id: Int!) {
+    removeItemCategory(id: $id) {
+      affectedRows
+    }
+  }
+`;
+
+export const REMOVE_UOM = gql`
+  mutation removeItemUom($id: Int!) {
+    removeItemUom(id: $id) {
+      affectedRows
+    }
+  }
+`;
