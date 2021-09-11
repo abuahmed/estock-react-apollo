@@ -9,18 +9,24 @@ import { fetchItems, removeItem, selectItems } from "./itemsSlice";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Skeleton from "@material-ui/core/Skeleton";
 import { NavLink as RouterLink } from "react-router-dom";
 
 import { changePageTitle } from "../settings/settingsSlice";
-import { Box, Button, IconButton, Stack, Typography } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  Typography,
+} from "@material-ui/core";
 import { Add, Edit } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
+import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 
 export const Items = () => {
   const dispatch = useAppDispatch();
@@ -34,69 +40,80 @@ export const Items = () => {
   const DeleteItem = (id: number) => {
     dispatch(removeItem(id));
   };
+
   return (
     <>
       <Helmet>
         <title>Items List | Pinna Stock</title>
       </Helmet>
       <Box component="div">
-        <Button color="secondary" component={RouterLink} to={"/app/item/0"}>
-          <Add /> Add New Item
+        <Button
+          color="secondary"
+          variant="contained"
+          component={RouterLink}
+          to={"/app/item/0"}
+        >
+          <Typography
+            variant="h5"
+            component="h5"
+            sx={{ display: "flex", justifyItems: "center" }}
+          >
+            <Add /> Add New Item
+          </Typography>
         </Button>
       </Box>
+      <Divider variant="middle" sx={{ my: 2 }} />
+
       <Grid container justifyContent="flex-start">
-        <Typography variant="h4" component="div">
-          {items.length} Items
-        </Typography>
         <TableContainer component={Paper}>
           <Table size="small" aria-label="a simple table">
             <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>UOM</TableCell>
-                <TableCell>Code</TableCell>
-                <TableCell>Purchase Price</TableCell>
-                <TableCell>Selling Price</TableCell>
-                <TableCell>Safe Qty.</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
+              <StyledTableRow>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Category</StyledTableCell>
+                <StyledTableCell>UOM</StyledTableCell>
+                <StyledTableCell>Code</StyledTableCell>
+                <StyledTableCell>Purchase Price</StyledTableCell>
+                <StyledTableCell>Selling Price</StyledTableCell>
+                <StyledTableCell>Safe Qty.</StyledTableCell>
+                <StyledTableCell>Actions</StyledTableCell>
+              </StyledTableRow>
             </TableHead>
             <TableBody>
               {loading === "pending" ? (
-                <TableRow>
-                  <TableCell>
+                <StyledTableRow>
+                  <StyledTableCell>
                     <Skeleton variant="rectangular" height={10} width={100} />
-                  </TableCell>
-                  <TableCell>
+                  </StyledTableCell>
+                  <StyledTableCell>
                     <Skeleton variant="rectangular" height={10} width={100} />
-                  </TableCell>
+                  </StyledTableCell>
 
-                  <TableCell>
+                  <StyledTableCell>
                     <Skeleton variant="rectangular" height={10} width={100} />
-                  </TableCell>
-                </TableRow>
+                  </StyledTableCell>
+                </StyledTableRow>
               ) : (
                 items &&
                 items.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell component="th" scope="row">
+                  <StyledTableRow key={row.id}>
+                    <StyledTableCell component="th" scope="row">
                       {row.displayName}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
                       {row && row.itemCategory && row.itemCategory.displayName}
-                    </TableCell>
-                    <TableCell>
+                    </StyledTableCell>
+                    <StyledTableCell>
                       {row &&
                         row.unitOfMeasure &&
                         row.unitOfMeasure.displayName}
-                    </TableCell>
-                    <TableCell>{row.code}</TableCell>
-                    <TableCell>{row.purchasePrice}</TableCell>
-                    <TableCell>{row.sellingPrice}</TableCell>
-                    <TableCell>{row.safeQty}</TableCell>
+                    </StyledTableCell>
+                    <StyledTableCell>{row.code}</StyledTableCell>
+                    <StyledTableCell>{row.purchasePrice}</StyledTableCell>
+                    <StyledTableCell>{row.sellingPrice}</StyledTableCell>
+                    <StyledTableCell>{row.safeQty}</StyledTableCell>
 
-                    <TableCell>
+                    <StyledTableCell>
                       <Stack direction="row" spacing={2} alignItems="center">
                         <IconButton
                           color="primary"
@@ -114,13 +131,16 @@ export const Items = () => {
                           <Delete />
                         </IconButton>
                       </Stack>
-                    </TableCell>
-                  </TableRow>
+                    </StyledTableCell>
+                  </StyledTableRow>
                 ))
               )}
             </TableBody>
           </Table>
         </TableContainer>
+        <Typography variant="h4" component="div">
+          {items.length} Items
+        </Typography>
       </Grid>
     </>
   );

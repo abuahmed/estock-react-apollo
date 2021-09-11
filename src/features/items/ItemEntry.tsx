@@ -43,12 +43,14 @@ import {
   Stack,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
-  TableRow,
   TextField,
+  Divider,
+  TableCell,
+  TableHead,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
+import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 
 const defaultItemCategory = {
   displayName: "",
@@ -79,7 +81,7 @@ export const ItemEntry = () => {
     }
     dispatch(fetchItemCategories("all"));
     dispatch(fetchItemUoms("all"));
-    dispatch(changePageTitle(`Item Detail`));
+    dispatch(changePageTitle(`Item Entry`));
   }, []);
 
   if (success) {
@@ -107,19 +109,38 @@ export const ItemEntry = () => {
         <title>Item Entry | Pinna Stock</title>
       </Helmet>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Button color="secondary" component={RouterLink} to={"/app/items"}>
-          <Backspace /> Back to Items List
+        <Button
+          color="secondary"
+          variant="contained"
+          component={RouterLink}
+          to={"/app/items"}
+        >
+          <Typography
+            variant="h5"
+            component="h5"
+            sx={{ display: "flex", justifyItems: "center" }}
+          >
+            <Backspace />
+          </Typography>
         </Button>
-        <Button color="secondary" onClick={resetFields}>
-          <Add /> Add New Item
+        <Button color="secondary" variant="contained" onClick={resetFields}>
+          <Typography
+            variant="h5"
+            component="h5"
+            sx={{ display: "flex", justifyItems: "center" }}
+          >
+            <Add />
+          </Typography>
         </Button>
       </Box>
+      <Divider variant="middle" sx={{ my: 2 }} />
+
       <Box>
-        <Container maxWidth="sm">
+        <Container maxWidth="lg">
           <Box sx={{ mb: 3 }}>
-            <Typography variant="h4" component="div">
+            {/* <Typography variant="h4" component="div">
               Add/Edit Item
-            </Typography>
+            </Typography> */}
             {/* {success && redirectToLogin} */}
             {loading === "pending" ? (
               <ItemSkeleton />
@@ -136,75 +157,107 @@ export const ItemEntry = () => {
                 >
                   {(props: FormikProps<ItemType>) => (
                     <Form>
-                      <FormikTextField formikKey="displayName" label="Name" />
-                      <TextField
-                        fullWidth
-                        sx={{ mt: 1 }}
-                        variant="outlined"
-                        name="itemCategoryId"
-                        id="itemCategoryId"
-                        select
-                        label="Item Category"
-                        value={props.values.itemCategoryId}
-                        onChange={props.handleChange}
-                      >
-                        {categories.map((option) => (
-                          <MenuItem key={option.id} value={option.id}>
-                            {option.displayName}
-                          </MenuItem>
-                        ))}
-                      </TextField>
+                      <Grid container spacing={2}>
+                        <Grid item sm={4} xs={12}>
+                          <FormikTextField
+                            formikKey="displayName"
+                            label="Name"
+                          />
+                        </Grid>
+                        <Grid item sm={4} xs={12}>
+                          <TextField
+                            fullWidth
+                            sx={{ mt: 1 }}
+                            variant="outlined"
+                            name="itemCategoryId"
+                            id="itemCategoryId"
+                            select
+                            label="Item Category"
+                            value={props.values.itemCategoryId}
+                            onChange={props.handleChange}
+                          >
+                            {categories.map((option) => (
+                              <MenuItem key={option.id} value={option.id}>
+                                {option.displayName}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </Grid>
+                        <Grid item sm={4} xs={12}>
+                          <TextField
+                            fullWidth
+                            sx={{ mt: 1 }}
+                            variant="outlined"
+                            name="unitOfMeasureId"
+                            id="unitOfMeasureId"
+                            select
+                            label="Unit Of Measure"
+                            value={props.values.unitOfMeasureId}
+                            onChange={props.handleChange}
+                          >
+                            {uoms.map((option) => (
+                              <MenuItem key={option.id} value={option.id}>
+                                {option.displayName}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </Grid>
+                      </Grid>
 
-                      <TextField
-                        fullWidth
-                        sx={{ mt: 1 }}
-                        variant="outlined"
-                        name="unitOfMeasureId"
-                        id="unitOfMeasureId"
-                        select
-                        label="Unit Of Measure"
-                        value={props.values.unitOfMeasureId}
-                        onChange={props.handleChange}
-                      >
-                        {uoms.map((option) => (
-                          <MenuItem key={option.id} value={option.id}>
-                            {option.displayName}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                      <FormikTextField
-                        formikKey="description"
-                        label="Description"
-                      />
-                      <FormikTextField formikKey="code" label="Code" />
-                      <FormikTextField
-                        formikKey="purchasePrice"
-                        label="Purchasing Price"
-                        type={"number"}
-                      />
-                      <FormikTextField
-                        formikKey="sellingPrice"
-                        label="Selling Price"
-                        type={"number"}
-                      />
-                      <FormikTextField
-                        formikKey="safeQty"
-                        label="Safe Qty."
-                        type={"number"}
-                      />
+                      <Grid container spacing={2}>
+                        <Grid item sm={4} xs={12}>
+                          <FormikTextField formikKey="code" label="Code" />
+                        </Grid>
+                        <Grid item sm={8} xs={12}>
+                          <FormikTextField
+                            formikKey="description"
+                            label="Description"
+                          />
+                        </Grid>
+                      </Grid>
+
+                      <Grid container spacing={2}>
+                        <Grid item sm={4} xs={12}>
+                          <FormikTextField
+                            formikKey="purchasePrice"
+                            label="Purchasing Price"
+                            type={"number"}
+                          />
+                        </Grid>
+                        <Grid item sm={4} xs={12}>
+                          <FormikTextField
+                            formikKey="sellingPrice"
+                            label="Selling Price"
+                            type={"number"}
+                          />
+                        </Grid>
+                        <Grid item sm={4} xs={12}>
+                          <FormikTextField
+                            formikKey="safeQty"
+                            label="Safe Qty."
+                            type={"number"}
+                          />
+                        </Grid>
+                      </Grid>
+
+                      {/* <Grid container>
+                        <Grid item sm={4} xs={12}></Grid>
+                        <Grid item sm={4} xs={12}></Grid>
+                        <Grid item sm={4} xs={12}></Grid>
+                      </Grid> */}
 
                       <br />
                       {error && <Toast severity="error">{error.message}</Toast>}
-                      <Box component="div" mt={1} width="100%">
-                        <Button
-                          type="submit"
-                          color="secondary"
-                          variant="contained"
-                          disabled={!props.isValid}
-                        >
-                          Save Item
-                        </Button>
-                      </Box>
+                      <Button
+                        sx={{ width: "100%" }}
+                        type="submit"
+                        color="secondary"
+                        variant="contained"
+                        disabled={!props.isValid}
+                      >
+                        <Save />
+                        Save Item
+                      </Button>
                     </Form>
                   )}
                 </Formik>
@@ -213,178 +266,215 @@ export const ItemEntry = () => {
           </Box>
         </Container>
       </Box>
-
-      <Grid container>
-        <Grid item md={6} xs={12} justifyContent="flex-start">
-          <Typography variant="h6" component="div">
-            {categories.length} Item Categories
-          </Typography>
-          <Formik
-            enableReinitialize={true}
-            initialValues={selectedCategory as Category}
-            validationSchema={registerSchema}
-            onSubmit={(values, actions) => {
-              actions.setSubmitting(false);
-              dispatch(addItemCategory(values));
-              setSelectedCategory(defaultItemCategory);
-            }}
-          >
-            {(props: FormikProps<Category>) => (
-              <Form>
-                <Stack direction="row">
-                  <FormikTextField
-                    sx={{ width: "240px" }}
-                    formikKey="displayName"
-                    label="Name"
-                  />
-
-                  <Box component="div" ml={1}>
+      <Divider variant="middle" sx={{ my: 2 }} />
+      <Container maxWidth="lg">
+        <Grid container spacing={2}>
+          <Grid item md={6} xs={12} justifyContent="flex-start">
+            <Typography variant="h6" component="div">
+              {categories.length} Item Categories
+            </Typography>
+            <Formik
+              enableReinitialize={true}
+              initialValues={selectedCategory as Category}
+              validationSchema={registerSchema}
+              onSubmit={(values, actions) => {
+                actions.setSubmitting(false);
+                dispatch(addItemCategory(values));
+                setSelectedCategory(defaultItemCategory);
+              }}
+            >
+              {(props: FormikProps<Category>) => (
+                <Form>
+                  <Stack direction="row">
+                    <FormikTextField
+                      sx={{ width: "240px" }}
+                      formikKey="displayName"
+                      label="Name"
+                    />
                     <Button
+                      sx={{ ml: "8px" }}
                       type="submit"
                       color="secondary"
                       variant="contained"
                       disabled={!props.isValid}
                     >
-                      <Save /> Save Category
+                      <Save />
                     </Button>
-                  </Box>
-                </Stack>
-              </Form>
-            )}
-          </Formik>
-          <TableContainer component={Paper}>
-            <Table size="small" aria-label="a simple table">
-              <TableBody>
-                {loading === "pending" ? (
-                  <TableRow>
-                    <TableCell>
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  categories &&
-                  categories.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell component="th" scope="row">
-                        {row.displayName}
-                      </TableCell>
+                  </Stack>
+                </Form>
+              )}
+            </Formik>
+            <TableContainer component={Paper} sx={{ mt: "8px" }}>
+              <Table size="small" aria-label="a simple table">
+                <TableHead>
+                  <StyledTableRow>
+                    <StyledTableCell>Category Name</StyledTableCell>
+                    <StyledTableCell>Actions</StyledTableCell>
+                  </StyledTableRow>
+                </TableHead>
+                <TableBody>
+                  {loading === "pending" ? (
+                    <StyledTableRow>
+                      <StyledTableCell>
+                        <Skeleton
+                          variant="rectangular"
+                          height={10}
+                          width={100}
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Skeleton
+                          variant="rectangular"
+                          height={10}
+                          width={100}
+                        />
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ) : (
+                    categories &&
+                    categories.map((row) => (
+                      <StyledTableRow key={row.id}>
+                        <StyledTableCell component="th" scope="row">
+                          {row.displayName}
+                        </StyledTableCell>
 
-                      <TableCell>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <IconButton
-                            color="primary"
-                            onClick={() =>
-                              SetSelectedCategory(row ? (row.id as number) : 0)
-                            }
+                        <StyledTableCell>
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
                           >
-                            <Edit />
-                          </IconButton>
-                          <IconButton
-                            color="secondary"
-                            onClick={() =>
-                              DeleteCategory(row ? (row.id as number) : 0)
-                            }
-                          >
-                            <Delete />
-                          </IconButton>
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
+                            <IconButton
+                              color="primary"
+                              onClick={() =>
+                                SetSelectedCategory(
+                                  row ? (row.id as number) : 0
+                                )
+                              }
+                            >
+                              <Edit />
+                            </IconButton>
+                            <IconButton
+                              color="secondary"
+                              onClick={() =>
+                                DeleteCategory(row ? (row.id as number) : 0)
+                              }
+                            >
+                              <Delete />
+                            </IconButton>
+                          </Stack>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
 
-        <Grid item md={6} xs={12} justifyContent="flex-start">
-          <Typography variant="h6" component="div">
-            {uoms.length} Unit Of Measures
-          </Typography>
-          <Formik
-            enableReinitialize={true}
-            initialValues={selectedUom as Category}
-            validationSchema={registerSchema}
-            onSubmit={(values, actions) => {
-              actions.setSubmitting(false);
-              dispatch(addItemUom(values));
-              setSelectedUom(defaultItemUom);
-            }}
-          >
-            {(props: FormikProps<Category>) => (
-              <Form>
-                <Stack direction="row">
-                  <FormikTextField
-                    sx={{ width: "240px" }}
-                    formikKey="displayName"
-                    label="Name"
-                  />
+          <Grid item md={6} xs={12} justifyContent="flex-start">
+            <Typography variant="h6" component="div">
+              {uoms.length} Unit Of Measures
+            </Typography>
+            <Formik
+              enableReinitialize={true}
+              initialValues={selectedUom as Category}
+              validationSchema={registerSchema}
+              onSubmit={(values, actions) => {
+                actions.setSubmitting(false);
+                dispatch(addItemUom(values));
+                setSelectedUom(defaultItemUom);
+              }}
+            >
+              {(props: FormikProps<Category>) => (
+                <Form>
+                  <Stack direction="row">
+                    <FormikTextField
+                      sx={{ width: "240px" }}
+                      formikKey="displayName"
+                      label="Name"
+                    />
 
-                  <Box component="div" ml={1}>
                     <Button
+                      sx={{ ml: "8px" }}
                       type="submit"
                       color="secondary"
                       variant="contained"
                       disabled={!props.isValid}
                     >
-                      <Save /> Save UOM
+                      <Save />
                     </Button>
-                  </Box>
-                </Stack>
-              </Form>
-            )}
-          </Formik>
-          <TableContainer component={Paper}>
-            <Table size="small" aria-label="a simple table">
-              <TableBody>
-                {loading === "pending" ? (
-                  <TableRow>
-                    <TableCell>
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  uoms &&
-                  uoms.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell component="th" scope="row">
-                        {row.displayName}
-                      </TableCell>
+                  </Stack>
+                </Form>
+              )}
+            </Formik>
+            <TableContainer component={Paper} sx={{ mt: "8px" }}>
+              <Table size="small" aria-label="a simple table">
+                <TableHead>
+                  <StyledTableRow>
+                    <StyledTableCell>UOM Name</StyledTableCell>
+                    <StyledTableCell>Actions</StyledTableCell>
+                  </StyledTableRow>
+                </TableHead>
+                <TableBody>
+                  {loading === "pending" ? (
+                    <StyledTableRow>
+                      <StyledTableCell>
+                        <Skeleton
+                          variant="rectangular"
+                          height={10}
+                          width={100}
+                        />
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Skeleton
+                          variant="rectangular"
+                          height={10}
+                          width={100}
+                        />
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ) : (
+                    uoms &&
+                    uoms.map((row) => (
+                      <StyledTableRow key={row.id}>
+                        <StyledTableCell component="th" scope="row">
+                          {row.displayName}
+                        </StyledTableCell>
 
-                      <TableCell>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <IconButton
-                            color="primary"
-                            onClick={() =>
-                              SetSelectedUom(row ? (row.id as number) : 0)
-                            }
+                        <StyledTableCell>
+                          <Stack
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
                           >
-                            <Edit />
-                          </IconButton>
-                          <IconButton
-                            color="secondary"
-                            onClick={() =>
-                              DeleteUom(row ? (row.id as number) : 0)
-                            }
-                          >
-                            <Delete />
-                          </IconButton>
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                            <IconButton
+                              color="primary"
+                              onClick={() =>
+                                SetSelectedUom(row ? (row.id as number) : 0)
+                              }
+                            >
+                              <Edit />
+                            </IconButton>
+                            <IconButton
+                              color="secondary"
+                              onClick={() =>
+                                DeleteUom(row ? (row.id as number) : 0)
+                              }
+                            >
+                              <Delete />
+                            </IconButton>
+                          </Stack>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
         </Grid>
-      </Grid>
+      </Container>
     </>
   );
 };

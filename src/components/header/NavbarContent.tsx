@@ -68,7 +68,7 @@ function NavbarContent() {
 
   return (
     <>
-      <Typography className={classes.title} variant="h6" noWrap>
+      <Typography className={classes.title} variant="h4" noWrap>
         {pageTitle}
       </Typography>
       <div className={classes.grow} />
