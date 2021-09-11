@@ -27,7 +27,7 @@ export const Items = () => {
   const { items, loading } = useAppSelector(selectItems);
 
   useEffect(() => {
-    if (items.length == 0) dispatch(fetchItems("all"));
+    if (items.length === 0) dispatch(fetchItems("all"));
     dispatch(changePageTitle("Items List"));
   }, []);
 

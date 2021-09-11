@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import AuthSkeleton from "../AuthSkeleton";
 
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { profileApollo, selectAuth } from "../authSlice";
+import { selectAuth } from "../authSlice";
 
 import { changePageTitle } from "../../settings/settingsSlice";
 import AccountHeader from "../../../components/account/AccountHeader";
@@ -14,7 +14,7 @@ import { AccountDetail } from "../../../components/account/AccountDetail";
 import ChangePassword from "../../../components/account/ChangePassword";
 
 export const Profile = () => {
-  const { loading, user } = useAppSelector(selectAuth);
+  const { loading } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
   const title = "My Account";
   useEffect(() => {

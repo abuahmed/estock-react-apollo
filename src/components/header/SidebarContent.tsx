@@ -1,13 +1,6 @@
 import React, { ReactNode, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import {
-  Avatar,
-  Box,
-  Button,
-  Divider,
-  List,
-  Typography,
-} from "@material-ui/core";
+import { Avatar, Box, Divider, List, Typography } from "@material-ui/core";
 import { useTheme } from "@material-ui/core/styles";
 import Link from "@material-ui/core/Link";
 
@@ -16,15 +9,12 @@ import {
   BarChart as BarChartIcon,
   Lock as LockIcon,
   ExitToApp as ExitToAppIcon,
-  SellOutlined as SalesIcon,
-  Settings as SettingsIcon,
   AccountCircle as UserIcon,
   People as UsersIcon,
   List as ListIcon,
   Inventory2Outlined,
   ShoppingCartOutlined,
   ShoppingBagOutlined,
-  InventoryOutlined,
   DescriptionOutlined,
   BusinessOutlined,
   PeopleOutline,

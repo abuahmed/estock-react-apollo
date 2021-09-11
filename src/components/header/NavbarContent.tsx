@@ -5,17 +5,13 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 
-import MailIcon from "@material-ui/icons/Mail";
-
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 
-import { profileApollo, selectAuth } from "../../features/auth/authSlice";
+import { selectAuth } from "../../features/auth/authSlice";
 import { logout } from "../../features/auth/authReducers";
 import { selectSetting } from "../../features/settings/settingsSlice";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import Badge from "@material-ui/core/Badge";
-import NotificationsIcon from "@material-ui/icons/Notifications";
 import useStyles from "./styles";
 import Search from "../search/Search";
 

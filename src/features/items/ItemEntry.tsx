@@ -26,6 +26,8 @@ import {
   fetchItemUoms,
   addItemCategory,
   removeItemCategory,
+  addItemUom,
+  removeItemUom,
 } from "./itemsSlice";
 import { Category, CategoryType, Item as ItemType } from "./types/itemType";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
@@ -43,26 +45,28 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   TextField,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
 
+const defaultItemCategory = {
+  displayName: "",
+  id: undefined,
+  type: CategoryType.ItemCategory,
+};
+const defaultItemUom = {
+  displayName: "",
+  id: undefined,
+  type: CategoryType.UnitOfMeasure,
+};
 export const ItemEntry = () => {
   const { id } = useParams() as {
     id: string;
   };
-  const [selectedCategory, setSelectedCategory] = useState<Category>({
-    displayName: "",
-    id: undefined,
-    type: CategoryType.ItemCategory,
-  });
-  const [selectedUom, setSelectedUom] = useState<Category>({
-    displayName: "",
-    id: undefined,
-    type: CategoryType.UnitOfMeasure,
-  });
+  const [selectedCategory, setSelectedCategory] =
+    useState<Category>(defaultItemCategory);
+  const [selectedUom, setSelectedUom] = useState<Category>(defaultItemUom);
   const { loading, error, success, selectedItem, categories, uoms } =
     useAppSelector(selectItems);
   const dispatch = useAppDispatch();
@@ -92,7 +96,7 @@ export const ItemEntry = () => {
     setSelectedCategory(categories.find((cat) => cat.id === id) as Category);
   };
   const DeleteUom = (id: number) => {
-    dispatch(removeItemCategory(id));
+    dispatch(removeItemUom(id));
   };
   const SetSelectedUom = (id: number) => {
     setSelectedUom(uoms.find((cat) => cat.id === id) as Category);
@@ -222,11 +226,7 @@ export const ItemEntry = () => {
             onSubmit={(values, actions) => {
               actions.setSubmitting(false);
               dispatch(addItemCategory(values));
-              setSelectedCategory({
-                displayName: "",
-                id: undefined,
-                type: CategoryType.ItemCategory,
-              });
+              setSelectedCategory(defaultItemCategory);
             }}
           >
             {(props: FormikProps<Category>) => (
@@ -237,7 +237,7 @@ export const ItemEntry = () => {
                     formikKey="displayName"
                     label="Name"
                   />
-                  {error && <Toast severity="error">{error.message}</Toast>}
+
                   <Box component="div" ml={1}>
                     <Button
                       type="submit"
@@ -310,12 +310,8 @@ export const ItemEntry = () => {
             validationSchema={registerSchema}
             onSubmit={(values, actions) => {
               actions.setSubmitting(false);
-              dispatch(addItemCategory(values));
-              setSelectedUom({
-                displayName: "",
-                id: undefined,
-                type: CategoryType.UnitOfMeasure,
-              });
+              dispatch(addItemUom(values));
+              setSelectedUom(defaultItemUom);
             }}
           >
             {(props: FormikProps<Category>) => (
@@ -326,7 +322,7 @@ export const ItemEntry = () => {
                     formikKey="displayName"
                     label="Name"
                   />
-                  {error && <Toast severity="error">{error.message}</Toast>}
+
                   <Box component="div" ml={1}>
                     <Button
                       type="submit"

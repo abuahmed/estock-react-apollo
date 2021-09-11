@@ -12,9 +12,9 @@ export type Category = {
 };
 
 export enum CategoryType {
-  ItemCategory,
-  UnitOfMeasure,
-  Bank,
+  ItemCategory = "ItemCategory",
+  UnitOfMeasure = "UnitOfMeasure",
+  Bank = "Bank",
 }
 
 // export type Item = {

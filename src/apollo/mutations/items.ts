@@ -66,7 +66,7 @@ export const ADD_UPDATE_ITEM_CATEGORY = gql`
   mutation AddUpdateItemCategory(
     $id: Int
     $displayName: String
-    $type: String
+    $type: CategoryType
   ) {
     createItemCategory(
       input: { id: $id, displayName: $displayName, type: $type }

@@ -1,5 +1,4 @@
-import React from "react";
-import { Link, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
 
 import Container from "@material-ui/core/Container";
@@ -14,7 +13,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import LockRounded from "@material-ui/icons/LockRounded";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { signIn, selectAuth, signInApollo } from "../authSlice";
+import { selectAuth, signInApollo } from "../authSlice";
 import { FormikTextField } from "../../../components/Layout/FormikTextField";
 
 import AuthSkeleton from "../AuthSkeleton";

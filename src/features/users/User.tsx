@@ -9,15 +9,8 @@ import { addUserRoles, getUser, selectUsers } from "./usersSlice";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Toast from "../../components/Layout/Toast";
-import {
-  Divider,
-  Skeleton,
-  Switch,
-  TextField,
-  Typography,
-} from "@material-ui/core";
+import { Divider, Skeleton, Switch, Typography } from "@material-ui/core";
 
-import AuthSkeleton from "../auth/AuthSkeleton";
 import { changePageTitle } from "../settings/settingsSlice";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
