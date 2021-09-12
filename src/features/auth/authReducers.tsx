@@ -38,6 +38,9 @@ export const authSlice = createSlice({
     resetSuccess: (state) => {
       state.success = undefined;
     },
+    resetError: (state) => {
+      state.error = undefined;
+    },
     // toggleDrawer: (state) => {
     //   state.drawerStatus = !state.drawerStatus
     // },

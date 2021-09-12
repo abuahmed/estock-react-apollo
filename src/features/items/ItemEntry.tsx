@@ -46,7 +46,6 @@ import {
   TableContainer,
   TextField,
   Divider,
-  TableCell,
   TableHead,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
@@ -74,20 +73,16 @@ export const ItemEntry = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    dispatch(changePageTitle(`Item Entry`));
+    if (categories.length === 0) dispatch(fetchItemCategories("all"));
+    if (uoms.length === 0) dispatch(fetchItemUoms("all"));
     if (id && id !== "0") {
       dispatch(getItem(parseInt(id)));
     } else {
       resetFields();
     }
-    dispatch(fetchItemCategories("all"));
-    dispatch(fetchItemUoms("all"));
-    dispatch(changePageTitle(`Item Entry`));
   }, []);
 
-  if (success) {
-    dispatch(resetSelectedItem());
-    dispatch(resetSuccess());
-  }
   function resetFields() {
     dispatch(resetSelectedItem());
   }
@@ -247,6 +242,9 @@ export const ItemEntry = () => {
                       </Grid> */}
 
                       <br />
+                      {success && (
+                        <Toast severity="success">{success.message}</Toast>
+                      )}
                       {error && <Toast severity="error">{error.message}</Toast>}
                       <Button
                         sx={{ width: "100%" }}

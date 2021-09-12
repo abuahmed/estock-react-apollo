@@ -1,4 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, ThunkDispatch } from "@reduxjs/toolkit";
+//import { store } from "../../app/store";
+
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
 import {
@@ -142,12 +144,17 @@ export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
         }
         restItems.push(addedItem);
         dispatch(setItems(restItems));
+        await setSuccessAction(dispatch, {
+          message: "Item Successfully Saved",
+        });
+
         return addedItem;
       }
     } catch (error: any) {
       const { code, stack } = error;
       const message = error.message;
       dispatch(setSelectedItem(arg));
+      await setErrorAction(dispatch, { message });
       //error.graphQLErrors[0].extensions.exception.response.status;
       return rejectWithValue({ code, message, id: uuidv4(), stack });
     }
@@ -308,6 +315,26 @@ export const removeItemUom = createAsyncThunk<
   }
 });
 
+async function setSuccessAction(
+  dispatch: ThunkDispatch<any, Item, any>,
+  payload: any
+) {
+  dispatch(setSuccess(payload));
+  setTimeout(() => {
+    dispatch(resetSelectedItem());
+    dispatch(resetSuccess());
+  }, 2000);
+}
+async function setErrorAction(
+  dispatch: ThunkDispatch<any, Item, any>,
+  payload: any
+) {
+  dispatch(setError(payload));
+  setTimeout(() => {
+    dispatch(resetError());
+  }, 6000);
+}
+
 const defaultValues: Item = {
   displayName: "",
   code: "",
@@ -324,7 +351,7 @@ const initialState: ItemsState = {
   selectedItem: { ...defaultValues },
   loading: "idle",
   currentRequestId: undefined,
-  success: false,
+  success: null,
   error: null,
 };
 
@@ -333,7 +360,16 @@ export const itemsSlice = createSlice({
   initialState,
   reducers: {
     resetSuccess: (state) => {
-      state.success = false;
+      state.success = null;
+    },
+    setSuccess: (state, { payload }) => {
+      state.success = payload;
+    },
+    setError: (state, { payload }) => {
+      state.error = payload;
+    },
+    resetError: (state) => {
+      state.error = null;
     },
     resetSelectedItem: (state) => {
       state.selectedItem = { ...defaultValues };
@@ -403,12 +439,12 @@ export const itemsSlice = createSlice({
     builder.addCase(addItem.fulfilled, (state, { payload, meta }) => {
       state.loading = "idle";
       state.selectedItem = payload;
-      state.success = true;
+      //state.success = true;
     });
     builder.addCase(addItem.rejected, (state, { payload, meta, error }) => {
       //console.log(payload);
       state.loading = "idle";
-      state.error = payload;
+      //state.error = payload;
     });
 
     builder.addCase(removeItem.pending, (state, { meta }) => {
@@ -417,7 +453,7 @@ export const itemsSlice = createSlice({
     builder.addCase(removeItem.fulfilled, (state, { payload, meta }) => {
       state.loading = "idle";
       state.items = payload;
-      state.success = true;
+      state.success = { message: "Item Removed Successfully" };
     });
     builder.addCase(removeItem.rejected, (state, { payload, meta, error }) => {
       state.loading = "idle";
@@ -430,6 +466,7 @@ export const itemsSlice = createSlice({
     builder.addCase(addItemCategory.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.categories = payload;
+      //state.success = true;
     });
     builder.addCase(addItemCategory.rejected, (state, { payload }) => {
       state.loading = "idle";
@@ -442,6 +479,7 @@ export const itemsSlice = createSlice({
     builder.addCase(addItemUom.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.uoms = payload;
+      //state.success = true;
     });
     builder.addCase(addItemUom.rejected, (state, { payload }) => {
       state.loading = "idle";
@@ -474,8 +512,15 @@ export const itemsSlice = createSlice({
   },
 });
 
-export const { resetSuccess, resetSelectedItem, setSelectedItem, setItems } =
-  itemsSlice.actions;
+export const {
+  resetSuccess,
+  setSuccess,
+  resetError,
+  setError,
+  resetSelectedItem,
+  setSelectedItem,
+  setItems,
+} = itemsSlice.actions;
 
 // Selectors
 export const selectItems = (state: RootState) => state.items as ItemsState;
