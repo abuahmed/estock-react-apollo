@@ -6,12 +6,14 @@ import authReducer from "../features/auth/authReducers";
 import usersReducer from "../features/users/usersSlice";
 import settingsReducer from "../features/settings/settingsSlice";
 import itemsReducer from "../features/items/itemsSlice";
+import transactionsReducer from "../features/transactions/transactionsSlice";
 
 const rootReducer = combineReducers({
   counter: counterReducer,
   auth: authReducer,
   users: usersReducer,
   items: itemsReducer,
+  transactions: transactionsReducer,
   settings: settingsReducer,
 });
 

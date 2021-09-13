@@ -19,7 +19,7 @@ import {
 import { RootState } from "../../app/store";
 
 import { AuthError } from "../auth/types/authType";
-import { Category, Item, ItemsState } from "./types/itemType";
+import { Category, Item, ItemsState } from "./types/itemTypes";
 
 export const fetchItems = createAsyncThunk<
   any,

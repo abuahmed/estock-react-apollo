@@ -19,7 +19,6 @@ import Toast from "../../components/Layout/Toast";
 import {
   addItem,
   selectItems,
-  resetSuccess,
   getItem,
   resetSelectedItem,
   fetchItemCategories,
@@ -29,7 +28,7 @@ import {
   addItemUom,
   removeItemUom,
 } from "./itemsSlice";
-import { Category, CategoryType, Item as ItemType } from "./types/itemType";
+import { Category, CategoryType, Item as ItemType } from "./types/itemTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
 import { changePageTitle } from "../settings/settingsSlice";

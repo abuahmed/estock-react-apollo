@@ -31,15 +31,15 @@ export type Role = {
   isPrivileged: boolean;
 };
 export type Warehouse = {
-  id: number;
-  uuid: string;
-  isEnabled: Boolean;
-  createdByUserId: number;
-  modifiedByUserId: number;
-  displayName: string;
-  description: string;
-  descriptionShort: string;
-  isPrivileged: boolean;
+  id?: number;
+  uuid?: string;
+  isEnabled?: Boolean;
+  createdByUserId?: number;
+  modifiedByUserId?: number;
+  displayName?: string;
+  description?: string;
+  descriptionShort?: string;
+  isPrivileged?: boolean;
 };
 
 enum UserStatus {

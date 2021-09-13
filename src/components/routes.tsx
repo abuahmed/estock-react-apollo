@@ -13,6 +13,7 @@ import Error from "../features/error/Error";
 import LandingPage from "../features/home/LandingPage";
 import { ItemEntry } from "../features/items/ItemEntry";
 import { Items } from "../features/items/Items";
+import { Headers } from "../features/transactions/Headers";
 import { Users } from "../features/users";
 import { User } from "../features/users/User";
 import DashboardLayout from "./DashboardLayout";
@@ -25,9 +26,9 @@ const routes = (isLoggedIn: Boolean) => [
     children: [
       { path: "dashboard", element: <Dashboard /> },
       { path: "onHand", element: <Dashboard /> },
-      { path: "sales", element: <Dashboard /> },
+      { path: "sales", element: <Headers type="Sale" /> },
       { path: "sales/:id", element: <User /> },
-      { path: "purchase", element: <Dashboard /> },
+      { path: "purchase/", element: <Headers type="Purchase" /> },
       { path: "purchase/:id", element: <User /> },
       { path: "pI", element: <Dashboard /> },
       { path: "pI/:id", element: <User /> },
