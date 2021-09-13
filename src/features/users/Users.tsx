@@ -7,10 +7,8 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Skeleton from "@material-ui/core/Skeleton";
 import { NavLink as RouterLink } from "react-router-dom";
@@ -20,6 +18,7 @@ import Avatar from "@material-ui/core/Avatar";
 import { IconButton, Stack } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
+import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 
 const useStyles = makeStyles({
   table: {
@@ -56,31 +55,31 @@ export const Users = () => {
         <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="simple table">
             <TableHead>
-              <TableRow>
-                <TableCell>Photo</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
+              <StyledTableRow>
+                <StyledTableCell>Photo</StyledTableCell>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Email</StyledTableCell>
+                <StyledTableCell>Actions</StyledTableCell>
+              </StyledTableRow>
             </TableHead>
             <TableBody>
               {loading === "pending" ? (
-                <TableRow>
-                  <TableCell>
+                <StyledTableRow>
+                  <StyledTableCell>
                     <Skeleton variant="rectangular" height={10} width={100} />
-                  </TableCell>
-                  <TableCell>
+                  </StyledTableCell>
+                  <StyledTableCell>
                     <Skeleton variant="rectangular" height={10} width={100} />
-                  </TableCell>
+                  </StyledTableCell>
 
-                  <TableCell>
+                  <StyledTableCell>
                     <Skeleton variant="rectangular" height={10} width={100} />
-                  </TableCell>
-                </TableRow>
+                  </StyledTableCell>
+                </StyledTableRow>
               ) : (
                 users.map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>
+                  <StyledTableRow key={row.id}>
+                    <StyledTableCell>
                       <Avatar
                         alt="avatar"
                         src={row.avatar}
@@ -89,13 +88,13 @@ export const Users = () => {
                           height: 64,
                         }}
                       />
-                    </TableCell>
-                    <TableCell component="th" scope="row">
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
                       {row.name}
-                    </TableCell>
-                    <TableCell>{row.email}</TableCell>
+                    </StyledTableCell>
+                    <StyledTableCell>{row.email}</StyledTableCell>
 
-                    <TableCell>
+                    <StyledTableCell>
                       <Stack direction="row" spacing={2} alignItems="center">
                         <IconButton
                           color="primary"
@@ -111,8 +110,8 @@ export const Users = () => {
                           <Delete />
                         </IconButton>
                       </Stack>
-                    </TableCell>
-                  </TableRow>
+                    </StyledTableCell>
+                  </StyledTableRow>
                 ))
               )}
             </TableBody>

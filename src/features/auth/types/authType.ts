@@ -16,9 +16,21 @@ export type AuthUser = {
   token: string;
   expiredAt: Date;
   roles: Role[];
+  warehouses?: Warehouse[];
 };
 
 export type Role = {
+  id: number;
+  uuid: string;
+  isEnabled: Boolean;
+  createdByUserId: number;
+  modifiedByUserId: number;
+  displayName: string;
+  description: string;
+  descriptionShort: string;
+  isPrivileged: boolean;
+};
+export type Warehouse = {
   id: number;
   uuid: string;
   isEnabled: Boolean;

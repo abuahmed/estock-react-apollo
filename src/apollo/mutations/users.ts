@@ -13,6 +13,10 @@ export const SIGN_IN = gql`
         id
         displayName
       }
+      warehouses {
+        id
+        displayName
+      }
     }
   }
 `;
@@ -27,6 +31,10 @@ export const SIGN_IN_GOOGLE = gql`
       isAdmin
       token
       roles {
+        id
+        displayName
+      }
+      warehouses {
         id
         displayName
       }
@@ -46,6 +54,10 @@ export const SIGN_IN_FACEBOOK = gql`
         id
         displayName
       }
+      warehouses {
+        id
+        displayName
+      }
     }
   }
 `;
@@ -58,6 +70,28 @@ export const ADD_USER_ROLES = gql`
       email
       avatar
       roles {
+        id
+        displayName
+      }
+      warehouses {
+        id
+        displayName
+      }
+    }
+  }
+`;
+export const ADD_USER_WAREHOUSES = gql`
+  mutation addUserWarehouses($ids: [Int!]!) {
+    addUserWarehouses(input: { ids: $ids }) {
+      id
+      name
+      email
+      avatar
+      roles {
+        id
+        displayName
+      }
+      warehouses {
         id
         displayName
       }
