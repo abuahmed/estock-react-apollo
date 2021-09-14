@@ -3,7 +3,10 @@ import { createAsyncThunk, createSlice, ThunkDispatch } from "@reduxjs/toolkit";
 
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
-import { GET_ALL_TRANSACTIONS } from "../../apollo/queries/transactions";
+import {
+  GET_ALL_TRANSACTIONS,
+  GET_TRANSACTION_LINES,
+} from "../../apollo/queries/transactions";
 
 import { RootState } from "../../app/store";
 
@@ -12,16 +15,16 @@ import {
   TransactionHeader,
   TransactionLine,
   TransactionsState,
+  TransactionType,
 } from "./types/transactionTypes";
 
 export const fetchHeaders = createAsyncThunk<
   any,
-  string,
+  TransactionType,
   { rejectValue: AuthError }
 >("transactions/fetchHeaders", async (_arg, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
-  console.log(_arg);
   try {
     const response = await apolloClient.query({
       query: GET_ALL_TRANSACTIONS,
@@ -30,6 +33,29 @@ export const fetchHeaders = createAsyncThunk<
 
     if (response && response.data && response.data.transactions) {
       return response.data.transactions as TransactionHeader[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+export const fetchLines = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("transactions/fetchLines", async (headerId, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    const response = await apolloClient.query({
+      query: GET_TRANSACTION_LINES,
+      variables: { headerId },
+    });
+
+    if (response && response.data && response.data.lines) {
+      return response.data.lines as TransactionLine[];
     }
   } catch (error: any) {
     const { code, stack } = error;
@@ -168,7 +194,7 @@ const defaultValues: TransactionLine = {
 const initialState: TransactionsState = {
   headers: [],
   lines: [],
-  //selectedHeader: {},
+  selectedHeader: {},
   selectedLine: {},
   loading: "idle",
   currentRequestId: undefined,
@@ -198,8 +224,17 @@ export const transactionsSlice = createSlice({
     setSelectedLine: (state, { payload }) => {
       state.selectedLine = payload;
     },
+    resetSelectedHeader: (state) => {
+      state.selectedHeader = {};
+    },
+    setSelectedHeader: (state, { payload }) => {
+      state.selectedHeader = payload;
+    },
     setHeaders: (state, { payload }) => {
       state.headers = payload;
+    },
+    setLines: (state, { payload }) => {
+      state.lines = payload;
     },
   },
   extraReducers: (builder) => {
@@ -211,6 +246,18 @@ export const transactionsSlice = createSlice({
       state.headers = payload;
     });
     builder.addCase(fetchHeaders.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
+
+    builder.addCase(fetchLines.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(fetchLines.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.lines = payload;
+    });
+    builder.addCase(fetchLines.rejected, (state, { payload }) => {
       state.loading = "idle";
       state.error = payload;
     });
@@ -263,7 +310,10 @@ export const {
   setError,
   resetSelectedLine,
   setSelectedLine,
+  resetSelectedHeader,
+  setSelectedHeader,
   setHeaders,
+  setLines,
 } = transactionsSlice.actions;
 
 // Selectors

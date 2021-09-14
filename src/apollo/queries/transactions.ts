@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_TRANSACTIONS = gql`
-  query GetTransactions($type: TransactionType) {
+  query GetTransactions($type: TransactionType!) {
     transactions(type: $type) {
       id
       transactionDate
@@ -22,8 +22,21 @@ export const GET_ALL_TRANSACTIONS = gql`
     }
   }
 `;
+export const GET_TRANSACTION_LINES = gql`
+  query GetLines($headerId: Int!) {
+    lines(headerId: $headerId) {
+      id
+      item {
+        id
+        displayName
+      }
+      qty
+      eachPrice
+    }
+  }
+`;
 
-// export const GET_SELECTED_HEADER = gql`
+// export const GET_SELECTED_HEADER = gql`;
 //   query GetSelectedHeader($id: Int!) {
 //     getSelectedHeader(id: $id) {
 //       id

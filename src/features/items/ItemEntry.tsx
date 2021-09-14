@@ -27,6 +27,7 @@ import {
   removeItemCategory,
   addItemUom,
   removeItemUom,
+  setSelectedItem,
 } from "./itemsSlice";
 import { Category, CategoryType, Item as ItemType } from "./types/itemTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
@@ -67,7 +68,7 @@ export const ItemEntry = () => {
   const [selectedCategory, setSelectedCategory] =
     useState<Category>(defaultItemCategory);
   const [selectedUom, setSelectedUom] = useState<Category>(defaultItemUom);
-  const { loading, error, success, selectedItem, categories, uoms } =
+  const { loading, error, success, items, selectedItem, categories, uoms } =
     useAppSelector(selectItems);
   const dispatch = useAppDispatch();
 
@@ -76,7 +77,9 @@ export const ItemEntry = () => {
     if (categories.length === 0) dispatch(fetchItemCategories("all"));
     if (uoms.length === 0) dispatch(fetchItemUoms("all"));
     if (id && id !== "0") {
-      dispatch(getItem(parseInt(id)));
+      const hd = items.find((h) => h.id === parseInt(id));
+      dispatch(setSelectedItem(hd));
+      //dispatch(getItem(parseInt(id)));
     } else {
       resetFields();
     }

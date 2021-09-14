@@ -1,6 +1,10 @@
 import { Warehouse } from "../../auth/types/authType";
 import { Item } from "../../items/types/itemTypes";
 
+export interface HeaderProps {
+  type: TransactionType;
+}
+
 export type BusinessPartner = {
   id?: number;
   uuid?: string;
@@ -18,14 +22,14 @@ export type BusinessPartner = {
   transactions?: [TransactionHeader];
 };
 
-enum BusinessPartnerType {
-  Customer,
-  Vendor,
+export enum BusinessPartnerType {
+  Customer = "Customer",
+  Vendor = "Vendor",
 }
 
-enum BusinessPartnerCategory {
-  Organization,
-  Individual,
+export enum BusinessPartnerCategory {
+  Organization = "Organization",
+  Individual = "Individual",
 }
 
 export type TransactionLine = {
@@ -59,44 +63,44 @@ export type TransactionHeader = {
   warehouseId?: number;
   warehouse?: Warehouse;
   businessPartnerId?: number;
-  businessPartner: BusinessPartner;
+  businessPartner?: BusinessPartner;
   lines?: [TransactionLine];
   comment?: string;
 };
 
-enum TransactionType {
-  All,
-  Sale,
-  Purchase,
-  PI,
-  Transfer,
-  Profit,
-  GoodsIn,
-  GoodsOut,
+export enum TransactionType {
+  All = "All",
+  Sale = "Sale",
+  Purchase = "Purchase",
+  PI = "PI",
+  Transfer = "Transfer",
+  Profit = "Profit",
+  GoodsIn = "GoodsIn",
+  GoodsOut = "GoodsOut",
 }
 
-enum TransactionStatus {
-  New,
-  Draft,
-  Order,
-  Posted,
-  PostedWithLessStock,
-  Completed,
-  Closed,
-  Approved,
-  Archived,
-  Canceled,
-  OnProcess,
-  Shipped,
-  DeliveryConfirmed,
-  Received,
-  Refunded,
+export enum TransactionStatus {
+  New = "New",
+  Draft = "Draft",
+  Order = "Order",
+  Posted = "Posted",
+  PostedWithLessStock = "PostedWithLessStock",
+  Completed = "Completed",
+  Closed = "Closed",
+  Approved = "Approved",
+  Archived = "Archived",
+  Canceled = "Canceled",
+  OnProcess = "OnProcess",
+  Shipped = "Shipped",
+  DeliveryConfirmed = "DeliveryConfirmed",
+  Received = "Received",
+  Refunded = "Refunded",
 }
 
 export type TransactionsState = {
   headers: TransactionHeader[];
   lines: TransactionLine[];
-  //selectedHeader: TransactionHeader;
+  selectedHeader: TransactionHeader;
   selectedLine: TransactionLine;
   loading: "idle" | "pending";
   currentRequestId: string | undefined;

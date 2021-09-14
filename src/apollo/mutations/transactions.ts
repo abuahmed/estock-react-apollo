@@ -38,7 +38,7 @@ export const CREATE_UPDATE_TRANSACTION_LINE = gql`
     $quantity: Float!
     $eachPrice: Float
   ) {
-    createTransaction(
+    addTransactionLine(
       input: {
         header: $header
         id: $id

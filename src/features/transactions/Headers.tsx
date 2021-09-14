@@ -12,7 +12,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
 import Skeleton from "@material-ui/core/Skeleton";
-import { NavLink as RouterLink, useParams } from "react-router-dom";
+import { NavLink as RouterLink } from "react-router-dom";
 
 import { changePageTitle } from "../settings/settingsSlice";
 import {
@@ -27,26 +27,23 @@ import { Add, Edit } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import { fetchItems, selectItems } from "../items/itemsSlice";
+import { HeaderProps } from "./types/transactionTypes";
 
-interface HeaderProps {
-  type: string;
-}
-export const Headers = (props: HeaderProps) => {
-  // const { type } = useParams() as {
-  //   type: string;
-  // };
-
+export const Headers = ({ type }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const { headers, loading } = useAppSelector(selectTransactions);
 
   const { items } = useAppSelector(selectItems);
 
   useEffect(() => {
-    if (headers.length === 0) dispatch(fetchHeaders(props.type));
+    if (headers.length === 0) dispatch(fetchHeaders(type));
+    else {
+      if (headers[0].type !== type) dispatch(fetchHeaders(type));
+    }
     if (items.length === 0) dispatch(fetchItems("all"));
 
-    dispatch(changePageTitle("Items List"));
-  }, []);
+    dispatch(changePageTitle(`${type} List`));
+  }, [type]);
 
   const DeleteHeader = (id: number) => {
     //dispatch(removeHeader(id));
@@ -55,21 +52,21 @@ export const Headers = (props: HeaderProps) => {
   return (
     <>
       <Helmet>
-        <title>Transactions List | Pinna Stock</title>
+        <title>{type} List | Pinna Stock</title>
       </Helmet>
       <Box component="div">
         <Button
           color="secondary"
           variant="contained"
           component={RouterLink}
-          to={"/app/transaction/0"}
+          to={`/app/${type}/0`}
         >
           <Typography
             variant="h5"
             component="h5"
             sx={{ display: "flex", justifyItems: "center" }}
           >
-            <Add /> Add New Transaction
+            <Add /> Add New {type}
           </Typography>
         </Button>
       </Box>
@@ -125,7 +122,7 @@ export const Headers = (props: HeaderProps) => {
                         <IconButton
                           color="primary"
                           component={RouterLink}
-                          to={"/app/transaction/" + row.id}
+                          to={`/app/${type}/${row.id}`}
                         >
                           <Edit />
                         </IconButton>
@@ -146,7 +143,7 @@ export const Headers = (props: HeaderProps) => {
           </Table>
         </TableContainer>
         <Typography variant="h4" component="div">
-          {headers.length} Transactions
+          {headers.length} {type}s
         </Typography>
       </Grid>
     </>

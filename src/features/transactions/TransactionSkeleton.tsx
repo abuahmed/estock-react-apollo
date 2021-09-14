@@ -2,7 +2,7 @@ import React from "react";
 import Skeleton from "@material-ui/core/Skeleton";
 import Box from "@material-ui/core/Box";
 
-function ItemSkeleton() {
+function TransactionSkeleton() {
   return (
     <Box
       display="flex"
@@ -18,4 +18,4 @@ function ItemSkeleton() {
   );
 }
 
-export default ItemSkeleton;
+export default TransactionSkeleton;

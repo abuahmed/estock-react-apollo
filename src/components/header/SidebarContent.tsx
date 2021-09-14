@@ -274,7 +274,7 @@ const getNavBarItems = (roles: string[]) => {
       title: "OnHand Inventory",
     },
     {
-      href: "/app/sales",
+      href: "/app/sale",
       icon: <ShoppingCartOutlined />,
       title: "Sales",
     },
@@ -284,7 +284,7 @@ const getNavBarItems = (roles: string[]) => {
       title: "Purchase",
     },
     {
-      href: "/app/physicalInventory",
+      href: "/app/pi",
       icon: <Inventory2Outlined />,
       title: "Physical Inventory",
     },
