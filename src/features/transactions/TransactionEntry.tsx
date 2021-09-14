@@ -22,6 +22,7 @@ import {
   fetchLines,
   selectTransactions,
   setSelectedLine,
+  resetLines,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -45,11 +46,11 @@ import {
   TableBody,
   Stack,
   IconButton,
+  Autocomplete,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
 import { selectItems } from "../items/itemsSlice";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
-import { fontSize } from "@material-ui/system";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
@@ -89,6 +90,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     };
     let ln: TransactionLine = { header: hd };
     dispatch(setSelectedLine(ln));
+    dispatch(resetLines());
   }
   return (
     <>
@@ -183,25 +185,31 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         </Grid>
                       </Grid>
 
+                      <Divider variant="middle" sx={{ my: 2 }} />
+
                       <Grid container spacing={2}>
                         <Grid item sm={4} xs={12}>
-                          <TextField
-                            fullWidth
-                            sx={{ mt: 1 }}
-                            variant="outlined"
-                            name="itemId"
+                          <Autocomplete
                             id="itemId"
-                            select
-                            label="Item"
-                            value={props.values.itemId}
-                            onChange={props.handleChange}
-                          >
-                            {items.map((option) => (
-                              <MenuItem key={option.id} value={option.id}>
-                                {option.displayName}
-                              </MenuItem>
-                            ))}
-                          </TextField>
+                            options={items}
+                            getOptionLabel={(option) =>
+                              option.displayName as string
+                            }
+                            sx={{ mt: 1 }}
+                            onChange={(e, value) => {
+                              props.setFieldValue(
+                                "itemId",
+                                value !== null ? value : null
+                              );
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                label="Items"
+                                name="itemId"
+                                {...params}
+                              />
+                            )}
+                          />
                         </Grid>
                         <Grid item sm={2} xs={12}>
                           <FormikTextField
@@ -219,13 +227,13 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         </Grid>
                         <Grid item sm={2} xs={12}>
                           <Button
-                            sx={{ width: "100%", mt: "8px" }}
+                            sx={{ width: "100%", mt: 1, p: 2 }}
                             type="submit"
                             color="secondary"
                             variant="contained"
                             disabled={!props.isValid}
                           >
-                            <Save />
+                            <Save /> Add Item
                           </Button>
                         </Grid>
                       </Grid>
@@ -307,7 +315,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                     Total Qty: {selectedLine.header?.totalQty}
                   </StyledTableCell>
                   <StyledTableCell
-                    sx={{ fontWeight: "900" }}
+                    sx={{ fontWeight: "900", fontSize: "24px" }}
                     scope="row"
                     align="right"
                   >

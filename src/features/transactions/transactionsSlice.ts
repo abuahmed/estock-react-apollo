@@ -230,8 +230,14 @@ export const transactionsSlice = createSlice({
     setSelectedHeader: (state, { payload }) => {
       state.selectedHeader = payload;
     },
+    resetHeaders: (state) => {
+      state.headers = [];
+    },
     setHeaders: (state, { payload }) => {
       state.headers = payload;
+    },
+    resetLines: (state) => {
+      state.lines = [];
     },
     setLines: (state, { payload }) => {
       state.lines = payload;
@@ -313,7 +319,9 @@ export const {
   resetSelectedHeader,
   setSelectedHeader,
   setHeaders,
+  resetHeaders,
   setLines,
+  resetLines,
 } = transactionsSlice.actions;
 
 // Selectors
