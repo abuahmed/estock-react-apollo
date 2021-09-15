@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 import DesktopDatePicker from "@material-ui/lab/DesktopDatePicker";
@@ -23,6 +23,7 @@ import {
   selectTransactions,
   setSelectedLine,
   resetLines,
+  setSelectedHeader,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -32,10 +33,9 @@ import {
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
 import { changePageTitle } from "../settings/settingsSlice";
-import { Add, Backspace, Delete, Edit } from "@material-ui/icons";
+import { Add, Backspace, Delete, Edit, Settings } from "@material-ui/icons";
 import {
   Grid,
-  MenuItem,
   TextField,
   Divider,
   TableContainer,
@@ -51,13 +51,14 @@ import {
 import Save from "@material-ui/icons/Save";
 import { selectItems } from "../items/itemsSlice";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import { Item } from "../items/types/itemTypes";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
     id: string;
   };
   const dispatch = useAppDispatch();
-
+  const [leftItems, setLeftItems] = useState<Item[]>([]);
   const { items } = useAppSelector(selectItems);
 
   const {
@@ -75,12 +76,17 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     if (id && id !== "0") {
       const hd = headers.find((h) => h.id === parseInt(id));
       let ln: TransactionLine = { header: hd };
+      dispatch(setSelectedHeader(hd));
       dispatch(setSelectedLine(ln));
       dispatch(fetchLines(parseInt(id)));
     } else {
       resetFields();
     }
   }, [type]);
+
+  useEffect(() => {
+    setLeftItems(items.filter((i) => !lines.some((l) => l.item?.id === i.id)));
+  }, [lines, items]);
 
   function resetFields() {
     const hd: TransactionHeader = {
@@ -92,6 +98,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     dispatch(setSelectedLine(ln));
     dispatch(resetLines());
   }
+
   return (
     <>
       <Helmet>
@@ -112,15 +119,32 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
             <Backspace />
           </Typography>
         </Button>
-        <Button color="secondary" variant="contained" onClick={resetFields}>
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
+        <Stack direction="row" spacing={2}>
+          <Button color="secondary" variant="contained" onClick={resetFields}>
+            <Typography
+              variant="h5"
+              component="h5"
+              sx={{ display: "flex", justifyItems: "center" }}
+            >
+              <Add />
+            </Typography>
+          </Button>
+          <Button
+            sx={{ display: { xs: "none", sm: "block" } }}
+            color="secondary"
+            variant="contained"
+            onClick={resetFields}
           >
-            <Add />
-          </Typography>
-        </Button>
+            <Typography
+              variant="h5"
+              component="h5"
+              sx={{ display: "flex", justifyItems: "center" }}
+            >
+              <Settings />
+              POST
+            </Typography>
+          </Button>
+        </Stack>
       </Box>
       <Divider variant="middle" sx={{ my: 2 }} />
 
@@ -136,22 +160,26 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
               <>
                 <Formik
                   enableReinitialize={true}
-                  initialValues={selectedLine as TransactionLine}
+                  initialValues={selectedHeader as TransactionHeader}
                   onSubmit={(values, actions) => {
                     actions.setSubmitting(false);
-                    //dispatch(addTransactionLine(values));
+                    //dispatch(addTransactionHeader(values));
                   }}
                 >
-                  {(props: FormikProps<TransactionLine>) => (
+                  {(props: FormikProps<TransactionHeader>) => (
                     <Form>
-                      <Grid container spacing={2}>
+                      <Grid
+                        container
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
                         <Grid item sm={4} xs={12}>
                           <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker
                               label={type + " Date"}
                               inputFormat="dd/MM/yyyy"
                               minDate={new Date("2021-01-01")}
-                              value={props.values.header?.transactionDate}
+                              value={props.values.transactionDate}
                               onChange={props.handleChange}
                               renderInput={(params) => (
                                 <TextField
@@ -164,34 +192,60 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                           </LocalizationProvider>
                         </Grid>
 
-                        <Grid item sm={4} xs={12}>
+                        <Grid item sm={2} xs={12}>
                           <TextField
-                            value={props.values.header?.number}
+                            value={props.values.number}
                             variant="outlined"
                             fullWidth
                             disabled
                           />
                         </Grid>
 
-                        <Grid item sm={4} xs={12}>
+                        <Grid item sm={2} xs={12}>
                           <TextField
-                            value={
-                              props.values.header?.businessPartner?.displayName
-                            }
+                            value={props.values.businessPartner?.displayName}
                             variant="outlined"
                             fullWidth
                             disabled
                           />
+                        </Grid>
+                        <Grid item sm={2} xs={12}>
+                          <Button
+                            sx={{ width: "100%", p: 1.5 }}
+                            type="submit"
+                            color="secondary"
+                            variant="contained"
+                            disabled={!props.isValid}
+                          >
+                            <Save /> Save
+                          </Button>
                         </Grid>
                       </Grid>
-
-                      <Divider variant="middle" sx={{ my: 2 }} />
-
-                      <Grid container spacing={2}>
+                    </Form>
+                  )}
+                </Formik>
+                <Divider variant="middle" sx={{ my: 2 }} />
+                <Formik
+                  enableReinitialize={true}
+                  initialValues={selectedLine as TransactionLine}
+                  onSubmit={(values, actions) => {
+                    actions.setSubmitting(false);
+                    values = { ...values, header: selectedHeader };
+                    console.log(values);
+                    //dispatch(addTransactionLine(values));
+                  }}
+                >
+                  {(props: FormikProps<TransactionLine>) => (
+                    <Form>
+                      <Grid
+                        container
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
                         <Grid item sm={4} xs={12}>
                           <Autocomplete
                             id="itemId"
-                            options={items}
+                            options={leftItems}
                             getOptionLabel={(option) =>
                               option.displayName as string
                             }
@@ -227,13 +281,13 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         </Grid>
                         <Grid item sm={2} xs={12}>
                           <Button
-                            sx={{ width: "100%", mt: 1, p: 2 }}
+                            sx={{ width: "100%", mt: 1, p: 1.5 }}
                             type="submit"
                             color="secondary"
                             variant="contained"
                             disabled={!props.isValid}
                           >
-                            <Save /> Add Item
+                            <Save /> Add
                           </Button>
                         </Grid>
                       </Grid>
