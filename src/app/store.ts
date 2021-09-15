@@ -17,6 +17,10 @@ const initialState = {
 export const store = configureStore({
   reducer: rootReducer,
   preloadedState: initialState,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type AppDispatch = typeof store.dispatch;

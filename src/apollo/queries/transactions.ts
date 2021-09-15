@@ -36,28 +36,28 @@ export const GET_TRANSACTION_LINES = gql`
   }
 `;
 
-// export const GET_SELECTED_HEADER = gql`;
-//   query GetSelectedHeader($id: Int!) {
-//     getSelectedHeader(id: $id) {
-//       id
-//       transactionDate
-//       number
-//       numberOfItems
-//       totalQty
-//       totalAmount
-//       warehouseId
-//       warehouse {
-//         id
-//         displayName
-//       }
-//       businessPartnerId
-//       businessPartner {
-//         id
-//         displayName
-//       }
-//     }
-//   }
-// `;
+export const GET_SELECTED_HEADER = gql`
+  query GetSelectedHeader($id: Int!) {
+    getHeaderById(id: $id) {
+      id
+      transactionDate
+      number
+      numberOfItems
+      totalQty
+      totalAmount
+      warehouseId
+      warehouse {
+        id
+        displayName
+      }
+      businessPartnerId
+      businessPartner {
+        id
+        displayName
+      }
+    }
+  }
+`;
 
 // export const GET_SELECTED_LINE = gql`
 //   query GetSelectedLine($id: Int!) {

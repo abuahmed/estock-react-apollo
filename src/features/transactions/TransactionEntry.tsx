@@ -24,6 +24,8 @@ import {
   setSelectedLine,
   resetLines,
   setSelectedHeader,
+  fetchHeaders,
+  addLine,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -52,11 +54,14 @@ import Save from "@material-ui/icons/Save";
 import { selectItems } from "../items/itemsSlice";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import { Item } from "../items/types/itemTypes";
+import { lineSchema } from "./validation";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
     id: string;
   };
+  const [tranHeader, setTranHeader] = useState<TransactionHeader>({ type });
+  const [tranLine, setTranLine] = useState<TransactionLine>({});
   const dispatch = useAppDispatch();
   const [leftItems, setLeftItems] = useState<Item[]>([]);
   const { items } = useAppSelector(selectItems);
@@ -74,19 +79,31 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   useEffect(() => {
     dispatch(changePageTitle(`${type} Entry`));
     if (id && id !== "0") {
-      const hd = headers.find((h) => h.id === parseInt(id));
-      let ln: TransactionLine = { header: hd };
-      dispatch(setSelectedHeader(hd));
-      dispatch(setSelectedLine(ln));
-      dispatch(fetchLines(parseInt(id)));
+      if (headers.length === 0) {
+        dispatch(fetchHeaders(type));
+      } else {
+        const hd = headers.find((h) => h.id === parseInt(id));
+        let ln: TransactionLine = { header: hd };
+        dispatch(setSelectedHeader(hd));
+        dispatch(setSelectedLine(ln));
+        dispatch(fetchLines(parseInt(id)));
+      }
     } else {
       resetFields();
     }
-  }, [type]);
+  }, [type, headers]);
 
   useEffect(() => {
     setLeftItems(items.filter((i) => !lines.some((l) => l.item?.id === i.id)));
   }, [lines, items]);
+
+  useEffect(() => {
+    setTranHeader(selectedHeader);
+  }, [selectedHeader]);
+
+  useEffect(() => {
+    setTranLine(selectedLine);
+  }, [selectedLine]);
 
   function resetFields() {
     const hd: TransactionHeader = {
@@ -94,6 +111,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       transactionDate: new Date(),
       number: "...",
     };
+    dispatch(setSelectedHeader(hd));
     let ln: TransactionLine = { header: hd };
     dispatch(setSelectedLine(ln));
     dispatch(resetLines());
@@ -160,7 +178,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
               <>
                 <Formik
                   enableReinitialize={true}
-                  initialValues={selectedHeader as TransactionHeader}
+                  initialValues={tranHeader as TransactionHeader}
                   onSubmit={(values, actions) => {
                     actions.setSubmitting(false);
                     //dispatch(addTransactionHeader(values));
@@ -180,7 +198,13 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                               inputFormat="dd/MM/yyyy"
                               minDate={new Date("2021-01-01")}
                               value={props.values.transactionDate}
-                              onChange={props.handleChange}
+                              onChange={(value) => {
+                                setTranHeader({
+                                  ...tranHeader,
+                                  transactionDate: value as Date,
+                                });
+                                props.setFieldValue("transactionDate", value);
+                              }}
                               renderInput={(params) => (
                                 <TextField
                                   {...params}
@@ -227,12 +251,12 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                 <Divider variant="middle" sx={{ my: 2 }} />
                 <Formik
                   enableReinitialize={true}
-                  initialValues={selectedLine as TransactionLine}
+                  validationSchema={lineSchema}
+                  initialValues={tranLine as TransactionLine}
                   onSubmit={(values, actions) => {
                     actions.setSubmitting(false);
-                    values = { ...values, header: selectedHeader };
-                    console.log(values);
-                    //dispatch(addTransactionLine(values));
+                    values = { ...values, header: tranHeader };
+                    dispatch(addLine(values));
                   }}
                 >
                   {(props: FormikProps<TransactionLine>) => (
@@ -252,7 +276,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                             sx={{ mt: 1 }}
                             onChange={(e, value) => {
                               props.setFieldValue(
-                                "itemId",
+                                "item",
                                 value !== null ? value : null
                               );
                             }}
@@ -267,7 +291,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         </Grid>
                         <Grid item sm={2} xs={12}>
                           <FormikTextField
-                            formikKey="Qty"
+                            formikKey="qty"
                             label="Quantity"
                             type={"number"}
                           />

@@ -4,7 +4,14 @@ import { createAsyncThunk, createSlice, ThunkDispatch } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
 import {
+  CREATE_UPDATE_HEADER,
+  CREATE_UPDATE_LINE,
+  REMOVE_HEADER,
+  REMOVE_LINE,
+} from "../../apollo/mutations/transactions";
+import {
   GET_ALL_TRANSACTIONS,
+  GET_SELECTED_HEADER,
   GET_TRANSACTION_LINES,
 } from "../../apollo/queries/transactions";
 
@@ -64,107 +71,171 @@ export const fetchLines = createAsyncThunk<
   }
 });
 
-// export const getItem = createAsyncThunk<
-//   any,
-//   number,
-//   { rejectValue: AuthError }
-// >("items/getItem", async (_id, thunkAPI) => {
-//   const { rejectWithValue } = thunkAPI;
-//   try {
-//     const response = await apolloClient.query({
-//       query: GET_SELECTED_ITEM,
-//       variables: { id: _id },
-//     });
+export const getHeader = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("transactions/getHeader", async (_id, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const response = await apolloClient.query({
+      query: GET_SELECTED_HEADER,
+      variables: { id: _id },
+    });
 
-//     if (response && response.data && response.data.getItem) {
-//       return response.data.getItem as Item;
-//     }
-//   } catch (error: any) {
-//     const { code, stack } = error;
-//     const message =
-//       error.response && error.response.data.message
-//         ? error.response.data.message
-//         : error.message;
-//     return rejectWithValue({ code, message, id: uuidv4(), stack });
-//   }
-// });
-// export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
-//   "items/addItem",
-//   async (arg, thunkAPI) => {
-//     const { rejectWithValue, getState, dispatch } = thunkAPI;
-//     try {
-//       let item = { ...arg };
-//       item.itemCategory = {
-//         id: item.itemCategoryId as number,
-//       };
-//       item.unitOfMeasure = {
-//         id: item.unitOfMeasureId as number,
-//       };
-//       const response = await apolloClient.mutate({
-//         mutation: ADD_UPDATE_ITEM,
-//         variables: {
-//           ...item,
-//         },
-//       });
+    if (response && response.data && response.data.getHeaderById) {
+      return response.data.getHeaderById as TransactionHeader;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 
-//       if (response && response.data && response.data.createItem) {
-//         const {
-//           items: { items },
-//         } = getState() as { items: ItemsState };
-//         let restItems = [...items];
-//         const addedItem = (await response.data.createItem) as Item;
-//         if (arg && arg.id) {
-//           restItems = restItems.filter((it) => it.id !== arg.id);
-//         }
-//         restItems.push(addedItem);
-//         dispatch(setItems(restItems));
-//         await setSuccessAction(dispatch, {
-//           message: "Item Successfully Saved",
-//         });
+export const addHeader = createAsyncThunk<
+  any,
+  TransactionHeader,
+  { rejectValue: AuthError }
+>("transactions/addHeader", async (arg, thunkAPI) => {
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: CREATE_UPDATE_HEADER,
+      variables: {
+        ...arg,
+      },
+    });
 
-//         return addedItem;
-//       }
-//     } catch (error: any) {
-//       const { code, stack } = error;
-//       const message = error.message;
-//       dispatch(setSelectedItem(arg));
-//       await setErrorAction(dispatch, { message });
-//       //error.graphQLErrors[0].extensions.exception.response.status;
-//       return rejectWithValue({ code, message, id: uuidv4(), stack });
-//     }
-//   }
-// );
+    if (response && response.data && response.data.createUpdateHeader) {
+      const {
+        transactions: { headers },
+      } = getState() as { transactions: TransactionsState };
+      let restItems = [...headers];
+      const addedItem = (await response.data
+        .createUpdateHeader) as TransactionHeader;
+      if (arg && arg.id) {
+        restItems = restItems.filter((it) => it.id !== arg.id);
+      }
+      restItems.push(addedItem);
+      dispatch(setHeaders(restItems));
+      await setSuccessAction(dispatch, {
+        message: "Item Successfully Saved",
+      });
 
-// export const removeItem = createAsyncThunk<
-//   any,
-//   number,
-//   { rejectValue: AuthError }
-// >("items/removeItem", async (id, thunkAPI) => {
-//   const { rejectWithValue, getState, dispatch } = thunkAPI;
-//   try {
-//     const response = await apolloClient.mutate({
-//       mutation: REMOVE_ITEM,
-//       variables: { id },
-//     });
+      return addedItem;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    dispatch(setSelectedHeader(arg));
+    await setErrorAction(dispatch, { message });
 
-//     if (response && response.data && response.data.removeItem) {
-//       const {
-//         items: { items },
-//       } = getState() as { items: ItemsState };
-//       let restItems = [...items];
-//       restItems = restItems.filter((item) => item.id !== id);
-//       dispatch(setItems(restItems));
-//       return restItems as Item[];
-//     }
-//   } catch (error: any) {
-//     const { code, stack } = error;
-//     const message =
-//       error.errors && error.errors[0].message
-//         ? error.errors[0].message
-//         : error.message;
-//     return rejectWithValue({ code, message, id: uuidv4(), stack });
-//   }
-// });
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+export const addLine = createAsyncThunk<
+  any,
+  TransactionLine,
+  { rejectValue: AuthError }
+>("transactions/addLine", async (arg, thunkAPI) => {
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  try {
+    let line = {
+      ...arg,
+      itemId: arg.item?.id,
+      headerId: 16,
+    };
+    console.log(line);
+    const response = await apolloClient.mutate({
+      mutation: CREATE_UPDATE_LINE,
+    });
+    //console.log(response.errors[0]?.message);
+
+    if (response && response.data && response.data.createUpdateLine) {
+      const {
+        transactions: { lines },
+      } = getState() as { transactions: TransactionsState };
+      let restItems = [...lines];
+      const addedLine = (await response.data
+        .createUpdateLine) as TransactionLine;
+      if (arg && arg.id) {
+        restItems = restItems.filter((it) => it.id !== arg.id);
+      }
+      restItems.push(addedLine);
+      dispatch(setLines(restItems));
+      await setSuccessAction(dispatch, {
+        message: "Item Successfully Saved",
+      });
+
+      return addedLine;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    dispatch(setSelectedLine(arg));
+    await setErrorAction(dispatch, { message });
+
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+export const removeHeader = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("transactions/removeHeader", async (id, thunkAPI) => {
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: REMOVE_HEADER,
+      variables: { id },
+    });
+
+    if (response && response.data && response.data.removeHeader) {
+      const {
+        transactions: { headers },
+      } = getState() as { transactions: TransactionsState };
+      let restItems = [...headers];
+      restItems = restItems.filter((item) => item.id !== id);
+      dispatch(setHeaders(restItems));
+      return restItems as TransactionHeader[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+export const removeLine = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("transactions/removeLine", async (id, thunkAPI) => {
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: REMOVE_LINE,
+      variables: { id },
+    });
+
+    if (response && response.data && response.data.removeLine) {
+      const {
+        transactions: { lines },
+      } = getState() as { transactions: TransactionsState };
+      let restItems = [...lines];
+      restItems = restItems.filter((item) => item.id !== id);
+      dispatch(setLines(restItems));
+      return restItems as TransactionLine[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 
 async function setSuccessAction(
   dispatch: ThunkDispatch<any, any, any>,
@@ -194,7 +265,7 @@ const defaultValues: TransactionLine = {
 const initialState: TransactionsState = {
   headers: [],
   lines: [],
-  selectedHeader: {},
+  selectedHeader: { type: TransactionType.Purchase },
   selectedLine: {},
   loading: "idle",
   currentRequestId: undefined,
@@ -225,7 +296,7 @@ export const transactionsSlice = createSlice({
       state.selectedLine = payload;
     },
     resetSelectedHeader: (state) => {
-      state.selectedHeader = {};
+      state.selectedHeader = { type: TransactionType.Purchase };
     },
     setSelectedHeader: (state, { payload }) => {
       state.selectedHeader = payload;
@@ -268,44 +339,59 @@ export const transactionsSlice = createSlice({
       state.error = payload;
     });
 
-    // builder.addCase(getItem.pending, (state, { meta }) => {
-    //   state.loading = "pending";
-    // });
-    // builder.addCase(getItem.fulfilled, (state, { payload, meta }) => {
-    //   state.loading = "idle";
-    //   state.selectedItem = payload;
-    // });
-    // builder.addCase(getItem.rejected, (state, { payload, meta, error }) => {
-    //   state.loading = "idle";
-    //   state.error = error;
-    // });
+    builder.addCase(getHeader.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(getHeader.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.selectedHeader = payload;
+    });
+    builder.addCase(getHeader.rejected, (state, { payload, meta, error }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
 
-    // builder.addCase(addItem.pending, (state, { meta }) => {
-    //   state.loading = "pending";
-    // });
-    // builder.addCase(addItem.fulfilled, (state, { payload, meta }) => {
-    //   state.loading = "idle";
-    //   state.selectedItem = payload;
-    //   //state.success = true;
-    // });
-    // builder.addCase(addItem.rejected, (state, { payload, meta, error }) => {
-    //   //console.log(payload);
-    //   state.loading = "idle";
-    //   //state.error = payload;
-    // });
+    builder.addCase(addLine.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(addLine.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.selectedLine = payload;
+    });
+    builder.addCase(addLine.rejected, (state, { payload, meta, error }) => {
+      //console.log(payload);
+      state.loading = "idle";
+      //state.error = payload;
+    });
 
-    // builder.addCase(removeItem.pending, (state, { meta }) => {
-    //   state.loading = "pending";
-    // });
-    // builder.addCase(removeItem.fulfilled, (state, { payload, meta }) => {
-    //   state.loading = "idle";
-    //   state.items = payload;
-    //   state.success = { message: "Item Removed Successfully" };
-    // });
-    // builder.addCase(removeItem.rejected, (state, { payload, meta, error }) => {
-    //   state.loading = "idle";
-    //   state.error = error;
-    // });
+    builder.addCase(removeHeader.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(removeHeader.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.headers = payload;
+      state.success = { message: "Transactions Removed Successfully" };
+    });
+    builder.addCase(
+      removeHeader.rejected,
+      (state, { payload, meta, error }) => {
+        state.loading = "idle";
+        state.error = payload;
+      }
+    );
+
+    builder.addCase(removeLine.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(removeLine.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.lines = payload;
+      state.success = { message: "Transaction Items Removed Successfully" };
+    });
+    builder.addCase(removeLine.rejected, (state, { payload, meta, error }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
   },
 });
 

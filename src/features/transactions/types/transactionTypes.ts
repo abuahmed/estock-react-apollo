@@ -53,7 +53,7 @@ export type TransactionHeader = {
   isEnabled?: boolean;
   createdByUserId?: number;
   modifiedByUserId?: number;
-  type?: TransactionType;
+  type: TransactionType;
   status?: TransactionStatus;
   number?: string;
   numberOfItems?: number;

@@ -77,9 +77,9 @@ export const ItemEntry = () => {
     if (categories.length === 0) dispatch(fetchItemCategories("all"));
     if (uoms.length === 0) dispatch(fetchItemUoms("all"));
     if (id && id !== "0") {
-      const hd = items.find((h) => h.id === parseInt(id));
-      dispatch(setSelectedItem(hd));
-      //dispatch(getItem(parseInt(id)));
+      const itm = items.find((h) => h.id === parseInt(id));
+      if (itm) dispatch(setSelectedItem(itm));
+      else dispatch(getItem(parseInt(id)));
     } else {
       resetFields();
     }
