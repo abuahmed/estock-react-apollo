@@ -126,6 +126,7 @@ export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
       item.unitOfMeasure = {
         id: item.unitOfMeasureId as number,
       };
+      console.log(arg);
       const response = await apolloClient.mutate({
         mutation: ADD_UPDATE_ITEM,
         variables: {

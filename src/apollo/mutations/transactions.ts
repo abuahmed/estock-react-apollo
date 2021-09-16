@@ -5,8 +5,6 @@ export const CREATE_UPDATE_HEADER = gql`
     $type: TransactionType
     $transactionDate: Date
     $id: Int
-    $displayName: String!
-    $description: String
     $warehouseId: Int
     $businessPartnerId: Int
   ) {
@@ -31,16 +29,54 @@ export const CREATE_UPDATE_HEADER = gql`
 `;
 
 export const CREATE_UPDATE_LINE = gql`
-  mutation CreateUpdateTransaction {
+  mutation CreateUpdateLine(
+    $id: Int
+    $headerId: Int
+    $type: TransactionType!
+    $transactionDate: DateTime
+    $warehouseId: Int
+    $businessPartnerId: Int
+    $itemId: Int
+    $qty: Float
+    $eachPrice: Float
+  ) {
     createUpdateLine(
-      input: { headerId: 16, itemId: 112, qty: 11, eachPrice: 22 }
+      input: {
+        id: $id
+        header: {
+          id: $headerId
+          type: $type
+          transactionDate: $transactionDate
+          warehouseId: $warehouseId
+          businessPartnerId: $businessPartnerId
+        }
+        itemId: $itemId
+        qty: $qty
+        eachPrice: $eachPrice
+      }
     ) {
       id
-      number
-      warehouseId
-      businessPartner {
+      item {
         id
         displayName
+      }
+      qty
+      eachPrice
+      header {
+        id
+        number
+        transactionDate
+        numberOfItems
+        totalAmount
+        totalQty
+        warehouse {
+          id
+          displayName
+        }
+        businessPartner {
+          id
+          displayName
+        }
       }
     }
   }
@@ -57,7 +93,20 @@ export const REMOVE_HEADER = gql`
 export const REMOVE_LINE = gql`
   mutation removeLine($id: Int!) {
     removeLine(id: $id) {
-      affectedRows
+      id
+      number
+      transactionDate
+      numberOfItems
+      totalAmount
+      totalQty
+      warehouse {
+        id
+        displayName
+      }
+      businessPartner {
+        id
+        displayName
+      }
     }
   }
 `;

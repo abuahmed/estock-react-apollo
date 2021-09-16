@@ -4,7 +4,11 @@ import { Helmet } from "react-helmet";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 // Slices
-import { fetchHeaders, selectTransactions } from "./transactionsSlice";
+import {
+  fetchHeaders,
+  removeHeader,
+  selectTransactions,
+} from "./transactionsSlice";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -46,7 +50,7 @@ export const Headers = ({ type }: HeaderProps) => {
   }, [type]);
 
   const DeleteHeader = (id: number) => {
-    //dispatch(removeHeader(id));
+    dispatch(removeHeader(id));
   };
 
   return (

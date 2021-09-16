@@ -26,6 +26,8 @@ import {
   setSelectedHeader,
   fetchHeaders,
   addLine,
+  removeLine,
+  setLines,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -83,7 +85,12 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
         dispatch(fetchHeaders(type));
       } else {
         const hd = headers.find((h) => h.id === parseInt(id));
-        let ln: TransactionLine = { header: hd };
+        let ln: TransactionLine = {
+          header: hd,
+          item: { displayName: "select item", id: 0 },
+          qty: 0,
+          eachPrice: 0,
+        };
         dispatch(setSelectedHeader(hd));
         dispatch(setSelectedLine(ln));
         dispatch(fetchLines(parseInt(id)));
@@ -112,11 +119,25 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       number: "...",
     };
     dispatch(setSelectedHeader(hd));
-    let ln: TransactionLine = { header: hd };
+    let ln: TransactionLine = {
+      header: hd,
+      item: { displayName: "select item", id: 0 },
+      qty: 0,
+      eachPrice: 0,
+    };
     dispatch(setSelectedLine(ln));
     dispatch(resetLines());
   }
 
+  const DeleteLine = (id: number) => {
+    dispatch(removeLine(id));
+  };
+  const SetSelectedLine = (id: number) => {
+    // setLeftItems(leftItems.concat(lines.filter((l) => l.item.id === id)));
+    dispatch(
+      setSelectedLine(lines.find((cat) => cat.id === id) as TransactionLine)
+    );
+  };
   return (
     <>
       <Helmet>
@@ -186,11 +207,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                 >
                   {(props: FormikProps<TransactionHeader>) => (
                     <Form>
-                      <Grid
-                        container
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
+                      <Grid container spacing={1} alignItems="center">
                         <Grid item sm={4} xs={12}>
                           <LocalizationProvider dateAdapter={AdapterDateFns}>
                             <DesktopDatePicker
@@ -255,21 +272,19 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                   initialValues={tranLine as TransactionLine}
                   onSubmit={(values, actions) => {
                     actions.setSubmitting(false);
-                    values = { ...values, header: tranHeader };
+                    values = { ...values, header: { ...tranHeader, type } };
+                    //console.log(values);
                     dispatch(addLine(values));
                   }}
                 >
                   {(props: FormikProps<TransactionLine>) => (
                     <Form>
-                      <Grid
-                        container
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
+                      <Grid container spacing={1} alignItems="center">
                         <Grid item sm={4} xs={12}>
                           <Autocomplete
                             id="itemId"
                             options={leftItems}
+                            value={props.values?.item}
                             getOptionLabel={(option) =>
                               option.displayName as string
                             }
@@ -329,6 +344,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                   <StyledTableCell>Item Name</StyledTableCell>
                   <StyledTableCell align="right">Qty</StyledTableCell>
                   <StyledTableCell align="right">Each Price</StyledTableCell>
+                  <StyledTableCell align="right">Total Price</StyledTableCell>
                   <StyledTableCell>Actions</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -363,13 +379,30 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       >
                         {row.eachPrice}
                       </StyledTableCell>
+                      <StyledTableCell
+                        scope="row"
+                        sx={{ padding: "0px 16px" }}
+                        align="right"
+                      >
+                        {(row.qty as number) * (row.eachPrice as number)}
+                      </StyledTableCell>
 
                       <StyledTableCell sx={{ padding: "0px 16px" }}>
                         <Stack direction="row" spacing={2} alignItems="center">
-                          <IconButton color="primary">
+                          <IconButton
+                            color="primary"
+                            onClick={() =>
+                              SetSelectedLine(row ? (row.id as number) : 0)
+                            }
+                          >
                             <Edit />
                           </IconButton>
-                          <IconButton color="secondary">
+                          <IconButton
+                            color="secondary"
+                            onClick={() =>
+                              DeleteLine(row ? (row.id as number) : 0)
+                            }
+                          >
                             <Delete />
                           </IconButton>
                         </Stack>
@@ -383,21 +416,23 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                     scope="row"
                     align="left"
                   >
-                    {selectedLine.header?.numberOfItems} Items
+                    {selectedHeader?.numberOfItems} Items
                   </StyledTableCell>
                   <StyledTableCell
                     sx={{ fontWeight: "900" }}
                     scope="row"
                     align="right"
                   >
-                    Total Qty: {selectedLine.header?.totalQty}
+                    Total Qty: {selectedHeader?.totalQty}
                   </StyledTableCell>
+                  <StyledTableCell></StyledTableCell>
+
                   <StyledTableCell
                     sx={{ fontWeight: "900", fontSize: "24px" }}
                     scope="row"
                     align="right"
                   >
-                    Total Amount : {selectedLine.header?.totalAmount}
+                    Total Amount : {selectedHeader?.totalAmount}
                   </StyledTableCell>
 
                   <StyledTableCell></StyledTableCell>

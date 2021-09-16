@@ -3,17 +3,6 @@ import { createAsyncThunk, createSlice, ThunkDispatch } from "@reduxjs/toolkit";
 
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
-import {
-  CREATE_UPDATE_HEADER,
-  CREATE_UPDATE_LINE,
-  REMOVE_HEADER,
-  REMOVE_LINE,
-} from "../../apollo/mutations/transactions";
-import {
-  GET_ALL_TRANSACTIONS,
-  GET_SELECTED_HEADER,
-  GET_TRANSACTION_LINES,
-} from "../../apollo/queries/transactions";
 
 import { RootState } from "../../app/store";
 
@@ -24,6 +13,17 @@ import {
   TransactionsState,
   TransactionType,
 } from "./types/transactionTypes";
+import {
+  CREATE_UPDATE_HEADER,
+  CREATE_UPDATE_LINE,
+  REMOVE_HEADER,
+  REMOVE_LINE,
+} from "../../apollo/mutations";
+import {
+  GET_ALL_TRANSACTIONS,
+  GET_SELECTED_HEADER,
+  GET_TRANSACTION_LINES,
+} from "../../apollo/queries";
 
 export const fetchHeaders = createAsyncThunk<
   any,
@@ -139,17 +139,25 @@ export const addLine = createAsyncThunk<
   any,
   TransactionLine,
   { rejectValue: AuthError }
->("transactions/addLine", async (arg, thunkAPI) => {
+>("transactions/addLine", async (tranLine, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
-    let line = {
-      ...arg,
-      itemId: arg.item?.id,
-      headerId: 16,
-    };
-    console.log(line);
+    const { id, item, header, qty, eachPrice } = tranLine;
+
+    //console.log(tranLine);
     const response = await apolloClient.mutate({
       mutation: CREATE_UPDATE_LINE,
+      variables: {
+        id: id,
+        headerId: header?.id,
+        type: header?.type,
+        transactionDate: header?.transactionDate,
+        businessPartnerId: 1,
+        warehouseId: 3,
+        itemId: item?.id,
+        qty: qty,
+        eachPrice: eachPrice,
+      },
     });
     //console.log(response.errors[0]?.message);
 
@@ -160,21 +168,22 @@ export const addLine = createAsyncThunk<
       let restItems = [...lines];
       const addedLine = (await response.data
         .createUpdateLine) as TransactionLine;
-      if (arg && arg.id) {
-        restItems = restItems.filter((it) => it.id !== arg.id);
+      if (tranLine && tranLine.id) {
+        restItems = restItems.filter((it) => it.id !== tranLine.id);
       }
       restItems.push(addedLine);
       dispatch(setLines(restItems));
+      //dispatch(setSelectedHeader(addedLine.header));
       await setSuccessAction(dispatch, {
-        message: "Item Successfully Saved",
+        message: `Item Successfully Added`,
       });
 
-      return addedLine;
+      return addedLine.header;
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
-    dispatch(setSelectedLine(arg));
+    dispatch(setSelectedLine(tranLine));
     await setErrorAction(dispatch, { message });
 
     return rejectWithValue({ code, message, id: uuidv4(), stack });
@@ -228,6 +237,10 @@ export const removeLine = createAsyncThunk<
       let restItems = [...lines];
       restItems = restItems.filter((item) => item.id !== id);
       dispatch(setLines(restItems));
+      dispatch(
+        setSelectedHeader(response.data.removeLine as TransactionHeader)
+      );
+
       return restItems as TransactionLine[];
     }
   } catch (error: any) {
@@ -258,6 +271,7 @@ async function setErrorAction(
 }
 
 const defaultValues: TransactionLine = {
+  item: { displayName: "select item", id: 0 },
   qty: 0,
   eachPrice: 0,
 };
@@ -356,7 +370,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(addLine.fulfilled, (state, { payload, meta }) => {
       state.loading = "idle";
-      state.selectedLine = payload;
+      state.selectedHeader = payload;
     });
     builder.addCase(addLine.rejected, (state, { payload, meta, error }) => {
       //console.log(payload);
