@@ -14,6 +14,7 @@ import LandingPage from "../features/home/LandingPage";
 import { ItemEntry } from "../features/items/ItemEntry";
 import { Items } from "../features/items/Items";
 import { Headers } from "../features/transactions/Headers";
+import { Inventories } from "../features/transactions/Inventories";
 import { TransactionEntry } from "../features/transactions/TransactionEntry";
 import { TransactionType } from "../features/transactions/types/transactionTypes";
 import { Users } from "../features/users";
@@ -27,7 +28,7 @@ const routes = (isLoggedIn: Boolean) => [
     element: isLoggedIn ? <DashboardLayout /> : <Navigate to="/login" />,
     children: [
       { path: "dashboard", element: <Dashboard /> },
-      { path: "onHand", element: <Dashboard /> },
+      { path: "onHand", element: <Inventories /> },
       { path: "sale", element: <Headers type={TransactionType.Sale} /> },
       {
         path: "sale/:id",

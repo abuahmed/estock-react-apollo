@@ -22,9 +22,36 @@ import {
 } from "../../apollo/mutations";
 import {
   GET_ALL_TRANSACTIONS,
+  GET_INVENTORIES,
   GET_SELECTED_HEADER,
   GET_TRANSACTION_LINES,
 } from "../../apollo/queries";
+import { Inventory } from "./types/transactionTypes";
+
+export const fetchInventories = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: AuthError }
+>("transactions/fetchInventories", async (_arg, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    const response = await apolloClient.query({
+      query: GET_INVENTORIES,
+    });
+
+    if (response && response.data && response.data.inventories) {
+      return response.data.inventories as Inventory[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 
 export const fetchHeaders = createAsyncThunk<
   any,
@@ -300,6 +327,7 @@ const defaultValues: TransactionLine = {
 };
 
 const initialState: TransactionsState = {
+  inventories: [],
   headers: [],
   lines: [],
   selectedHeader: { type: TransactionType.Purchase },
@@ -360,6 +388,18 @@ export const transactionsSlice = createSlice({
       state.headers = payload;
     });
     builder.addCase(fetchHeaders.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
+
+    builder.addCase(fetchInventories.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(fetchInventories.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.inventories = payload;
+    });
+    builder.addCase(fetchInventories.rejected, (state, { payload }) => {
       state.loading = "idle";
       state.error = payload;
     });

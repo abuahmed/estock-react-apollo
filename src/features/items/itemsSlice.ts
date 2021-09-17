@@ -13,6 +13,7 @@ import {
   GET_ALL_ITEMS,
   GET_ALL_ITEM_CATEGORIES,
   GET_ALL_ITEM_UOMS,
+  GET_INVENTORIES,
   GET_SELECTED_ITEM,
 } from "../../apollo/queries";
 

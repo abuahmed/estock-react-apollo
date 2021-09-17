@@ -22,6 +22,30 @@ export const GET_ALL_TRANSACTIONS = gql`
     }
   }
 `;
+export const GET_INVENTORIES = gql`
+  query {
+    inventories {
+      id
+      item {
+        id
+        displayName
+        itemCategory {
+          id
+          displayName
+        }
+        unitOfMeasure {
+          id
+          displayName
+        }
+      }
+      warehouse {
+        id
+        displayName
+      }
+      qtyOnHand
+    }
+  }
+`;
 export const GET_TRANSACTION_LINES = gql`
   query GetLines($headerId: Int!) {
     lines(headerId: $headerId) {

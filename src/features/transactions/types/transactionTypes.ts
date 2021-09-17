@@ -97,7 +97,23 @@ export enum TransactionStatus {
   Refunded = "Refunded",
 }
 
+export type Inventory = {
+  id?: number;
+  uuid?: string;
+  isEnabled?: boolean;
+  createdByUserId?: number;
+  modifiedByUserId?: number;
+  dateRecordCreated?: Date;
+  dateLastModified?: Date;
+  warehouseId?: number;
+  itemId?: number;
+  qtyOnHand?: number;
+  warehouse?: Warehouse;
+  item?: Item;
+};
+
 export type TransactionsState = {
+  inventories: Inventory[];
   headers: TransactionHeader[];
   lines: TransactionLine[];
   selectedHeader: TransactionHeader;
