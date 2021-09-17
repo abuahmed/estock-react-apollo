@@ -29,6 +29,7 @@ import {
   addLine,
   removeLine,
   setLines,
+  postHeader,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -38,7 +39,14 @@ import {
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
 import { changePageTitle } from "../settings/settingsSlice";
-import { Add, Backspace, Delete, Edit, Settings } from "@material-ui/icons";
+import {
+  Add,
+  Backspace,
+  Delete,
+  Edit,
+  PostAdd,
+  Settings,
+} from "@material-ui/icons";
 import {
   Grid,
   TextField,
@@ -139,6 +147,9 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       setSelectedLine(lines.find((cat) => cat.id === id) as TransactionLine)
     );
   };
+  function postTransaction() {
+    dispatch(postHeader(selectedHeader.id as number));
+  }
   return (
     <>
       <Helmet>
@@ -179,8 +190,9 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
               variant="h5"
               component="h5"
               sx={{ display: "flex", justifyItems: "center" }}
+              onClick={postTransaction}
             >
-              <Settings />
+              <PostAdd />
               POST
             </Typography>
           </Button>

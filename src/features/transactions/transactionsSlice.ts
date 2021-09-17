@@ -16,6 +16,7 @@ import {
 import {
   CREATE_UPDATE_HEADER,
   CREATE_UPDATE_LINE,
+  POST_HEADER,
   REMOVE_HEADER,
   REMOVE_LINE,
 } from "../../apollo/mutations";
@@ -186,6 +187,28 @@ export const addLine = createAsyncThunk<
     dispatch(setSelectedLine(tranLine));
     await setErrorAction(dispatch, { message });
 
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+export const postHeader = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("transactions/postHeader", async (id, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: POST_HEADER,
+      variables: { id },
+    });
+
+    if (response && response.data && response.data.postHeader) {
+      return response.data.postHeader as TransactionHeader;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -393,6 +416,19 @@ export const transactionsSlice = createSlice({
         state.error = payload;
       }
     );
+
+    builder.addCase(postHeader.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(postHeader.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedHeader = payload;
+      state.success = { message: "Transaction Posted Successfully" };
+    });
+    builder.addCase(postHeader.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
 
     builder.addCase(removeLine.pending, (state, { meta }) => {
       state.loading = "pending";
