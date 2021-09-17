@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Helmet } from "react-helmet";
-
+import { format } from "date-fns";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 // Slices
@@ -109,7 +109,10 @@ export const Headers = ({ type }: HeaderProps) => {
                 headers.map((row) => (
                   <StyledTableRow key={row.id}>
                     <StyledTableCell component="th" scope="row">
-                      {row.transactionDate}
+                      {format(
+                        new Date(row.transactionDate as Date),
+                        "MMM-dd-yyyy"
+                      )}
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       {row.warehouse && row.warehouse.displayName}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
-import DesktopDatePicker from "@material-ui/lab/DesktopDatePicker";
+//import DesktopDatePicker from "@material-ui/lab/DesktopDatePicker";
+import DateTimePicker from "@material-ui/lab/DateTimePicker";
 
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
@@ -210,9 +211,9 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       <Grid container spacing={1} alignItems="center">
                         <Grid item sm={4} xs={12}>
                           <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DesktopDatePicker
+                            <DateTimePicker
                               label={type + " Date"}
-                              inputFormat="dd/MM/yyyy"
+                              inputFormat="MMM-dd-yyyy"
                               minDate={new Date("2021-01-01")}
                               value={props.values.transactionDate}
                               onChange={(value) => {
