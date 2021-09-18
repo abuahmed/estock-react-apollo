@@ -32,6 +32,7 @@ import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import { fetchItems, selectItems } from "../items/itemsSlice";
 import { HeaderProps } from "./types/transactionTypes";
+import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 
 export const Headers = ({ type }: HeaderProps) => {
   const dispatch = useAppDispatch();
@@ -113,6 +114,12 @@ export const Headers = ({ type }: HeaderProps) => {
                         new Date(row.transactionDate as Date),
                         "MMM-dd-yyyy"
                       )}
+                      (
+                      {getAmharicCalendarFormatted(
+                        row.transactionDate as Date,
+                        "-"
+                      )}
+                      )
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       {row.warehouse && row.warehouse.displayName}
