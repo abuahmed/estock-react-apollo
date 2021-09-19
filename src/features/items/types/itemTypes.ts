@@ -1,5 +1,3 @@
-import { Warehouse } from "../../auth/types/authType";
-
 export type Category = {
   id?: number;
   uuid?: string;

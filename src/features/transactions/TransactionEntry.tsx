@@ -28,7 +28,6 @@ import {
   fetchHeaders,
   addLine,
   removeLine,
-  setLines,
   postHeader,
 } from "./transactionsSlice";
 import {
@@ -39,14 +38,7 @@ import {
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
 import { changePageTitle } from "../settings/settingsSlice";
-import {
-  Add,
-  Backspace,
-  Delete,
-  Edit,
-  PostAdd,
-  Settings,
-} from "@material-ui/icons";
+import { Add, Backspace, Delete, Edit, PostAdd } from "@material-ui/icons";
 import {
   Grid,
   TextField,

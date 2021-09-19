@@ -14,14 +14,18 @@ import Skeleton from "@material-ui/core/Skeleton";
 import { changePageTitle } from "../settings/settingsSlice";
 import {
   Box,
+  Button,
+  Checkbox,
   Divider,
+  FormControlLabel,
+  FormGroup,
   IconButton,
   Stack,
   Tab,
   Tabs,
   Typography,
 } from "@material-ui/core";
-import { History, ViewList } from "@material-ui/icons";
+import { Backspace, History, ViewList } from "@material-ui/icons";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import {
   fetchInventories,
@@ -39,6 +43,32 @@ export const Inventories = () => {
     setTabValue(newValue);
   };
 
+  // const [includeSale, setIncludeSale] = useState(true);
+
+  // const handleChangeSale = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setIncludeSale(event.target.checked);
+  // };
+
+  // const [includePurchase, setIncludePurchase] = useState(true);
+
+  // const handleChangePurchase = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setIncludePurchase(event.target.checked);
+  // };
+
+  const [state, setState] = useState({
+    includeSale: true,
+    includePurchase: true,
+  });
+
+  const handleChangeType = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setState({
+      ...state,
+      [event.target.name]: event.target.checked,
+    });
+  };
+
+  const { includeSale, includePurchase } = state;
+
   const [selectedInventory, setSelectedInventory] = useState<Inventory>({});
   const dispatch = useAppDispatch();
   const { inventories, loading, lines } = useAppSelector(selectTransactions);
@@ -49,19 +79,25 @@ export const Inventories = () => {
     dispatch(changePageTitle("Inventories List"));
   }, []);
 
-  const ChangeTab = (id: number) => {
-    setSelectedInventory(inventories.find((i) => i.id === id) as Inventory);
-    setTabValue(1);
+  const ChangeTab = (id: number, tabIndex: number) => {
+    if (tabIndex === 1)
+      setSelectedInventory(inventories.find((i) => i.id === id) as Inventory);
+    setTabValue(tabIndex);
   };
+  // const SelectInventoryItem = (itemId?: number) => {
+  //   setSelectedInventory(
+  //     inventories.find((i) => i.item?.id === itemId) as Inventory
+  //   );
+  // };
   useEffect(() => {
     dispatch(
       fetchLines({
         itemId: selectedInventory.item?.id,
-        includeSales: true,
-        includePurchases: true,
+        includeSales: includeSale,
+        includePurchases: includePurchase,
       })
     );
-  }, [selectedInventory]);
+  }, [selectedInventory, includeSale, includePurchase]);
 
   return (
     <>
@@ -149,7 +185,7 @@ export const Inventories = () => {
                           >
                             <IconButton
                               color="primary"
-                              onClick={() => ChangeTab(row.id as number)}
+                              onClick={() => ChangeTab(row.id as number, 1)}
                             >
                               <History />
                             </IconButton>
@@ -168,7 +204,53 @@ export const Inventories = () => {
         </>
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
-        <Typography variant="h4" component="div">
+        <>
+          <Box
+            component="div"
+            sx={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button
+              color="secondary"
+              variant="contained"
+              onClick={() => ChangeTab(0, 0)}
+            >
+              <Typography
+                variant="h5"
+                component="h5"
+                sx={{ display: "flex", justifyItems: "center" }}
+              >
+                <Backspace />
+              </Typography>
+            </Button>
+            <Stack direction="row">
+              <FormGroup aria-label="position" row>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={includeSale}
+                      onChange={handleChangeType}
+                      name="includeSale"
+                      inputProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                  label="Include Sales"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={includePurchase}
+                      onChange={handleChangeType}
+                      name="includePurchase"
+                      inputProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                  label="Include Purchases"
+                />
+              </FormGroup>
+            </Stack>
+          </Box>
+          <Divider variant="middle" sx={{ my: 2 }} />
+
           <TableContainer component={Paper} sx={{ mt: "8px" }}>
             <Table size="small" aria-label="a dense table">
               <TableHead>
@@ -251,7 +333,10 @@ export const Inventories = () => {
               </TableBody>
             </Table>
           </TableContainer>
-        </Typography>
+          <Typography variant="h4" component="div">
+            {lines.length} transactions
+          </Typography>
+        </>
       </TabPanel>
     </>
   );
