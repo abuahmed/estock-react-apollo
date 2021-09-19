@@ -102,7 +102,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
         };
         dispatch(setSelectedHeader(hd));
         dispatch(setSelectedLine(ln));
-        dispatch(fetchLines(parseInt(id)));
+        dispatch(fetchLines({ headerId: parseInt(id) }));
       }
     } else {
       resetFields();

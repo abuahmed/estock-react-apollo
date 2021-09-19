@@ -23,9 +23,15 @@ import {
 } from "@material-ui/core";
 import { History, ViewList } from "@material-ui/icons";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
-import { fetchInventories, selectTransactions } from "./transactionsSlice";
+import {
+  fetchInventories,
+  fetchLines,
+  selectTransactions,
+} from "./transactionsSlice";
 import { TabPanel } from "../styles/tabComponents";
 import { Inventory } from "./types/transactionTypes";
+import { format } from "date-fns";
+import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 
 export const Inventories = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -35,7 +41,7 @@ export const Inventories = () => {
 
   const [selectedInventory, setSelectedInventory] = useState<Inventory>({});
   const dispatch = useAppDispatch();
-  const { inventories, loading } = useAppSelector(selectTransactions);
+  const { inventories, loading, lines } = useAppSelector(selectTransactions);
 
   useEffect(() => {
     if (inventories.length === 0) dispatch(fetchInventories("all"));
@@ -47,6 +53,15 @@ export const Inventories = () => {
     setSelectedInventory(inventories.find((i) => i.id === id) as Inventory);
     setTabValue(1);
   };
+  useEffect(() => {
+    dispatch(
+      fetchLines({
+        itemId: selectedInventory.item?.id,
+        includeSales: true,
+        includePurchases: true,
+      })
+    );
+  }, [selectedInventory]);
 
   return (
     <>
@@ -154,7 +169,88 @@ export const Inventories = () => {
       </TabPanel>
       <TabPanel value={tabValue} index={1}>
         <Typography variant="h4" component="div">
-          {selectedInventory.id}
+          <TableContainer component={Paper} sx={{ mt: "8px" }}>
+            <Table size="small" aria-label="a dense table">
+              <TableHead>
+                <StyledTableRow>
+                  <StyledTableCell>Type</StyledTableCell>
+                  <StyledTableCell>Warehouse</StyledTableCell>
+                  <StyledTableCell>Date</StyledTableCell>
+                  <StyledTableCell>Item</StyledTableCell>
+                  <StyledTableCell align="right">Qty</StyledTableCell>
+                  <StyledTableCell align="right">Each Price</StyledTableCell>
+                  <StyledTableCell align="right">Total Price</StyledTableCell>
+                  <StyledTableCell>Actions</StyledTableCell>
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                {loading === "pending" ? (
+                  <StyledTableRow>
+                    <StyledTableCell>
+                      <Skeleton variant="rectangular" height={10} width={100} />
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Skeleton variant="rectangular" height={10} width={100} />
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ) : (
+                  lines &&
+                  lines.map((row) => (
+                    <StyledTableRow key={row.id}>
+                      <StyledTableCell component="th" scope="row">
+                        {row.header?.type}
+                      </StyledTableCell>
+
+                      <StyledTableCell component="th" scope="row">
+                        {row.header?.warehouse?.displayName}
+                      </StyledTableCell>
+
+                      <StyledTableCell component="th" scope="row">
+                        {format(
+                          new Date(row.header?.transactionDate as Date),
+                          "MMM-dd-yyyy"
+                        )}
+                        (
+                        {getAmharicCalendarFormatted(
+                          row.header?.transactionDate as Date,
+                          "-"
+                        )}
+                        )
+                      </StyledTableCell>
+                      <StyledTableCell component="th" scope="row">
+                        {row.item?.displayName}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        scope="row"
+                        sx={{ padding: "0px 16px" }}
+                        align="right"
+                      >
+                        {row.qty}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        scope="row"
+                        sx={{ padding: "0px 16px" }}
+                        align="right"
+                      >
+                        {row.eachPrice}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        scope="row"
+                        sx={{ padding: "0px 16px" }}
+                        align="right"
+                      >
+                        {(row.qty as number) * (row.eachPrice as number)}
+                      </StyledTableCell>
+
+                      <StyledTableCell
+                        sx={{ padding: "0px 16px" }}
+                      ></StyledTableCell>
+                    </StyledTableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Typography>
       </TabPanel>
     </>

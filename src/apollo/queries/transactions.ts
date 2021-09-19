@@ -47,12 +47,36 @@ export const GET_INVENTORIES = gql`
   }
 `;
 export const GET_TRANSACTION_LINES = gql`
-  query GetLines($headerId: Int!) {
-    lines(headerId: $headerId) {
+  query GetLines(
+    $headerId: Int
+    $itemId: Int
+    $includeSales: Boolean
+    $includePurchases: Boolean
+    $includePIs: Boolean
+    $includeTransfers: Boolean
+  ) {
+    lines(
+      headerId: $headerId
+      itemId: $itemId
+      includeSales: $includeSales
+      includePurchases: $includePurchases
+      includePIs: $includePIs
+      includeTransfers: $includeTransfers
+    ) {
       id
       item {
         id
         displayName
+      }
+      header {
+        type
+        transactionDate
+        warehouse {
+          displayName
+        }
+        businessPartner {
+          displayName
+        }
       }
       qty
       eachPrice

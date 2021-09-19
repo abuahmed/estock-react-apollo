@@ -8,6 +8,7 @@ import { RootState } from "../../app/store";
 
 import { AuthError } from "../auth/types/authType";
 import {
+  TransactionArgs,
   TransactionHeader,
   TransactionLine,
   TransactionsState,
@@ -78,15 +79,16 @@ export const fetchHeaders = createAsyncThunk<
 
 export const fetchLines = createAsyncThunk<
   any,
-  number,
+  TransactionArgs,
   { rejectValue: AuthError }
->("transactions/fetchLines", async (headerId, thunkAPI) => {
+>("transactions/fetchLines", async (transactionArgs, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
-
+  //const { headerId,itemId } = transactionArgs;
+  console.log(transactionArgs);
   try {
     const response = await apolloClient.query({
       query: GET_TRANSACTION_LINES,
-      variables: { headerId },
+      variables: { ...transactionArgs },
     });
 
     if (response && response.data && response.data.lines) {

@@ -123,3 +123,14 @@ export type TransactionsState = {
   success: any;
   error: any;
 };
+
+export type TransactionArgs = {
+  skip?: number;
+  take?: number;
+  headerId?: number;
+  itemId?: number;
+  includeSales?: boolean;
+  includePurchases?: boolean;
+  includePIs?: boolean;
+  includeTransfers?: boolean;
+};
