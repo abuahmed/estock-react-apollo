@@ -20,10 +20,8 @@ import {
   Button,
   Checkbox,
   Divider,
-  FormControl,
   FormControlLabel,
   FormGroup,
-  FormLabel,
   IconButton,
   Stack,
   Tab,
@@ -31,7 +29,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { ArrowForward, Backspace, History, ViewList } from "@material-ui/icons";
+import { Backspace, History, ViewList } from "@material-ui/icons";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import {
   fetchInventories,
@@ -42,12 +40,9 @@ import { TabPanel } from "../styles/tabComponents";
 import { Inventory } from "./types/transactionTypes";
 import { addMonths, format } from "date-fns";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
-import {
-  DatePicker,
-  DateTimePicker,
-  LocalizationProvider,
-} from "@material-ui/lab";
+import { DatePicker, LocalizationProvider } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
+import { NavLink } from "react-router-dom";
 
 export const Inventories = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -130,6 +125,8 @@ export const Inventories = () => {
         aria-label="icon label tabs example"
         variant="fullWidth"
         centered
+        textColor="secondary"
+        indicatorColor="secondary"
       >
         <Tab icon={<ViewList />} label="Inventories" />
         <Tab icon={<History />} label="Item History" />
@@ -137,7 +134,7 @@ export const Inventories = () => {
       <TabPanel value={tabValue} index={0}>
         <>
           <Box component="div"></Box>
-          <Divider variant="middle" sx={{ my: 2 }} />
+          {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
 
           <Grid container justifyContent="flex-start">
             <TableContainer component={Paper}>
@@ -356,13 +353,13 @@ export const Inventories = () => {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell>Type</StyledTableCell>
-                  <StyledTableCell>Warehouse</StyledTableCell>
+                  {/* <StyledTableCell>Warehouse</StyledTableCell> */}
                   <StyledTableCell>Date</StyledTableCell>
-                  <StyledTableCell>Item</StyledTableCell>
+                  <StyledTableCell align="center">Number</StyledTableCell>
+                  <StyledTableCell align="center">Item</StyledTableCell>
                   <StyledTableCell align="right">Qty</StyledTableCell>
                   <StyledTableCell align="right">Each Price</StyledTableCell>
                   <StyledTableCell align="right">Total Price</StyledTableCell>
-                  <StyledTableCell>Actions</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -383,9 +380,9 @@ export const Inventories = () => {
                         {row.header?.type}
                       </StyledTableCell>
 
-                      <StyledTableCell component="th" scope="row">
+                      {/* <StyledTableCell component="th" scope="row">
                         {row.header?.warehouse?.displayName}
-                      </StyledTableCell>
+                      </StyledTableCell> */}
 
                       <StyledTableCell component="th" scope="row">
                         {format(
@@ -400,7 +397,22 @@ export const Inventories = () => {
                         )
                       </StyledTableCell>
                       <StyledTableCell component="th" scope="row">
-                        {row.item?.displayName}
+                        <Button
+                          color="primary"
+                          component={NavLink}
+                          to={"/app/" + row.header?.type + "/" + row.header?.id}
+                        >
+                          {row.header?.number}
+                        </Button>
+                      </StyledTableCell>
+                      <StyledTableCell component="th" scope="row">
+                        <Button
+                          color="primary"
+                          component={NavLink}
+                          to={"/app/item/" + row.item?.id}
+                        >
+                          {row.item?.displayName}
+                        </Button>
                       </StyledTableCell>
                       <StyledTableCell
                         scope="row"
@@ -423,10 +435,6 @@ export const Inventories = () => {
                       >
                         {(row.qty as number) * (row.eachPrice as number)}
                       </StyledTableCell>
-
-                      <StyledTableCell
-                        sx={{ padding: "0px 16px" }}
-                      ></StyledTableCell>
                     </StyledTableRow>
                   ))
                 )}

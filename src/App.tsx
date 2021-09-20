@@ -10,7 +10,8 @@ function App() {
   const { user } = useAppSelector(selectAuth);
 
   const isLoggedIn = user ? true : false;
-  const routing = useRoutes(routes(isLoggedIn));
+  const roles = user?.roles ? user?.roles : [];
+  const routing = useRoutes(routes(isLoggedIn, roles));
   return <ThemeProvider theme={themes.custom}>{routing}</ThemeProvider>;
 }
 

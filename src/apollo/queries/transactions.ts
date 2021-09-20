@@ -81,8 +81,10 @@ export const GET_TRANSACTION_LINES = gql`
         displayName
       }
       header {
+        id
         type
         transactionDate
+        number
         warehouse {
           displayName
         }

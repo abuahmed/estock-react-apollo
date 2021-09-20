@@ -32,6 +32,7 @@ import { DrawerHeader } from "../DashboardSidebar";
 import CustomDialog from "../modals/CustomDialog";
 import ChangePassword from "../account/ChangePassword";
 import { logout } from "../../features/auth/authReducers";
+import { RoleTypes } from "../../features/auth/types/authType";
 
 const SidebarContent = () => {
   const dispatch = useAppDispatch();
@@ -266,47 +267,47 @@ const getNavBarItems = (roles: string[]) => {
     {
       href: "/app/dashboard",
       icon: <BarChartIcon />,
-      title: "View Dashboard",
+      title: RoleTypes.ViewDashboard,
     },
     {
       href: "/app/onHand",
       icon: <ListIcon />,
-      title: "OnHand Inventory",
+      title: RoleTypes.OnHandInventory,
     },
     {
       href: "/app/sale",
       icon: <ShoppingCartOutlined />,
-      title: "Sales",
+      title: RoleTypes.ViewSales,
     },
     {
       href: "/app/purchase",
       icon: <ShoppingBagOutlined />,
-      title: "Purchase",
+      title: RoleTypes.ViewPurchase,
     },
     {
       href: "/app/pi",
       icon: <Inventory2Outlined />,
-      title: "Physical Inventory",
+      title: RoleTypes.ViewPI,
     },
     {
       href: "/app/items",
       icon: <DescriptionOutlined />,
-      title: "Items",
+      title: RoleTypes.Items,
     },
     {
       href: "/app/customers",
       icon: <PeopleOutline />,
-      title: "Customers",
+      title: RoleTypes.Customers,
     },
     {
       href: "/app/vendors",
       icon: <BusinessOutlined />,
-      title: "Vendors",
+      title: RoleTypes.Vendors,
     },
     {
       href: "/app/users",
       icon: <UsersIcon />,
-      title: "Users",
+      title: RoleTypes.Users,
       click: "",
     },
   ];
