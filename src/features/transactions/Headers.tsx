@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { format } from "date-fns";
+import { addMonths, format } from "date-fns";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 // Slices
@@ -17,7 +17,12 @@ import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
 import Skeleton from "@material-ui/core/Skeleton";
 import { NavLink as RouterLink } from "react-router-dom";
-
+import { DatePicker, LocalizationProvider } from "@material-ui/lab";
+import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { changePageTitle } from "../settings/settingsSlice";
 import {
   Box,
@@ -25,6 +30,7 @@ import {
   Divider,
   IconButton,
   Stack,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import { Add, Edit } from "@material-ui/icons";
@@ -35,20 +41,38 @@ import { HeaderProps } from "./types/transactionTypes";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 
 export const Headers = ({ type }: HeaderProps) => {
+  const [startDate, setStartDate] = useState<Date | null>(
+    addMonths(new Date(), -1)
+  );
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
   const dispatch = useAppDispatch();
   const { headers, loading } = useAppSelector(selectTransactions);
 
   const { items } = useAppSelector(selectItems);
 
   useEffect(() => {
-    if (headers.length === 0) dispatch(fetchHeaders(type));
+    if (headers.length === 0)
+      dispatch(
+        fetchHeaders({
+          type,
+          durationBegin: startDate as Date,
+          durationEnd: endDate as Date,
+        })
+      );
     else {
-      if (headers[0].type !== type) dispatch(fetchHeaders(type));
+      if (headers[0].type !== type)
+        dispatch(
+          fetchHeaders({
+            type,
+            durationBegin: startDate as Date,
+            durationEnd: endDate as Date,
+          })
+        );
     }
     if (items.length === 0) dispatch(fetchItems("all"));
 
     dispatch(changePageTitle(`${type} List`));
-  }, [type, dispatch]);
+  }, [dispatch, type, startDate, endDate]);
 
   const DeleteHeader = (id: number) => {
     dispatch(removeHeader(id));
@@ -75,7 +99,56 @@ export const Headers = ({ type }: HeaderProps) => {
           </Typography>
         </Button>
       </Box>
-      <Divider variant="middle" sx={{ my: 2 }} />
+      <Accordion sx={{ m: 1 }}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>Filter List</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Stack direction="row" justifyContent="center" alignItems="center">
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Grid item sm={4} xs={12}>
+                  <DatePicker
+                    label={"Start Date"}
+                    inputFormat="MMM-dd-yyyy"
+                    minDate={new Date("2021-01-01")}
+                    value={startDate}
+                    onChange={(newValue) => {
+                      setStartDate(newValue);
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth helperText="" />
+                    )}
+                  />
+                </Grid>
+                <Grid item sm={4} xs={12}>
+                  <DatePicker
+                    label={"End Date"}
+                    inputFormat="MMM-dd-yyyy"
+                    minDate={new Date("2021-01-01")}
+                    value={endDate}
+                    onChange={(newValue) => {
+                      setEndDate(newValue);
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth helperText="" />
+                    )}
+                  />
+                </Grid>
+              </Grid>
+            </LocalizationProvider>
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
 
       <Grid container justifyContent="flex-start">
         <TableContainer component={Paper}>

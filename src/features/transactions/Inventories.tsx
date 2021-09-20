@@ -10,22 +10,28 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
 import Skeleton from "@material-ui/core/Skeleton";
-
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { changePageTitle } from "../settings/settingsSlice";
 import {
   Box,
   Button,
   Checkbox,
   Divider,
+  FormControl,
   FormControlLabel,
   FormGroup,
+  FormLabel,
   IconButton,
   Stack,
   Tab,
   Tabs,
+  TextField,
   Typography,
 } from "@material-ui/core";
-import { Backspace, History, ViewList } from "@material-ui/icons";
+import { ArrowForward, Backspace, History, ViewList } from "@material-ui/icons";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import {
   fetchInventories,
@@ -34,8 +40,14 @@ import {
 } from "./transactionsSlice";
 import { TabPanel } from "../styles/tabComponents";
 import { Inventory } from "./types/transactionTypes";
-import { format } from "date-fns";
+import { addMonths, format } from "date-fns";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
+import {
+  DatePicker,
+  DateTimePicker,
+  LocalizationProvider,
+} from "@material-ui/lab";
+import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 
 export const Inventories = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -59,6 +71,11 @@ export const Inventories = () => {
 
   const { includeSale, includePurchase, includePI, includeTransfer } = state;
 
+  const [startDate, setStartDate] = useState<Date | null>(
+    addMonths(new Date(), -1)
+  );
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
+
   const [selectedInventory, setSelectedInventory] = useState<Inventory>({});
   const dispatch = useAppDispatch();
   const { inventories, loading, lines } = useAppSelector(selectTransactions);
@@ -67,7 +84,7 @@ export const Inventories = () => {
     if (inventories.length === 0) dispatch(fetchInventories("all"));
 
     dispatch(changePageTitle("Inventories List"));
-  }, [dispatch]);
+  }, [dispatch, inventories.length]);
 
   const ChangeTab = (id: number, tabIndex: number) => {
     if (tabIndex === 1)
@@ -87,6 +104,8 @@ export const Inventories = () => {
         includePurchases: includePurchase,
         includePIs: includePI,
         includeTransfers: includeTransfer,
+        durationBegin: startDate as Date,
+        durationEnd: endDate as Date,
       })
     );
   }, [
@@ -96,6 +115,8 @@ export const Inventories = () => {
     includePurchase,
     includePI,
     includeTransfer,
+    startDate,
+    endDate,
   ]);
 
   return (
@@ -221,57 +242,115 @@ export const Inventories = () => {
                 <Backspace />
               </Typography>
             </Button>
-            <Stack direction="row">
-              <FormGroup aria-label="position" row>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={includeSale}
-                      onChange={handleChangeType}
-                      name="includeSale"
-                      inputProps={{ "aria-label": "controlled" }}
-                    />
-                  }
-                  label="Include Sales"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={includePurchase}
-                      onChange={handleChangeType}
-                      name="includePurchase"
-                      inputProps={{ "aria-label": "controlled" }}
-                    />
-                  }
-                  label="Include Purchases"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={includePI}
-                      onChange={handleChangeType}
-                      name="includePI"
-                      inputProps={{ "aria-label": "controlled" }}
-                    />
-                  }
-                  label="Include Sales"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={includeTransfer}
-                      onChange={handleChangeType}
-                      name="includeTransfer"
-                      inputProps={{ "aria-label": "controlled" }}
-                    />
-                  }
-                  label="Include Purchases"
-                />
-              </FormGroup>
-            </Stack>
           </Box>
-          <Divider variant="middle" sx={{ my: 2 }} />
 
+          <Accordion sx={{ m: 1 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>Filter List</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <FormGroup aria-label="position" row>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={includeSale}
+                        onChange={handleChangeType}
+                        name="includeSale"
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                    }
+                    label="Sales"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={includePurchase}
+                        onChange={handleChangeType}
+                        name="includePurchase"
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                    }
+                    label="Purchases"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={includePI}
+                        onChange={handleChangeType}
+                        name="includePI"
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                    }
+                    label="PIs"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={includeTransfer}
+                        onChange={handleChangeType}
+                        name="includeTransfer"
+                        inputProps={{ "aria-label": "controlled" }}
+                      />
+                    }
+                    label="Transfers"
+                  />
+                </FormGroup>
+              </Stack>
+              <Divider variant="middle" sx={{ my: 2 }} />
+              <Stack
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <Grid
+                    container
+                    spacing={2}
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Grid item sm={4} xs={12}>
+                      <DatePicker
+                        label={"Start Date"}
+                        inputFormat="MMM-dd-yyyy"
+                        minDate={new Date("2021-01-01")}
+                        value={startDate}
+                        onChange={(newValue) => {
+                          setStartDate(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField {...params} fullWidth helperText="" />
+                        )}
+                      />
+                    </Grid>
+                    <Grid item sm={4} xs={12}>
+                      <DatePicker
+                        label={"End Date"}
+                        inputFormat="MMM-dd-yyyy"
+                        minDate={new Date("2021-01-01")}
+                        value={endDate}
+                        onChange={(newValue) => {
+                          setEndDate(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField {...params} fullWidth helperText="" />
+                        )}
+                      />
+                    </Grid>
+                  </Grid>
+                </LocalizationProvider>
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
           <TableContainer component={Paper} sx={{ mt: "8px" }}>
             <Table size="small" aria-label="a dense table">
               <TableHead>

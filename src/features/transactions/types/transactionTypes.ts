@@ -127,10 +127,13 @@ export type TransactionsState = {
 export type TransactionArgs = {
   skip?: number;
   take?: number;
+  type?: TransactionType;
   headerId?: number;
   itemId?: number;
   includeSales?: boolean;
   includePurchases?: boolean;
   includePIs?: boolean;
   includeTransfers?: boolean;
+  durationBegin?: Date;
+  durationEnd?: Date;
 };

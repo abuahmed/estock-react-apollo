@@ -1,8 +1,16 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_TRANSACTIONS = gql`
-  query GetTransactions($type: TransactionType!) {
-    transactions(type: $type) {
+  query GetTransactions(
+    $type: TransactionType!
+    $durationBegin: DateTime
+    $durationEnd: DateTime
+  ) {
+    transactions(
+      type: $type
+      durationBegin: $durationBegin
+      durationEnd: $durationEnd
+    ) {
       id
       transactionDate
       number
@@ -54,6 +62,8 @@ export const GET_TRANSACTION_LINES = gql`
     $includePurchases: Boolean
     $includePIs: Boolean
     $includeTransfers: Boolean
+    $durationBegin: DateTime
+    $durationEnd: DateTime
   ) {
     lines(
       headerId: $headerId
@@ -62,6 +72,8 @@ export const GET_TRANSACTION_LINES = gql`
       includePurchases: $includePurchases
       includePIs: $includePIs
       includeTransfers: $includeTransfers
+      durationBegin: $durationBegin
+      durationEnd: $durationEnd
     ) {
       id
       item {

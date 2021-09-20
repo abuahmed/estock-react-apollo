@@ -83,7 +83,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     dispatch(changePageTitle(`${type} Entry`));
     if (id && id !== "0") {
       if (headers.length === 0) {
-        dispatch(fetchHeaders(type));
+        dispatch(fetchHeaders({ type }));
       } else {
         const hd = headers.find((h) => h.id === parseInt(id));
         let ln: TransactionLine = {
@@ -99,7 +99,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     } else {
       resetFields();
     }
-  }, [dispatch, type, headers]);
+  }, [dispatch, type, headers, id]);
 
   useEffect(() => {
     setLeftItems(items.filter((i) => !lines.some((l) => l.item?.id === i.id)));

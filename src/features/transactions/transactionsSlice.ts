@@ -56,7 +56,7 @@ export const fetchInventories = createAsyncThunk<
 
 export const fetchHeaders = createAsyncThunk<
   any,
-  TransactionType,
+  TransactionArgs,
   { rejectValue: AuthError }
 >("transactions/fetchHeaders", async (_arg, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
@@ -64,7 +64,7 @@ export const fetchHeaders = createAsyncThunk<
   try {
     const response = await apolloClient.query({
       query: GET_ALL_TRANSACTIONS,
-      variables: { type: _arg },
+      variables: { ..._arg },
     });
 
     if (response && response.data && response.data.transactions) {
