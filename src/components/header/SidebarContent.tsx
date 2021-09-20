@@ -62,7 +62,7 @@ const SidebarContent = () => {
   const voidFunction = () => {};
   useEffect(() => {
     setRoles(user?.roles.map((r) => r.displayName) as string[]);
-  }, []);
+  }, [user?.roles]);
 
   return (
     <Box

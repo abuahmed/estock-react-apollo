@@ -55,7 +55,7 @@ export const User = () => {
       dispatch(getUser(parseInt(id)));
       dispatch(changePageTitle(`List Of Roles`));
     }
-  }, []);
+  }, [dispatch, id]);
 
   return (
     <>

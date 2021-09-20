@@ -99,7 +99,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     } else {
       resetFields();
     }
-  }, [type, headers]);
+  }, [dispatch, type, headers]);
 
   useEffect(() => {
     setLeftItems(items.filter((i) => !lines.some((l) => l.item?.id === i.id)));

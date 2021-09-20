@@ -48,7 +48,7 @@ export const Headers = ({ type }: HeaderProps) => {
     if (items.length === 0) dispatch(fetchItems("all"));
 
     dispatch(changePageTitle(`${type} List`));
-  }, [type]);
+  }, [type, dispatch]);
 
   const DeleteHeader = (id: number) => {
     dispatch(removeHeader(id));

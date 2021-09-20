@@ -20,7 +20,7 @@ export const Profile = () => {
   useEffect(() => {
     //if (user) dispatch(profileApollo(user!.id));
     dispatch(changePageTitle(title));
-  }, []);
+  }, [dispatch]);
 
   return (
     <div>

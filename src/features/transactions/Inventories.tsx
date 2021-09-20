@@ -43,21 +43,11 @@ export const Inventories = () => {
     setTabValue(newValue);
   };
 
-  // const [includeSale, setIncludeSale] = useState(true);
-
-  // const handleChangeSale = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setIncludeSale(event.target.checked);
-  // };
-
-  // const [includePurchase, setIncludePurchase] = useState(true);
-
-  // const handleChangePurchase = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setIncludePurchase(event.target.checked);
-  // };
-
   const [state, setState] = useState({
     includeSale: true,
     includePurchase: true,
+    includePI: true,
+    includeTransfer: true,
   });
 
   const handleChangeType = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +57,7 @@ export const Inventories = () => {
     });
   };
 
-  const { includeSale, includePurchase } = state;
+  const { includeSale, includePurchase, includePI, includeTransfer } = state;
 
   const [selectedInventory, setSelectedInventory] = useState<Inventory>({});
   const dispatch = useAppDispatch();
@@ -77,7 +67,7 @@ export const Inventories = () => {
     if (inventories.length === 0) dispatch(fetchInventories("all"));
 
     dispatch(changePageTitle("Inventories List"));
-  }, []);
+  }, [dispatch]);
 
   const ChangeTab = (id: number, tabIndex: number) => {
     if (tabIndex === 1)
@@ -95,9 +85,18 @@ export const Inventories = () => {
         itemId: selectedInventory.item?.id,
         includeSales: includeSale,
         includePurchases: includePurchase,
+        includePIs: includePI,
+        includeTransfers: includeTransfer,
       })
     );
-  }, [selectedInventory, includeSale, includePurchase]);
+  }, [
+    dispatch,
+    selectedInventory,
+    includeSale,
+    includePurchase,
+    includePI,
+    includeTransfer,
+  ]);
 
   return (
     <>
@@ -241,6 +240,28 @@ export const Inventories = () => {
                       checked={includePurchase}
                       onChange={handleChangeType}
                       name="includePurchase"
+                      inputProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                  label="Include Purchases"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={includePI}
+                      onChange={handleChangeType}
+                      name="includePI"
+                      inputProps={{ "aria-label": "controlled" }}
+                    />
+                  }
+                  label="Include Sales"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={includeTransfer}
+                      onChange={handleChangeType}
+                      name="includeTransfer"
                       inputProps={{ "aria-label": "controlled" }}
                     />
                   }

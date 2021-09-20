@@ -83,7 +83,7 @@ export const ItemEntry = () => {
     } else {
       resetFields();
     }
-  }, []);
+  }, [dispatch]);
 
   function resetFields() {
     dispatch(resetSelectedItem());

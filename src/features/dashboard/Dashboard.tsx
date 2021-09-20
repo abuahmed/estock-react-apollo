@@ -12,7 +12,7 @@ function Dashboard() {
 
   useEffect(() => {
     dispatch(changePageTitle("Dashboard"));
-  }, []);
+  }, [dispatch]);
   return (
     <>
       <Helmet>

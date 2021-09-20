@@ -38,7 +38,7 @@ export const Users = () => {
   useEffect(() => {
     dispatch(fetchUsers("all"));
     dispatch(changePageTitle("Users List"));
-  }, []);
+  }, [dispatch]);
   //const notify = () => toast('Wow so easy!')
 
   // if (!user) {

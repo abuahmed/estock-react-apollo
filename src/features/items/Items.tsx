@@ -43,7 +43,7 @@ export const Items = () => {
     if (categories.length === 0) dispatch(fetchItemCategories("all"));
     if (uoms.length === 0) dispatch(fetchItemUoms("all"));
     dispatch(changePageTitle("Items List"));
-  }, []);
+  }, [categories.length, dispatch, items.length, uoms.length]);
 
   const DeleteItem = (id: number) => {
     dispatch(removeItem(id));
