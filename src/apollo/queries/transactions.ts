@@ -14,6 +14,7 @@ export const GET_ALL_TRANSACTIONS = gql`
       id
       transactionDate
       number
+      status
       numberOfItems
       totalQty
       totalAmount
@@ -85,6 +86,7 @@ export const GET_TRANSACTION_LINES = gql`
         type
         transactionDate
         number
+        status
         warehouse {
           displayName
         }

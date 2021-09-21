@@ -51,7 +51,7 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
           path: "sale/:id",
           element: isPrivileged(
             <TransactionEntry type={TransactionType.Sale} />,
-            RoleTypes.AddSales
+            RoleTypes.AddSale
           ),
         },
         {
@@ -131,7 +131,17 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
 };
 
 function isPrivileged(element: ReactNode, privileged: string): ReactNode {
-  if (PrivilegedRoles.some((r) => r.displayName === privileged)) return element;
+  if (PrivilegedRoles.some((r) => r.displayName === privileged)) {
+    return element;
+  } else {
+    if (
+      privileged.substr(0, 3) === "Add" &&
+      PrivilegedRoles.some(
+        (r) => r.displayName === privileged.replace("Add", "View")
+      )
+    )
+      return element;
+  }
   return <Navigate to="/app/profile" />;
 }
 export default routes;

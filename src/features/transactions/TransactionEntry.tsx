@@ -34,6 +34,7 @@ import {
   TransactionLine,
   TransactionHeader,
   HeaderProps,
+  TransactionStatus,
 } from "./types/transactionTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
@@ -58,6 +59,9 @@ import { selectItems } from "../items/itemsSlice";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import { Item } from "../items/types/itemTypes";
 import { lineSchema } from "./validation";
+import { selectAuth } from "../auth/authSlice";
+import { isPrivilegedTransaction } from "../../utils/authUtils";
+import { AuthState, Role, RoleTypes } from "../auth/types/authType";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
@@ -68,6 +72,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const [leftItems, setLeftItems] = useState<Item[]>([]);
   const { items } = useAppSelector(selectItems);
+  const { user } = useAppSelector(selectAuth);
 
   const {
     headers,
@@ -142,6 +147,9 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   function postTransaction() {
     dispatch(postHeader(selectedHeader.id as number));
   }
+  function unPostTransaction() {
+    //dispatch(unPostHeader(selectedHeader.id as number));
+  }
   return (
     <>
       <Helmet>
@@ -163,31 +171,52 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
           </Typography>
         </Button>
         <Stack direction="row" spacing={2}>
-          <Button color="secondary" variant="contained" onClick={resetFields}>
-            <Typography
-              variant="h5"
-              component="h5"
-              sx={{ display: "flex", justifyItems: "center" }}
-            >
-              <Add />
-            </Typography>
-          </Button>
-          <Button
-            sx={{ display: { xs: "none", sm: "block" } }}
-            color="secondary"
-            variant="contained"
-            onClick={resetFields}
-          >
-            <Typography
-              variant="h5"
-              component="h5"
-              sx={{ display: "flex", justifyItems: "center" }}
-              onClick={postTransaction}
-            >
-              <PostAdd />
-              POST
-            </Typography>
-          </Button>
+          {isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
+            <Button color="secondary" variant="contained" onClick={resetFields}>
+              <Typography
+                variant="h5"
+                component="h5"
+                sx={{ display: "flex", justifyItems: "center" }}
+              >
+                <Add />
+              </Typography>
+            </Button>
+          )}
+          {selectedHeader?.status === TransactionStatus.Draft &&
+            isPrivilegedTransaction(user?.roles as Role[], type, "Post") && (
+              <Button
+                // sx={{ display: { xs: "none", sm: "block" } }}
+                color="secondary"
+                variant="contained"
+                onClick={resetFields}
+              >
+                <Typography
+                  variant="h5"
+                  component="h5"
+                  sx={{ display: "flex", justifyItems: "center" }}
+                  onClick={postTransaction}
+                >
+                  POST
+                </Typography>
+              </Button>
+            )}
+          {selectedHeader?.status === TransactionStatus.Posted &&
+            isPrivilegedTransaction(user?.roles as Role[], type, "UnPost") && (
+              <Button
+                color="secondary"
+                variant="contained"
+                onClick={resetFields}
+              >
+                <Typography
+                  variant="h5"
+                  component="h5"
+                  sx={{ display: "flex", justifyItems: "center" }}
+                  onClick={unPostTransaction}
+                >
+                  UnPost
+                </Typography>
+              </Button>
+            )}
         </Stack>
       </Box>
       <Divider variant="middle" sx={{ my: 2 }} />
@@ -197,151 +226,160 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
         {error && <Toast severity="error">{error.message}</Toast>}
 
         <Container maxWidth="lg">
-          <Box sx={{ mb: 3 }}>
-            {loading === "pending" ? (
-              <TransactionSkeleton />
-            ) : (
-              <>
-                <Formik
-                  enableReinitialize={true}
-                  initialValues={tranHeader as TransactionHeader}
-                  onSubmit={(values, actions) => {
-                    actions.setSubmitting(false);
-                    //dispatch(addTransactionHeader(values));
-                  }}
-                >
-                  {(props: FormikProps<TransactionHeader>) => (
-                    <Form>
-                      <Grid container spacing={1} alignItems="center">
-                        <Grid item sm={4} xs={12}>
-                          <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DateTimePicker
-                              label={type + " Date"}
-                              inputFormat="MMM-dd-yyyy"
-                              minDate={new Date("2021-01-01")}
-                              value={props.values.transactionDate}
-                              onChange={(value) => {
-                                setTranHeader({
-                                  ...tranHeader,
-                                  transactionDate: value as Date,
-                                });
-                                props.setFieldValue("transactionDate", value);
-                              }}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  fullWidth
-                                  helperText=""
+          {selectedHeader?.status === TransactionStatus.Draft &&
+            isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
+              <Box sx={{ mb: 3 }}>
+                {loading === "pending" ? (
+                  <TransactionSkeleton />
+                ) : (
+                  <>
+                    <Formik
+                      enableReinitialize={true}
+                      initialValues={tranHeader as TransactionHeader}
+                      onSubmit={(values, actions) => {
+                        actions.setSubmitting(false);
+                        //dispatch(addTransactionHeader(values));
+                      }}
+                    >
+                      {(props: FormikProps<TransactionHeader>) => (
+                        <Form>
+                          <Grid container spacing={1} alignItems="center">
+                            <Grid item sm={4} xs={12}>
+                              <LocalizationProvider
+                                dateAdapter={AdapterDateFns}
+                              >
+                                <DateTimePicker
+                                  label={type + " Date"}
+                                  inputFormat="MMM-dd-yyyy"
+                                  minDate={new Date("2021-01-01")}
+                                  value={props.values.transactionDate}
+                                  onChange={(value) => {
+                                    setTranHeader({
+                                      ...tranHeader,
+                                      transactionDate: value as Date,
+                                    });
+                                    props.setFieldValue(
+                                      "transactionDate",
+                                      value
+                                    );
+                                  }}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      fullWidth
+                                      helperText=""
+                                    />
+                                  )}
                                 />
-                              )}
-                            />
-                          </LocalizationProvider>
-                        </Grid>
+                              </LocalizationProvider>
+                            </Grid>
 
-                        <Grid item sm={2} xs={12}>
-                          <TextField
-                            value={props.values.number}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                          />
-                        </Grid>
-
-                        <Grid item sm={2} xs={12}>
-                          <TextField
-                            value={props.values.businessPartner?.displayName}
-                            variant="outlined"
-                            fullWidth
-                            disabled
-                          />
-                        </Grid>
-                        <Grid item sm={2} xs={12}>
-                          <Button
-                            sx={{ width: "100%", p: 1.5 }}
-                            type="submit"
-                            color="secondary"
-                            variant="contained"
-                            disabled={!props.isValid}
-                          >
-                            <Save /> Save
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Form>
-                  )}
-                </Formik>
-                <Divider variant="middle" sx={{ my: 2 }} />
-                <Formik
-                  enableReinitialize={true}
-                  validationSchema={lineSchema}
-                  initialValues={tranLine as TransactionLine}
-                  onSubmit={(values, actions) => {
-                    actions.setSubmitting(false);
-                    values = { ...values, header: { ...tranHeader, type } };
-                    //console.log(values);
-                    dispatch(addLine(values));
-                  }}
-                >
-                  {(props: FormikProps<TransactionLine>) => (
-                    <Form>
-                      <Grid container spacing={1} alignItems="center">
-                        <Grid item sm={4} xs={12}>
-                          <Autocomplete
-                            id="itemId"
-                            options={leftItems}
-                            value={props.values?.item}
-                            getOptionLabel={(option) =>
-                              option.displayName as string
-                            }
-                            sx={{ mt: 1 }}
-                            onChange={(e, value) => {
-                              props.setFieldValue(
-                                "item",
-                                value !== null ? value : null
-                              );
-                            }}
-                            renderInput={(params) => (
+                            <Grid item sm={2} xs={12}>
                               <TextField
-                                label="Items"
-                                name="itemId"
-                                {...params}
+                                value={props.values.number}
+                                variant="outlined"
+                                fullWidth
+                                disabled
                               />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item sm={2} xs={12}>
-                          <FormikTextField
-                            formikKey="qty"
-                            label="Quantity"
-                            type={"number"}
-                          />
-                        </Grid>
-                        <Grid item sm={2} xs={12}>
-                          <FormikTextField
-                            formikKey="eachPrice"
-                            label="Each Price"
-                            type={"number"}
-                          />
-                        </Grid>
-                        <Grid item sm={2} xs={12}>
-                          <Button
-                            sx={{ width: "100%", mt: 1, p: 1.5 }}
-                            type="submit"
-                            color="secondary"
-                            variant="contained"
-                            disabled={!props.isValid}
-                          >
-                            <Save /> Add
-                          </Button>
-                        </Grid>
-                      </Grid>
-                    </Form>
-                  )}
-                </Formik>
-              </>
-            )}
-          </Box>
+                            </Grid>
 
+                            <Grid item sm={2} xs={12}>
+                              <TextField
+                                value={
+                                  props.values.businessPartner?.displayName
+                                }
+                                variant="outlined"
+                                fullWidth
+                                disabled
+                              />
+                            </Grid>
+                            <Grid item sm={2} xs={12}>
+                              <Button
+                                sx={{ width: "100%", p: 1.5 }}
+                                type="submit"
+                                color="secondary"
+                                variant="contained"
+                                disabled={!props.isValid}
+                              >
+                                <Save /> Save
+                              </Button>
+                            </Grid>
+                          </Grid>
+                        </Form>
+                      )}
+                    </Formik>
+                    <Divider variant="middle" sx={{ my: 2 }} />
+                    <Formik
+                      enableReinitialize={true}
+                      validationSchema={lineSchema}
+                      initialValues={tranLine as TransactionLine}
+                      onSubmit={(values, actions) => {
+                        actions.setSubmitting(false);
+                        values = { ...values, header: { ...tranHeader, type } };
+                        //console.log(values);
+                        dispatch(addLine(values));
+                      }}
+                    >
+                      {(props: FormikProps<TransactionLine>) => (
+                        <Form>
+                          <Grid container spacing={1} alignItems="center">
+                            <Grid item sm={4} xs={12}>
+                              <Autocomplete
+                                id="itemId"
+                                options={leftItems}
+                                value={props.values?.item}
+                                getOptionLabel={(option) =>
+                                  option.displayName as string
+                                }
+                                sx={{ mt: 1 }}
+                                onChange={(e, value) => {
+                                  props.setFieldValue(
+                                    "item",
+                                    value !== null ? value : null
+                                  );
+                                }}
+                                renderInput={(params) => (
+                                  <TextField
+                                    label="Items"
+                                    name="itemId"
+                                    {...params}
+                                  />
+                                )}
+                              />
+                            </Grid>
+                            <Grid item sm={2} xs={12}>
+                              <FormikTextField
+                                formikKey="qty"
+                                label="Quantity"
+                                type={"number"}
+                              />
+                            </Grid>
+                            <Grid item sm={2} xs={12}>
+                              <FormikTextField
+                                formikKey="eachPrice"
+                                label="Each Price"
+                                type={"number"}
+                              />
+                            </Grid>
+                            <Grid item sm={2} xs={12}>
+                              <Button
+                                sx={{ width: "100%", mt: 1, p: 1.5 }}
+                                type="submit"
+                                color="secondary"
+                                variant="contained"
+                                disabled={!props.isValid}
+                              >
+                                <Save /> Add
+                              </Button>
+                            </Grid>
+                          </Grid>
+                        </Form>
+                      )}
+                    </Formik>
+                  </>
+                )}
+              </Box>
+            )}
           <TableContainer component={Paper} sx={{ mt: "8px" }}>
             <Table size="small" aria-label="a dense table">
               <TableHead>
@@ -393,24 +431,35 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       </StyledTableCell>
 
                       <StyledTableCell sx={{ padding: "0px 16px" }}>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <IconButton
-                            color="primary"
-                            onClick={() =>
-                              SetSelectedLine(row ? (row.id as number) : 0)
-                            }
-                          >
-                            <Edit />
-                          </IconButton>
-                          <IconButton
-                            color="secondary"
-                            onClick={() =>
-                              DeleteLine(row ? (row.id as number) : 0)
-                            }
-                          >
-                            <Delete />
-                          </IconButton>
-                        </Stack>
+                        {selectedHeader?.status === TransactionStatus.Draft &&
+                          isPrivilegedTransaction(
+                            user?.roles as Role[],
+                            type,
+                            "Add"
+                          ) && (
+                            <Stack
+                              direction="row"
+                              spacing={2}
+                              alignItems="center"
+                            >
+                              <IconButton
+                                color="primary"
+                                onClick={() =>
+                                  SetSelectedLine(row ? (row.id as number) : 0)
+                                }
+                              >
+                                <Edit />
+                              </IconButton>
+                              <IconButton
+                                color="secondary"
+                                onClick={() =>
+                                  DeleteLine(row ? (row.id as number) : 0)
+                                }
+                              >
+                                <Delete />
+                              </IconButton>
+                            </Stack>
+                          )}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))

@@ -33,12 +33,15 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Add, Edit } from "@material-ui/icons";
+import { Add, Edit, Visibility } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import { fetchItems, selectItems } from "../items/itemsSlice";
-import { HeaderProps } from "./types/transactionTypes";
+import { HeaderProps, TransactionStatus } from "./types/transactionTypes";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
+import { Role } from "../auth/types/authType";
+import { selectAuth } from "../auth/authSlice";
+import { isPrivilegedTransaction } from "../../utils/authUtils";
 
 export const Headers = ({ type }: HeaderProps) => {
   const [startDate, setStartDate] = useState<Date | null>(
@@ -49,6 +52,7 @@ export const Headers = ({ type }: HeaderProps) => {
   const { headers, loading } = useAppSelector(selectTransactions);
 
   const { items } = useAppSelector(selectItems);
+  const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {
     if (headers.length === 0)
@@ -84,20 +88,22 @@ export const Headers = ({ type }: HeaderProps) => {
         <title>{type} List | Pinna Stock</title>
       </Helmet>
       <Box component="div">
-        <Button
-          color="secondary"
-          variant="contained"
-          component={RouterLink}
-          to={`/app/${type}/0`}
-        >
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
+        {isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
+          <Button
+            color="secondary"
+            variant="contained"
+            component={RouterLink}
+            to={`/app/${type}/0`}
           >
-            <Add /> Add New {type}
-          </Typography>
-        </Button>
+            <Typography
+              variant="h5"
+              component="h5"
+              sx={{ display: "flex", justifyItems: "center" }}
+            >
+              <Add /> Add New {type}
+            </Typography>
+          </Button>
+        )}
       </Box>
       <Accordion sx={{ m: 1 }}>
         <AccordionSummary
@@ -161,6 +167,7 @@ export const Headers = ({ type }: HeaderProps) => {
                 <StyledTableCell>No of Items</StyledTableCell>
                 <StyledTableCell>Total Qty</StyledTableCell>
                 <StyledTableCell>Total Amount</StyledTableCell>
+                <StyledTableCell>Status</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
               </StyledTableRow>
             </TableHead>
@@ -203,24 +210,51 @@ export const Headers = ({ type }: HeaderProps) => {
                     <StyledTableCell>{row.numberOfItems}</StyledTableCell>
                     <StyledTableCell>{row.totalQty}</StyledTableCell>
                     <StyledTableCell>{row.totalAmount}</StyledTableCell>
+                    <StyledTableCell>{row.status}</StyledTableCell>
 
                     <StyledTableCell>
                       <Stack direction="row" spacing={2} alignItems="center">
-                        <IconButton
-                          color="primary"
-                          component={RouterLink}
-                          to={`/app/${type}/${row.id}`}
-                        >
-                          <Edit />
-                        </IconButton>
-                        <IconButton
-                          color="secondary"
-                          onClick={() =>
-                            DeleteHeader(row ? (row.id as number) : 0)
-                          }
-                        >
-                          <Delete />
-                        </IconButton>
+                        {isPrivilegedTransaction(
+                          user?.roles as Role[],
+                          type,
+                          "View"
+                        ) && (
+                          <IconButton
+                            color="primary"
+                            component={RouterLink}
+                            to={`/app/${type}/${row.id}`}
+                          >
+                            <Visibility />
+                          </IconButton>
+                        )}
+                        {isPrivilegedTransaction(
+                          user?.roles as Role[],
+                          type,
+                          "Add"
+                        ) && (
+                          <IconButton
+                            color="primary"
+                            component={RouterLink}
+                            to={`/app/${type}/${row.id}`}
+                          >
+                            <Edit />
+                          </IconButton>
+                        )}
+                        {row?.status === TransactionStatus.Draft &&
+                          isPrivilegedTransaction(
+                            user?.roles as Role[],
+                            type,
+                            "Delete"
+                          ) && (
+                            <IconButton
+                              color="secondary"
+                              onClick={() =>
+                                DeleteHeader(row ? (row.id as number) : 0)
+                              }
+                            >
+                              <Delete />
+                            </IconButton>
+                          )}
                       </Stack>
                     </StyledTableCell>
                   </StyledTableRow>
