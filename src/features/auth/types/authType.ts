@@ -143,7 +143,7 @@ export enum RoleTypes {
   // HistoryPI = "Pi Lines History", same as View PI
 
   // Sales = "Sales",
-  ViewSales = "View Sale",
+  ViewSale = "View Sale",
   AddSale = "Add Sale",
   PostSale = "Post Sale",
   UnPostSale = "UnPost Sale",

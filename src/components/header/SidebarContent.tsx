@@ -256,14 +256,14 @@ const SidebarContent = () => {
   );
 };
 
-const getNavBarItems = (roles: string[]) => {
+const getNavBarItems = (userRoles: string[]) => {
   interface Props {
     href: string;
     title: string;
     icon: ReactNode;
     click?: string | undefined;
   }
-  let items = [
+  let menuItems = [
     {
       href: "/app/dashboard",
       icon: <BarChartIcon />,
@@ -277,7 +277,7 @@ const getNavBarItems = (roles: string[]) => {
     {
       href: "/app/sale",
       icon: <ShoppingCartOutlined />,
-      title: RoleTypes.ViewSales,
+      title: RoleTypes.ViewSale,
     },
     {
       href: "/app/purchase",
@@ -312,19 +312,29 @@ const getNavBarItems = (roles: string[]) => {
     },
   ];
 
-  let privilegedItems: Props[] = [];
+  let privilegedMenuItems: Props[] = [];
 
-  items.forEach((item) => {
-    for (let index = 0; index < roles.length; index++) {
-      const rl = roles[index];
-      if (rl.includes(item.title)) {
-        privilegedItems.push(item);
-        break;
-      }
+  menuItems.forEach((item) => {
+    if (
+      userRoles.some((userRole) => userRole === item.title) ||
+      userRoles.some(
+        (userRole) => userRole === item.title.replace("View", "Add")
+      )
+    ) {
+      privilegedMenuItems.push(item);
     }
   });
+  // menuItems.forEach((item) => {
+  //   for (let index = 0; index < userRoles.length; index++) {
+  //     const rl = userRoles[index];
+  //     if (rl.includes(item.title)) {
+  //       privilegedMenuItems.push(item);
+  //       break;
+  //     }
+  //   }
+  // });
 
-  privilegedItems = privilegedItems.concat([
+  privilegedMenuItems = privilegedMenuItems.concat([
     {
       href: "/app/profile",
       icon: <UserIcon />,
@@ -344,7 +354,7 @@ const getNavBarItems = (roles: string[]) => {
       click: "logout",
     },
   ]);
-  return privilegedItems;
+  return privilegedMenuItems;
 
   // {
   //     href: "/app/settings",

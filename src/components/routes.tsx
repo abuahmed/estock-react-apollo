@@ -44,7 +44,7 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
           path: "sale",
           element: isPrivileged(
             <Headers type={TransactionType.Sale} />,
-            RoleTypes.ViewSales
+            RoleTypes.ViewSale
           ),
         },
         {
@@ -131,17 +131,25 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
 };
 
 function isPrivileged(element: ReactNode, privileged: string): ReactNode {
-  if (PrivilegedRoles.some((r) => r.displayName === privileged)) {
-    return element;
-  } else {
-    if (
-      privileged.substr(0, 3) === "Add" &&
-      PrivilegedRoles.some(
-        (r) => r.displayName === privileged.replace("Add", "View")
-      )
+  if (
+    PrivilegedRoles.some((r) => r.displayName === privileged) ||
+    PrivilegedRoles.some(
+      (r) => r.displayName === privileged.replace("Add", "View")
+    ) ||
+    PrivilegedRoles.some(
+      (r) => r.displayName === privileged.replace("View", "Add")
     )
-      return element;
+  ) {
+    return element;
   }
+
   return <Navigate to="/app/profile" />;
 }
 export default routes;
+//privileged.substr(0, 3) === "Add" &&
+// else {
+//     if (
+//       PrivilegedRoles.some(
+//         (r) => r.displayName === privileged.replace("Add", "View")
+//       )
+//     )

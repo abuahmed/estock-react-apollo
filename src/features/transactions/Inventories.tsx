@@ -37,12 +37,15 @@ import {
   selectTransactions,
 } from "./transactionsSlice";
 import { TabPanel } from "../styles/tabComponents";
-import { Inventory } from "./types/transactionTypes";
+import { Inventory, TransactionType } from "./types/transactionTypes";
 import { addMonths, format } from "date-fns";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { DatePicker, LocalizationProvider } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
 import { NavLink } from "react-router-dom";
+import { Role } from "../auth/types/authType";
+import { selectAuth } from "../auth/authSlice";
+import { isPrivilegedTransaction } from "../../utils/authUtils";
 
 export const Inventories = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -74,6 +77,7 @@ export const Inventories = () => {
   const [selectedInventory, setSelectedInventory] = useState<Inventory>({});
   const dispatch = useAppDispatch();
   const { inventories, loading, lines } = useAppSelector(selectTransactions);
+  const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {
     if (inventories.length === 0) dispatch(fetchInventories("all"));
@@ -86,19 +90,39 @@ export const Inventories = () => {
       setSelectedInventory(inventories.find((i) => i.id === id) as Inventory);
     setTabValue(tabIndex);
   };
-  // const SelectInventoryItem = (itemId?: number) => {
-  //   setSelectedInventory(
-  //     inventories.find((i) => i.item?.id === itemId) as Inventory
-  //   );
-  // };
+
   useEffect(() => {
     dispatch(
       fetchLines({
         itemId: selectedInventory.item?.id,
-        includeSales: includeSale,
-        includePurchases: includePurchase,
-        includePIs: includePI,
-        includeTransfers: includeTransfer,
+        includeSales:
+          includeSale &&
+          isPrivilegedTransaction(
+            user?.roles as Role[],
+            TransactionType.Sale,
+            "View"
+          ),
+        includePurchases:
+          includePurchase &&
+          isPrivilegedTransaction(
+            user?.roles as Role[],
+            TransactionType.Purchase,
+            "View"
+          ),
+        includePIs:
+          includePI &&
+          isPrivilegedTransaction(
+            user?.roles as Role[],
+            TransactionType.PI,
+            "View"
+          ),
+        includeTransfers:
+          includeTransfer &&
+          isPrivilegedTransaction(
+            user?.roles as Role[],
+            TransactionType.Transfer,
+            "View"
+          ),
         durationBegin: startDate as Date,
         durationEnd: endDate as Date,
       })
@@ -256,50 +280,74 @@ export const Inventories = () => {
                 justifyContent="center"
               >
                 <FormGroup aria-label="position" row>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={includeSale}
-                        onChange={handleChangeType}
-                        name="includeSale"
-                        inputProps={{ "aria-label": "controlled" }}
-                      />
-                    }
-                    label="Sales"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={includePurchase}
-                        onChange={handleChangeType}
-                        name="includePurchase"
-                        inputProps={{ "aria-label": "controlled" }}
-                      />
-                    }
-                    label="Purchases"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={includePI}
-                        onChange={handleChangeType}
-                        name="includePI"
-                        inputProps={{ "aria-label": "controlled" }}
-                      />
-                    }
-                    label="PIs"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={includeTransfer}
-                        onChange={handleChangeType}
-                        name="includeTransfer"
-                        inputProps={{ "aria-label": "controlled" }}
-                      />
-                    }
-                    label="Transfers"
-                  />
+                  {isPrivilegedTransaction(
+                    user?.roles as Role[],
+                    TransactionType.Sale,
+                    "View"
+                  ) && (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={includeSale}
+                          onChange={handleChangeType}
+                          name="includeSale"
+                          inputProps={{ "aria-label": "controlled" }}
+                        />
+                      }
+                      label="Sales"
+                    />
+                  )}
+                  {isPrivilegedTransaction(
+                    user?.roles as Role[],
+                    TransactionType.Purchase,
+                    "View"
+                  ) && (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={includePurchase}
+                          onChange={handleChangeType}
+                          name="includePurchase"
+                          inputProps={{ "aria-label": "controlled" }}
+                        />
+                      }
+                      label="Purchases"
+                    />
+                  )}
+                  {isPrivilegedTransaction(
+                    user?.roles as Role[],
+                    TransactionType.PI,
+                    "View"
+                  ) && (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={includePI}
+                          onChange={handleChangeType}
+                          name="includePI"
+                          inputProps={{ "aria-label": "controlled" }}
+                        />
+                      }
+                      label="PIs"
+                    />
+                  )}
+                  {isPrivilegedTransaction(
+                    user?.roles as Role[],
+                    TransactionType.Transfer,
+                    "View"
+                  ) && (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={includeTransfer}
+                          onChange={handleChangeType}
+                          name="includeTransfer"
+                          inputProps={{ "aria-label": "controlled" }}
+                        />
+                      }
+                      label="Transfers"
+                    />
+                  )}
                 </FormGroup>
               </Stack>
               <Divider variant="middle" sx={{ my: 2 }} />
