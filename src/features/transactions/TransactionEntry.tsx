@@ -30,12 +30,16 @@ import {
   removeLine,
   postHeader,
   unPostHeader,
+  getItemInventory,
+  fetchInventories,
 } from "./transactionsSlice";
 import {
   TransactionLine,
   TransactionHeader,
   HeaderProps,
   TransactionStatus,
+  TransactionType,
+  Inventory,
 } from "./types/transactionTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
@@ -68,6 +72,10 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
     id: string;
   };
+  const [selectedItem, setSelectedItem] = useState(0);
+  const [selectedInventory, setSelectedInventory] = useState<Inventory>({
+    qtyOnHand: 0,
+  });
   const [tranHeader, setTranHeader] = useState<TransactionHeader>({ type });
   const [tranLine, setTranLine] = useState<TransactionLine>({});
   const dispatch = useAppDispatch();
@@ -80,6 +88,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     lines,
     selectedHeader,
     selectedLine,
+    inventories,
     loading,
     success,
     error,
@@ -87,6 +96,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
 
   useEffect(() => {
     dispatch(changePageTitle(`${type} Entry`));
+    dispatch(fetchInventories("all"));
     if (id && id !== "0") {
       if (headers.length === 0) {
         dispatch(fetchHeaders({ type }));
@@ -119,6 +129,17 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     setTranLine(selectedLine);
   }, [selectedLine]);
 
+  useEffect(() => {
+    if (selectedItem !== 0) {
+      const inv = inventories.find((i) => i.item?.id === selectedItem);
+      if (inv) setSelectedInventory(inv as Inventory);
+      else setSelectedInventory({ qtyOnHand: 0 });
+    }
+  }, [selectedItem]);
+
+  // if (selectedItem !== 0) {
+  //   dispatch(getItemInventory(selectedItem as number));
+  // }
   function resetFields() {
     const hd: TransactionHeader = {
       type,
@@ -317,8 +338,15 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       initialValues={tranLine as TransactionLine}
                       onSubmit={(values, actions) => {
                         actions.setSubmitting(false);
+                        if (type === TransactionType.PI) {
+                          values = {
+                            ...values,
+                            diff:
+                              (values.qty as number) -
+                              (selectedInventory?.qtyOnHand as number),
+                          };
+                        }
                         values = { ...values, header: { ...tranHeader, type } };
-                        //console.log(values);
                         dispatch(addLine(values));
                       }}
                     >
@@ -339,6 +367,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                                     "item",
                                     value !== null ? value : null
                                   );
+                                  setSelectedItem(value?.id as number);
                                 }}
                                 renderInput={(params) => (
                                   <TextField
@@ -357,12 +386,29 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                               />
                             </Grid>
                             <Grid item sm={2} xs={12}>
-                              <FormikTextField
-                                formikKey="eachPrice"
-                                label="Each Price"
-                                type={"number"}
-                              />
+                              {type === TransactionType.Purchase ||
+                              type === TransactionType.Sale ? (
+                                <FormikTextField
+                                  formikKey="eachPrice"
+                                  label="Each Price"
+                                  type={"number"}
+                                />
+                              ) : (
+                                <TextField
+                                  id="outlined-basic"
+                                  label="Current Qty"
+                                  value={
+                                    selectedInventory
+                                      ? selectedInventory.qtyOnHand
+                                      : 0
+                                  }
+                                  variant="outlined"
+                                  disabled
+                                  sx={{ mt: 1 }}
+                                />
+                              )}
                             </Grid>
+
                             <Grid item sm={2} xs={12}>
                               <Button
                                 sx={{ width: "100%", mt: 1, p: 1.5 }}
@@ -388,8 +434,19 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                 <StyledTableRow>
                   <StyledTableCell>Item Name</StyledTableCell>
                   <StyledTableCell align="right">Qty</StyledTableCell>
-                  <StyledTableCell align="right">Each Price</StyledTableCell>
-                  <StyledTableCell align="right">Total Price</StyledTableCell>
+                  {type === TransactionType.Purchase ||
+                  type === TransactionType.Sale ? (
+                    <>
+                      <StyledTableCell align="right">
+                        Each Price
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
+                        Total Price
+                      </StyledTableCell>
+                    </>
+                  ) : (
+                    <StyledTableCell align="right">Difference</StyledTableCell>
+                  )}
                   <StyledTableCell>Actions</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
@@ -417,21 +474,34 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       >
                         {row.qty}
                       </StyledTableCell>
-                      <StyledTableCell
-                        scope="row"
-                        sx={{ padding: "0px 16px" }}
-                        align="right"
-                      >
-                        {row.eachPrice}
-                      </StyledTableCell>
-                      <StyledTableCell
-                        scope="row"
-                        sx={{ padding: "0px 16px" }}
-                        align="right"
-                      >
-                        {(row.qty as number) * (row.eachPrice as number)}
-                      </StyledTableCell>
+                      {type === TransactionType.Purchase ||
+                      type === TransactionType.Sale ? (
+                        <>
+                          <StyledTableCell
+                            scope="row"
+                            sx={{ padding: "0px 16px" }}
+                            align="right"
+                          >
+                            {row.eachPrice}
+                          </StyledTableCell>
 
+                          <StyledTableCell
+                            scope="row"
+                            sx={{ padding: "0px 16px" }}
+                            align="right"
+                          >
+                            {(row.qty as number) * (row.eachPrice as number)}
+                          </StyledTableCell>
+                        </>
+                      ) : (
+                        <StyledTableCell
+                          scope="row"
+                          sx={{ padding: "0px 16px" }}
+                          align="right"
+                        >
+                          {row.diff}
+                        </StyledTableCell>
+                      )}
                       <StyledTableCell sx={{ padding: "0px 16px" }}>
                         {selectedHeader?.status === TransactionStatus.Draft &&
                           isPrivilegedTransaction(
@@ -483,14 +553,18 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                   </StyledTableCell>
                   <StyledTableCell></StyledTableCell>
 
-                  <StyledTableCell
-                    sx={{ fontWeight: "900", fontSize: "24px" }}
-                    scope="row"
-                    align="right"
-                  >
-                    Total Amount : {selectedHeader?.totalAmount}
-                  </StyledTableCell>
-
+                  {type === TransactionType.Purchase ||
+                  type === TransactionType.Sale ? (
+                    <StyledTableCell
+                      sx={{ fontWeight: "900", fontSize: "24px" }}
+                      scope="row"
+                      align="right"
+                    >
+                      Total Amount : {selectedHeader?.totalAmount}
+                    </StyledTableCell>
+                  ) : (
+                    <StyledTableCell></StyledTableCell>
+                  )}
                   <StyledTableCell></StyledTableCell>
                 </StyledTableRow>
               </TableBody>

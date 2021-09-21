@@ -114,6 +114,7 @@ export type Inventory = {
 
 export type TransactionsState = {
   inventories: Inventory[];
+  selectedInventory?: Inventory;
   headers: TransactionHeader[];
   lines: TransactionLine[];
   selectedHeader: TransactionHeader;
@@ -128,6 +129,7 @@ export type TransactionArgs = {
   skip?: number;
   take?: number;
   type?: TransactionType;
+  status?: TransactionStatus;
   headerId?: number;
   itemId?: number;
   includeSales?: boolean;

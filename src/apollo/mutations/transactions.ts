@@ -39,6 +39,7 @@ export const CREATE_UPDATE_LINE = gql`
     $itemId: Int
     $qty: Float
     $eachPrice: Float
+    $diff: Float
   ) {
     createUpdateLine(
       input: {
@@ -53,6 +54,7 @@ export const CREATE_UPDATE_LINE = gql`
         itemId: $itemId
         qty: $qty
         eachPrice: $eachPrice
+        diff: $diff
       }
     ) {
       id
@@ -62,6 +64,7 @@ export const CREATE_UPDATE_LINE = gql`
       }
       qty
       eachPrice
+      diff
       header {
         id
         number

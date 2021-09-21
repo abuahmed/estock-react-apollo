@@ -37,7 +37,11 @@ import {
   selectTransactions,
 } from "./transactionsSlice";
 import { TabPanel } from "../styles/tabComponents";
-import { Inventory, TransactionType } from "./types/transactionTypes";
+import {
+  Inventory,
+  TransactionStatus,
+  TransactionType,
+} from "./types/transactionTypes";
 import { addMonths, format } from "date-fns";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { DatePicker, LocalizationProvider } from "@material-ui/lab";
@@ -125,6 +129,7 @@ export const Inventories = () => {
           ),
         durationBegin: startDate as Date,
         durationEnd: endDate as Date,
+        status: TransactionStatus.Posted,
       })
     );
   }, [
@@ -136,6 +141,7 @@ export const Inventories = () => {
     includeTransfer,
     startDate,
     endDate,
+    user?.roles,
   ]);
 
   return (
@@ -406,8 +412,11 @@ export const Inventories = () => {
                   <StyledTableCell align="center">Number</StyledTableCell>
                   <StyledTableCell align="center">Item</StyledTableCell>
                   <StyledTableCell align="right">Qty</StyledTableCell>
-                  <StyledTableCell align="right">Each Price</StyledTableCell>
-                  <StyledTableCell align="right">Total Price</StyledTableCell>
+                  <StyledTableCell align="right">
+                    Each Price(Difference)
+                  </StyledTableCell>
+
+                  <StyledTableCell align="right">Total</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -469,13 +478,25 @@ export const Inventories = () => {
                       >
                         {row.qty}
                       </StyledTableCell>
-                      <StyledTableCell
-                        scope="row"
-                        sx={{ padding: "0px 16px" }}
-                        align="right"
-                      >
-                        {row.eachPrice}
-                      </StyledTableCell>
+
+                      {row.header?.type === TransactionType.Sale ||
+                      row.header?.type === TransactionType.Purchase ? (
+                        <StyledTableCell
+                          scope="row"
+                          sx={{ padding: "0px 16px" }}
+                          align="right"
+                        >
+                          {row.eachPrice}
+                        </StyledTableCell>
+                      ) : (
+                        <StyledTableCell
+                          scope="row"
+                          sx={{ padding: "0px 16px" }}
+                          align="right"
+                        >
+                          {row.diff}
+                        </StyledTableCell>
+                      )}
                       <StyledTableCell
                         scope="row"
                         sx={{ padding: "0px 16px" }}

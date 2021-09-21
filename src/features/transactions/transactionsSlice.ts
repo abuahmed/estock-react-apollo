@@ -26,6 +26,7 @@ import {
 import {
   GET_ALL_TRANSACTIONS,
   GET_INVENTORIES,
+  GET_ITEM_INVENTORY,
   GET_SELECTED_HEADER,
   GET_TRANSACTION_LINES,
 } from "../../apollo/queries";
@@ -174,7 +175,7 @@ export const addLine = createAsyncThunk<
 >("transactions/addLine", async (tranLine, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
-    const { id, item, header, qty, eachPrice } = tranLine;
+    const { id, item, header, qty, eachPrice, diff } = tranLine;
 
     //console.log(tranLine);
     const response = await apolloClient.mutate({
@@ -189,6 +190,7 @@ export const addLine = createAsyncThunk<
         itemId: item?.id,
         qty: qty,
         eachPrice: eachPrice,
+        diff: diff,
       },
     });
     //console.log(response.errors[0]?.message);
@@ -325,7 +327,27 @@ export const removeLine = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
+export const getItemInventory = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("transactions/getItemInventory", async (_id, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const response = await apolloClient.query({
+      query: GET_ITEM_INVENTORY,
+      variables: { id: _id },
+    });
 
+    if (response && response.data && response.data.getItemInventory) {
+      return response.data.getItemInventory as Inventory;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 async function setSuccessAction(
   dispatch: ThunkDispatch<any, any, any>,
   payload: any
@@ -354,6 +376,7 @@ const defaultValues: TransactionLine = {
 
 const initialState: TransactionsState = {
   inventories: [],
+  selectedInventory: { id: 0 },
   headers: [],
   lines: [],
   selectedHeader: {
@@ -461,6 +484,21 @@ export const transactionsSlice = createSlice({
       state.loading = "idle";
       state.error = payload;
     });
+
+    builder.addCase(getItemInventory.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(getItemInventory.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.selectedInventory = payload;
+    });
+    builder.addCase(
+      getItemInventory.rejected,
+      (state, { payload, meta, error }) => {
+        state.loading = "idle";
+        state.error = payload;
+      }
+    );
 
     builder.addCase(addLine.pending, (state, { meta }) => {
       state.loading = "pending";

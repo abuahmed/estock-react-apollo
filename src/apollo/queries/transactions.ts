@@ -55,6 +55,30 @@ export const GET_INVENTORIES = gql`
     }
   }
 `;
+export const GET_ITEM_INVENTORY = gql`
+  query GetItemInventory($id: Int!) {
+    getItemInventory(id: $id) {
+      id
+      item {
+        id
+        displayName
+        itemCategory {
+          id
+          displayName
+        }
+        unitOfMeasure {
+          id
+          displayName
+        }
+      }
+      warehouse {
+        id
+        displayName
+      }
+      qtyOnHand
+    }
+  }
+`;
 export const GET_TRANSACTION_LINES = gql`
   query GetLines(
     $headerId: Int
@@ -65,6 +89,7 @@ export const GET_TRANSACTION_LINES = gql`
     $includeTransfers: Boolean
     $durationBegin: DateTime
     $durationEnd: DateTime
+    $status: TransactionStatus
   ) {
     lines(
       headerId: $headerId
@@ -75,6 +100,7 @@ export const GET_TRANSACTION_LINES = gql`
       includeTransfers: $includeTransfers
       durationBegin: $durationBegin
       durationEnd: $durationEnd
+      status: $status
     ) {
       id
       item {
@@ -96,6 +122,7 @@ export const GET_TRANSACTION_LINES = gql`
       }
       qty
       eachPrice
+      diff
     }
   }
 `;
