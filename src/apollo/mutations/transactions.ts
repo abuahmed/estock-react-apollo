@@ -112,6 +112,28 @@ export const POST_HEADER = gql`
   }
 `;
 
+export const UN_POST_HEADER = gql`
+  mutation unPostHeader($id: Int!) {
+    unPostHeader(id: $id) {
+      id
+      number
+      transactionDate
+      status
+      numberOfItems
+      totalAmount
+      totalQty
+      warehouse {
+        id
+        displayName
+      }
+      businessPartner {
+        id
+        displayName
+      }
+    }
+  }
+`;
+
 export const REMOVE_LINE = gql`
   mutation removeLine($id: Int!) {
     removeLine(id: $id) {

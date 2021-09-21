@@ -29,6 +29,7 @@ import {
   addLine,
   removeLine,
   postHeader,
+  unPostHeader,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -39,7 +40,7 @@ import {
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
 import { changePageTitle } from "../settings/settingsSlice";
-import { Add, Backspace, Delete, Edit, PostAdd } from "@material-ui/icons";
+import { Add, Backspace, Delete, Edit } from "@material-ui/icons";
 import {
   Grid,
   TextField,
@@ -61,7 +62,7 @@ import { Item } from "../items/types/itemTypes";
 import { lineSchema } from "./validation";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
-import { AuthState, Role, RoleTypes } from "../auth/types/authType";
+import { Role } from "../auth/types/authType";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
@@ -122,6 +123,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     const hd: TransactionHeader = {
       type,
       transactionDate: new Date(),
+      status: TransactionStatus.Draft,
       number: "...",
     };
     dispatch(setSelectedHeader(hd));
@@ -148,7 +150,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     dispatch(postHeader(selectedHeader.id as number));
   }
   function unPostTransaction() {
-    //dispatch(unPostHeader(selectedHeader.id as number));
+    dispatch(unPostHeader(selectedHeader.id as number));
   }
   return (
     <>

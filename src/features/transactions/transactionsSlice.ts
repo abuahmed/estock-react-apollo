@@ -12,6 +12,7 @@ import {
   TransactionHeader,
   TransactionLine,
   TransactionsState,
+  TransactionStatus,
   TransactionType,
 } from "./types/transactionTypes";
 import {
@@ -20,6 +21,7 @@ import {
   POST_HEADER,
   REMOVE_HEADER,
   REMOVE_LINE,
+  UN_POST_HEADER,
 } from "../../apollo/mutations";
 import {
   GET_ALL_TRANSACTIONS,
@@ -242,6 +244,28 @@ export const postHeader = createAsyncThunk<
   }
 });
 
+export const unPostHeader = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: AuthError }
+>("transactions/unPostHeader", async (id, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: UN_POST_HEADER,
+      variables: { id },
+    });
+
+    if (response && response.data && response.data.unPostHeader) {
+      return response.data.unPostHeader as TransactionHeader;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
 export const removeHeader = createAsyncThunk<
   any,
   number,
@@ -332,8 +356,16 @@ const initialState: TransactionsState = {
   inventories: [],
   headers: [],
   lines: [],
-  selectedHeader: { type: TransactionType.Purchase },
-  selectedLine: {},
+  selectedHeader: {
+    type: TransactionType.Purchase,
+    status: TransactionStatus.Draft,
+    transactionDate: new Date(),
+  },
+  selectedLine: {
+    item: { displayName: "select item", id: 0 },
+    qty: 0,
+    eachPrice: 0,
+  },
   loading: "idle",
   currentRequestId: undefined,
   success: null,
@@ -468,6 +500,19 @@ export const transactionsSlice = createSlice({
       state.success = { message: "Transaction Posted Successfully" };
     });
     builder.addCase(postHeader.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
+
+    builder.addCase(unPostHeader.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(unPostHeader.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedHeader = payload;
+      state.success = { message: "Transaction unPosted Successfully" };
+    });
+    builder.addCase(unPostHeader.rejected, (state, { payload }) => {
       state.loading = "idle";
       state.error = payload;
     });
