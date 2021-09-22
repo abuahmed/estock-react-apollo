@@ -84,10 +84,12 @@ export const Inventories = () => {
   const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {
-    if (inventories.length === 0) dispatch(fetchInventories("all"));
+    //if (inventories.length === 0)
+    console.log("hits Inventories use effect");
+    dispatch(fetchInventories("all"));
 
     dispatch(changePageTitle("Inventories List"));
-  }, [dispatch, inventories.length]);
+  }, [dispatch]); //inventories.length
 
   const ChangeTab = (id: number, tabIndex: number) => {
     if (tabIndex === 1)
@@ -443,7 +445,9 @@ export const Inventories = () => {
 
                       <StyledTableCell component="th" scope="row">
                         {format(
-                          new Date(row.header?.transactionDate as Date),
+                          new Date(
+                            (row.header?.transactionDate as Date).toString()
+                          ),
                           "MMM-dd-yyyy"
                         )}
                         (

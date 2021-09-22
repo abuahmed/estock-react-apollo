@@ -186,7 +186,7 @@ export const addLine = createAsyncThunk<
         type: header?.type,
         transactionDate: header?.transactionDate,
         businessPartnerId: 1,
-        warehouseId: 1,
+        warehouseId: 3,
         itemId: item?.id,
         qty: qty,
         eachPrice: eachPrice,
@@ -229,15 +229,18 @@ export const postHeader = createAsyncThunk<
   number,
   { rejectValue: AuthError }
 >("transactions/postHeader", async (id, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
+    //apolloClient.read.clearStore()
     const response = await apolloClient.mutate({
       mutation: POST_HEADER,
       variables: { id },
     });
 
     if (response && response.data && response.data.postHeader) {
-      return response.data.postHeader as TransactionHeader;
+      const header = response.data.postHeader as TransactionHeader;
+      //dispatch(setLines(header.lines as TransactionLine[]));
+      return header;
     }
   } catch (error: any) {
     const { code, stack } = error;
@@ -251,7 +254,7 @@ export const unPostHeader = createAsyncThunk<
   number,
   { rejectValue: AuthError }
 >("transactions/unPostHeader", async (id, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: UN_POST_HEADER,
@@ -259,7 +262,9 @@ export const unPostHeader = createAsyncThunk<
     });
 
     if (response && response.data && response.data.unPostHeader) {
-      return response.data.unPostHeader as TransactionHeader;
+      const header = response.data.unPostHeader as TransactionHeader;
+      //dispatch(setLines(header.lines as TransactionLine[]));
+      return header;
     }
   } catch (error: any) {
     const { code, stack } = error;

@@ -69,6 +69,7 @@ export const CREATE_UPDATE_LINE = gql`
         id
         number
         transactionDate
+        status
         numberOfItems
         totalAmount
         totalQty
@@ -111,6 +112,16 @@ export const POST_HEADER = gql`
         id
         displayName
       }
+      lines {
+        id
+        item {
+          id
+          displayName
+        }
+        qty
+        eachPrice
+        diff
+      }
     }
   }
 `;
@@ -132,6 +143,16 @@ export const UN_POST_HEADER = gql`
       businessPartner {
         id
         displayName
+      }
+      lines {
+        id
+        item {
+          id
+          displayName
+        }
+        qty
+        eachPrice
+        diff
       }
     }
   }

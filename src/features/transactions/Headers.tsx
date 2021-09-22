@@ -54,25 +54,26 @@ export const Headers = ({ type }: HeaderProps) => {
   const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {
-    if (headers.length === 0)
-      dispatch(
-        fetchHeaders({
-          type,
-          durationBegin: startDate as Date,
-          durationEnd: endDate as Date,
-        })
-      );
-    else {
-      if (headers[0].type !== type)
-        dispatch(
-          fetchHeaders({
-            type,
-            durationBegin: startDate as Date,
-            durationEnd: endDate as Date,
-          })
-        );
-    }
-    if (items.length === 0) dispatch(fetchItems("all"));
+    // if (headers.length === 0)
+    dispatch(
+      fetchHeaders({
+        type,
+        durationBegin: startDate as Date,
+        durationEnd: endDate as Date,
+      })
+    );
+    // else {
+    //   if (headers[0].type !== type)
+    //     dispatch(
+    //       fetchHeaders({
+    //         type,
+    //         durationBegin: startDate as Date,
+    //         durationEnd: endDate as Date,
+    //       })
+    //     );
+    // }
+    //if (items.length === 0)
+    dispatch(fetchItems("all"));
 
     dispatch(changePageTitle(`${type} List`));
   }, [dispatch, type, startDate, endDate]);
