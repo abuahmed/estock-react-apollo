@@ -186,7 +186,7 @@ export const addLine = createAsyncThunk<
         type: header?.type,
         transactionDate: header?.transactionDate,
         businessPartnerId: 1,
-        warehouseId: 3,
+        warehouseId: 1,
         itemId: item?.id,
         qty: qty,
         eachPrice: eachPrice,

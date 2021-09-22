@@ -5,10 +5,9 @@
 import { createTheme } from "@material-ui/core/styles";
 import customTheme from "./custom";
 import defaultTheme from "./default";
-
+//fontFamily: "cursive",
 const overrides = {
   typography: {
-    fontFamily: "cursive",
     h1: {
       fontSize: "3rem",
     },
