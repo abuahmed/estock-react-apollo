@@ -8,6 +8,7 @@ import { RootState } from "../../app/store";
 
 import { AuthError } from "../auth/types/authType";
 import {
+  Setting,
   TransactionArgs,
   TransactionHeader,
   TransactionLine,
@@ -28,9 +29,11 @@ import {
   GET_INVENTORIES,
   GET_ITEM_INVENTORY,
   GET_SELECTED_HEADER,
+  GET_SETTING,
   GET_TRANSACTION_LINES,
 } from "../../apollo/queries";
 import { Inventory } from "./types/transactionTypes";
+import { endOfDay, startOfDay } from "date-fns";
 
 export const fetchInventories = createAsyncThunk<
   any,
@@ -40,8 +43,20 @@ export const fetchInventories = createAsyncThunk<
   const { rejectWithValue } = thunkAPI;
 
   try {
+    const settingResponse = await apolloClient.query({
+      query: GET_SETTING,
+      variables: {
+        currentTime: new Date(),
+      },
+    });
+    const settingData =
+      settingResponse &&
+      settingResponse.data &&
+      (settingResponse.data.getSetting as Setting);
+
     const response = await apolloClient.query({
       query: GET_INVENTORIES,
+      variables: { lastUpdated: settingData.lastInventoryUpdated },
     });
 
     if (response && response.data && response.data.inventories) {
@@ -65,13 +80,42 @@ export const fetchHeaders = createAsyncThunk<
   const { rejectWithValue } = thunkAPI;
 
   try {
-    const response = await apolloClient.query({
-      query: GET_ALL_TRANSACTIONS,
-      variables: { ..._arg },
+    const settingResponse = await apolloClient.query({
+      query: GET_SETTING,
+      variables: {
+        currentTime: new Date(),
+      },
     });
 
-    if (response && response.data && response.data.transactions) {
-      return response.data.transactions as TransactionHeader[];
+    if (
+      settingResponse &&
+      settingResponse.data &&
+      settingResponse.data.getSetting
+    ) {
+      const settingData = settingResponse.data.getSetting as Setting;
+
+      console.log(_arg, settingData);
+
+      const lastUpdated =
+        _arg.type === TransactionType.Sale
+          ? settingData.lastSalesUpdated
+          : _arg.type === TransactionType.Purchase
+          ? settingData.lastPurchaseUpdated
+          : settingData.lastPIUpdated;
+
+      const response = await apolloClient.query({
+        query: GET_ALL_TRANSACTIONS,
+        variables: {
+          ..._arg,
+          lastUpdated: lastUpdated,
+          durationBegin: startOfDay(_arg.durationBegin as Date).toISOString(),
+          durationEnd: endOfDay(_arg.durationEnd as Date).toISOString(),
+        },
+      });
+
+      if (response && response.data && response.data.transactions) {
+        return response.data.transactions as TransactionHeader[];
+      }
     }
   } catch (error: any) {
     const { code, stack } = error;
@@ -87,11 +131,14 @@ export const fetchLines = createAsyncThunk<
 >("transactions/fetchLines", async (transactionArgs, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   //const { headerId,itemId } = transactionArgs;
-  console.log(transactionArgs);
   try {
     const response = await apolloClient.query({
       query: GET_TRANSACTION_LINES,
-      variables: { ...transactionArgs },
+      variables: {
+        ...transactionArgs,
+        durationBegin: startOfDay(transactionArgs.durationBegin as Date),
+        durationEnd: endOfDay(transactionArgs.durationEnd as Date),
+      },
     });
 
     if (response && response.data && response.data.lines) {

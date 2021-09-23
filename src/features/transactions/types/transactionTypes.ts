@@ -138,4 +138,21 @@ export type TransactionArgs = {
   includeTransfers?: boolean;
   durationBegin?: Date;
   durationEnd?: Date;
+  lastUpdated?: Date;
+};
+
+export type Setting = {
+  id?: number;
+  uuid?: string;
+  isEnabled?: boolean;
+  createdByUserId?: number;
+  modifiedByUserId?: number;
+  dateRecordCreated?: Date;
+  dateLastModified?: Date;
+  lastInventoryUpdated?: Date;
+  lastPIUpdated?: Date;
+  lastPurchaseUpdated?: Date;
+  lastSalesUpdated?: Date;
+  lastItemsUpdated?: Date;
+  lastBusinessPartnersUpdated?: Date;
 };

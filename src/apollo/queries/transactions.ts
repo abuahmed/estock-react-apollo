@@ -32,7 +32,7 @@ export const GET_ALL_TRANSACTIONS = gql`
   }
 `;
 export const GET_INVENTORIES = gql`
-  query {
+  query GetInventories($lastUpdated: DateTime) {
     inventories {
       id
       item {
