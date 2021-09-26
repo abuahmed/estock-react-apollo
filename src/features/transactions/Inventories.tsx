@@ -29,7 +29,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Backspace, History, ViewList } from "@material-ui/icons";
+import { Backspace, History, Refresh, ViewList } from "@material-ui/icons";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import {
   fetchInventories,
@@ -42,7 +42,7 @@ import {
   TransactionStatus,
   TransactionType,
 } from "./types/transactionTypes";
-import { addMonths, format } from "date-fns";
+import { addMonths, endOfDay, format, startOfDay } from "date-fns";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { DatePicker, LocalizationProvider } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
@@ -50,6 +50,7 @@ import { NavLink } from "react-router-dom";
 import { Role } from "../auth/types/authType";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
+import TableSkeleton from "../../components/Layout/TableSkeleton";
 
 export const Inventories = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -84,56 +85,51 @@ export const Inventories = () => {
   const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {
-    //if (inventories.length === 0)
-    console.log("hits Inventories use effect");
-    dispatch(fetchInventories("all"));
-
+    if (inventories.length === 0) dispatch(fetchInventories("all"));
     dispatch(changePageTitle("Inventories List"));
-  }, [dispatch]); //inventories.length
+  }, [dispatch, inventories.length]);
 
+  const RefreshList = () => {
+    dispatch(fetchInventories("refresh"));
+    fetchInventoryLines("refresh");
+  };
   const ChangeTab = (id: number, tabIndex: number) => {
     if (tabIndex === 1)
       setSelectedInventory(inventories.find((i) => i.id === id) as Inventory);
     setTabValue(tabIndex);
   };
 
-  useEffect(() => {
+  const fetchInventoryLines = (refresh: string) => {
+    const userRoles = user?.roles as Role[];
+    let startDateHeader = startDate as Date;
+    let endDateHeader = endDate as Date;
+    if (refresh !== "refresh") {
+      startDateHeader = startOfDay(startDateHeader);
+      endDateHeader = endOfDay(endDateHeader);
+    }
     dispatch(
       fetchLines({
         itemId: selectedInventory.item?.id,
         includeSales:
           includeSale &&
-          isPrivilegedTransaction(
-            user?.roles as Role[],
-            TransactionType.Sale,
-            "View"
-          ),
+          isPrivilegedTransaction(userRoles, TransactionType.Sale, "View"),
         includePurchases:
           includePurchase &&
-          isPrivilegedTransaction(
-            user?.roles as Role[],
-            TransactionType.Purchase,
-            "View"
-          ),
+          isPrivilegedTransaction(userRoles, TransactionType.Purchase, "View"),
         includePIs:
           includePI &&
-          isPrivilegedTransaction(
-            user?.roles as Role[],
-            TransactionType.PI,
-            "View"
-          ),
+          isPrivilegedTransaction(userRoles, TransactionType.PI, "View"),
         includeTransfers:
           includeTransfer &&
-          isPrivilegedTransaction(
-            user?.roles as Role[],
-            TransactionType.Transfer,
-            "View"
-          ),
-        durationBegin: startDate as Date,
-        durationEnd: endDate as Date,
+          isPrivilegedTransaction(userRoles, TransactionType.Transfer, "View"),
+        durationBegin: startDateHeader,
+        durationEnd: endDateHeader,
         status: TransactionStatus.Posted,
       })
     );
+  };
+  useEffect(() => {
+    fetchInventoryLines("All");
   }, [
     dispatch,
     selectedInventory,
@@ -143,7 +139,6 @@ export const Inventories = () => {
     includeTransfer,
     startDate,
     endDate,
-    user?.roles,
   ]);
 
   return (
@@ -165,8 +160,34 @@ export const Inventories = () => {
       </Tabs>
       <TabPanel value={tabValue} index={0}>
         <>
-          <Box component="div"></Box>
-          {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
+          <Box component="div">
+            <Button
+              color="secondary"
+              variant="contained"
+              sx={{ ml: 1 }}
+              onClick={RefreshList}
+            >
+              <Typography
+                variant="h5"
+                component="h5"
+                sx={{ display: "flex", justifyItems: "center" }}
+              >
+                <Refresh />
+              </Typography>
+            </Button>
+          </Box>
+          <Accordion sx={{ m: 1 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>Filter List</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Divider variant="middle" sx={{ my: 2 }} />
+            </AccordionDetails>
+          </Accordion>
 
           <Grid container justifyContent="flex-start">
             <TableContainer component={Paper}>
@@ -184,30 +205,7 @@ export const Inventories = () => {
                 </TableHead>
                 <TableBody>
                   {loading === "pending" ? (
-                    <StyledTableRow>
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-                    </StyledTableRow>
+                    <TableSkeleton numRows={10} numColumns={5} />
                   ) : (
                     inventories &&
                     inventories.map((row) => (
@@ -261,6 +259,7 @@ export const Inventories = () => {
             <Button
               color="secondary"
               variant="contained"
+              sx={{ ml: 1 }}
               onClick={() => ChangeTab(0, 0)}
             >
               <Typography
@@ -374,7 +373,7 @@ export const Inventories = () => {
                     <Grid item sm={4} xs={12}>
                       <DatePicker
                         label={"Start Date"}
-                        inputFormat="MMM-dd-yyyy"
+                        views={["day", "month", "year"]}
                         minDate={new Date("2021-01-01")}
                         value={startDate}
                         onChange={(newValue) => {
@@ -388,7 +387,7 @@ export const Inventories = () => {
                     <Grid item sm={4} xs={12}>
                       <DatePicker
                         label={"End Date"}
-                        inputFormat="MMM-dd-yyyy"
+                        views={["day", "month", "year"]}
                         minDate={new Date("2021-01-01")}
                         value={endDate}
                         onChange={(newValue) => {
@@ -415,7 +414,7 @@ export const Inventories = () => {
                   <StyledTableCell align="center">Item</StyledTableCell>
                   <StyledTableCell align="right">Qty</StyledTableCell>
                   <StyledTableCell align="right">
-                    Each Price(Difference)
+                    Each Price (Difference)
                   </StyledTableCell>
 
                   <StyledTableCell align="right">Total</StyledTableCell>
@@ -423,14 +422,7 @@ export const Inventories = () => {
               </TableHead>
               <TableBody>
                 {loading === "pending" ? (
-                  <StyledTableRow>
-                    <StyledTableCell>
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </StyledTableCell>
-                  </StyledTableRow>
+                  <TableSkeleton numRows={10} numColumns={6} />
                 ) : (
                   lines &&
                   lines.map((row) => (

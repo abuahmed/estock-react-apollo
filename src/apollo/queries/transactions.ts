@@ -5,11 +5,13 @@ export const GET_ALL_TRANSACTIONS = gql`
     $type: TransactionType!
     $durationBegin: DateTime
     $durationEnd: DateTime
+    $lastUpdated: DateTime
   ) {
     transactions(
       type: $type
       durationBegin: $durationBegin
       durationEnd: $durationEnd
+      lastUpdated: $lastUpdated
     ) {
       id
       transactionDate
@@ -33,7 +35,7 @@ export const GET_ALL_TRANSACTIONS = gql`
 `;
 export const GET_INVENTORIES = gql`
   query GetInventories($lastUpdated: DateTime) {
-    inventories {
+    inventories(lastUpdated: $lastUpdated) {
       id
       item {
         id
@@ -90,6 +92,7 @@ export const GET_TRANSACTION_LINES = gql`
     $durationBegin: DateTime
     $durationEnd: DateTime
     $status: TransactionStatus
+    $lastUpdated: DateTime
   ) {
     lines(
       headerId: $headerId
@@ -101,6 +104,7 @@ export const GET_TRANSACTION_LINES = gql`
       durationBegin: $durationBegin
       durationEnd: $durationEnd
       status: $status
+      lastUpdated: $lastUpdated
     ) {
       id
       item {

@@ -67,6 +67,7 @@ import { lineSchema } from "./validation";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
 import { Role } from "../auth/types/authType";
+import TableSkeleton from "../../components/Layout/TableSkeleton";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
@@ -452,14 +453,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
               </TableHead>
               <TableBody>
                 {loading === "pending" ? (
-                  <StyledTableRow>
-                    <StyledTableCell>
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Skeleton variant="rectangular" height={10} width={100} />
-                    </StyledTableCell>
-                  </StyledTableRow>
+                  <TableSkeleton numRows={10} numColumns={4} />
                 ) : (
                   lines &&
                   lines.map((row) => (

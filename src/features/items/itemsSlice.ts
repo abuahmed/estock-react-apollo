@@ -17,6 +17,7 @@ import {
 } from "../../apollo/queries";
 
 import { RootState } from "../../app/store";
+//import { sleep } from "../../utils/sleep";
 
 import { AuthError } from "../auth/types/authType";
 import { Category, Item, ItemsState } from "./types/itemTypes";
@@ -29,6 +30,7 @@ export const fetchItems = createAsyncThunk<
   const { rejectWithValue } = thunkAPI;
 
   try {
+    //await sleep(5000);
     const response = await apolloClient.query({
       query: GET_ALL_ITEMS,
     });

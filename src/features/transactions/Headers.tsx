@@ -32,7 +32,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Add, Edit, Visibility } from "@material-ui/icons";
+import { Add, Edit, Visibility, Refresh } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import { fetchItems, selectItems } from "../items/itemsSlice";
@@ -41,6 +41,7 @@ import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { Role } from "../auth/types/authType";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
+import TableSkeleton from "../../components/Layout/TableSkeleton";
 
 export const Headers = ({ type }: HeaderProps) => {
   const [startDate, setStartDate] = useState<Date | null>(
@@ -54,32 +55,43 @@ export const Headers = ({ type }: HeaderProps) => {
   const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {
-    // if (headers.length === 0)
-    dispatch(
-      fetchHeaders({
-        type,
-        durationBegin: startDate as Date,
-        durationEnd: endDate as Date,
-      })
-    );
-    // else {
-    //   if (headers[0].type !== type)
-    //     dispatch(
-    //       fetchHeaders({
-    //         type,
-    //         durationBegin: startDate as Date,
-    //         durationEnd: endDate as Date,
-    //       })
-    //     );
-    // }
-    //if (items.length === 0)
-    dispatch(fetchItems("all"));
+    if (headers.length === 0)
+      dispatch(
+        fetchHeaders({
+          type,
+          durationBegin: startDate as Date,
+          durationEnd: endDate as Date,
+          refreshList: "All",
+        })
+      );
+    else {
+      if (headers[0].type !== type)
+        dispatch(
+          fetchHeaders({
+            type,
+            durationBegin: startDate as Date,
+            durationEnd: endDate as Date,
+            refreshList: "All",
+          })
+        );
+    }
+    if (items.length === 0) dispatch(fetchItems("all"));
 
     dispatch(changePageTitle(`${type} List`));
   }, [dispatch, type, startDate, endDate]);
 
   const DeleteHeader = (id: number) => {
     dispatch(removeHeader(id));
+  };
+  const RefreshList = () => {
+    dispatch(
+      fetchHeaders({
+        type,
+        durationBegin: startDate as Date,
+        durationEnd: endDate as Date,
+        refreshList: "refresh",
+      })
+    );
   };
 
   return (
@@ -100,10 +112,24 @@ export const Headers = ({ type }: HeaderProps) => {
               component="h5"
               sx={{ display: "flex", justifyItems: "center" }}
             >
-              <Add /> Add New {type}
+              <Add />
             </Typography>
           </Button>
         )}
+        <Button
+          color="secondary"
+          variant="contained"
+          sx={{ ml: 1 }}
+          onClick={RefreshList}
+        >
+          <Typography
+            variant="h5"
+            component="h5"
+            sx={{ display: "flex", justifyItems: "center" }}
+          >
+            <Refresh />
+          </Typography>
+        </Button>
       </Box>
       <Accordion sx={{ m: 1 }}>
         <AccordionSummary
@@ -125,7 +151,7 @@ export const Headers = ({ type }: HeaderProps) => {
                 <Grid item sm={4} xs={12}>
                   <DatePicker
                     label={"Start Date"}
-                    inputFormat="MMM-dd-yyyy"
+                    views={["day", "month", "year"]}
                     minDate={new Date("2021-01-01")}
                     value={startDate}
                     onChange={(newValue) => {
@@ -139,7 +165,7 @@ export const Headers = ({ type }: HeaderProps) => {
                 <Grid item sm={4} xs={12}>
                   <DatePicker
                     label={"End Date"}
-                    inputFormat="MMM-dd-yyyy"
+                    views={["day", "month", "year"]}
                     minDate={new Date("2021-01-01")}
                     value={endDate}
                     onChange={(newValue) => {
@@ -173,18 +199,7 @@ export const Headers = ({ type }: HeaderProps) => {
             </TableHead>
             <TableBody>
               {loading === "pending" ? (
-                <StyledTableRow>
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-                </StyledTableRow>
+                <TableSkeleton numRows={10} numColumns={7} />
               ) : (
                 headers &&
                 headers.map((row) => (

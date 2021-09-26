@@ -138,6 +138,7 @@ export type TransactionArgs = {
   includeTransfers?: boolean;
   durationBegin?: Date;
   durationEnd?: Date;
+  refreshList?: string;
   lastUpdated?: Date;
 };
 

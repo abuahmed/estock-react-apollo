@@ -33,6 +33,7 @@ import {
 import { Add, Edit } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import TableSkeleton from "../../components/Layout/TableSkeleton";
 
 export const Items = () => {
   const dispatch = useAppDispatch();
@@ -89,18 +90,7 @@ export const Items = () => {
             </TableHead>
             <TableBody>
               {loading === "pending" ? (
-                <StyledTableRow>
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-                </StyledTableRow>
+                <TableSkeleton numRows={10} numColumns={7} />
               ) : (
                 items &&
                 items.map((row) => (

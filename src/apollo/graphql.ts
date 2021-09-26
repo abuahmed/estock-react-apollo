@@ -2,9 +2,9 @@ import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 //import { selectAuth } from "../features/auth/authSlice";
 //import { useAppSelector } from "./hooks";
-// uri: `https://estockserver.pinnasofts.com/graphql` as any,
 
 const httpLink = createHttpLink({
+  // uri: `https://estockserver.pinnasofts.com/graphql` as any,
   uri: `http://localhost:5500/graphql` as any,
 });
 

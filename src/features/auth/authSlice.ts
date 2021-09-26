@@ -22,7 +22,6 @@ import {
   VerifyResendAuth,
 } from "./types/authType";
 import { PROFILE } from "../../apollo/queries/users";
-//import { sleep } from '../../utils/sleep';
 
 export const uploadFile = createAsyncThunk<
   any,
