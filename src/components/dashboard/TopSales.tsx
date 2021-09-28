@@ -5,13 +5,8 @@ import {
   CardContent,
   CardHeader,
   Divider,
-  Typography,
   colors,
-  useTheme,
 } from "@material-ui/core";
-import LaptopMacIcon from "@material-ui/icons/LaptopMac";
-import PhoneIcon from "@material-ui/icons/Phone";
-import TabletIcon from "@material-ui/icons/Tablet";
 
 interface PropTypes {
   height?: string;
@@ -20,18 +15,20 @@ export const TopSales = (props: PropTypes) => {
   const data = {
     datasets: [
       {
-        data: [63, 15, 22],
+        data: [40, 15, 22, 12, 11],
         backgroundColor: [
           colors.indigo[500],
           colors.red[600],
           colors.orange[600],
+          colors.green[600],
+          colors.blue[600],
         ],
         borderWidth: 8,
         borderColor: colors.common.white,
         hoverBorderColor: colors.common.white,
       },
     ],
-    labels: ["Desktop", "Tablet", "Mobile"],
+    labels: ["Item 01", "Item 02 ", "Item 03", "Item 04", "Item 05"],
   };
 
   return (

@@ -1,5 +1,15 @@
 import { gql } from "@apollo/client";
 
+export const GET_INVENTORY_SUMMARY = gql`
+  query {
+    getInventorySummary {
+      warehouseId
+      totalItems
+      totalPurchases
+      totalSales
+    }
+  }
+`;
 export const GET_ALL_TRANSACTIONS = gql`
   query GetTransactions(
     $type: TransactionType!

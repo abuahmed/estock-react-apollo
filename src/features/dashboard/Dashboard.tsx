@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Box, Container, Grid } from "@material-ui/core";
 import {
@@ -9,17 +9,39 @@ import {
   TopSales,
 } from "../../components/dashboard";
 
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { changePageTitle } from "../settings/settingsSlice";
 import { TotalItems } from "../../components/dashboard/TotalItems";
+import {
+  getSummary,
+  selectTransactions,
+} from "../transactions/transactionsSlice";
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-
+  const { inventorySummary, loading } = useAppSelector(selectTransactions);
+  const [summary, setSummary] = useState({
+    items: 0,
+    purchases: 0,
+    sales: 0,
+    profit: 0,
+  });
   useEffect(() => {
+    dispatch(getSummary("all"));
     dispatch(changePageTitle("Dashboard"));
   }, []);
-
+  useEffect(() => {
+    if (inventorySummary.totalItems > 0)
+      setSummary({
+        items: inventorySummary.totalItems as number,
+        purchases: inventorySummary.totalPurchases as number,
+        sales: inventorySummary.totalSales as number,
+        profit:
+          (inventorySummary.totalSales as number) -
+          (inventorySummary.totalPurchases as number),
+      });
+  }, [inventorySummary]);
+  let { items, purchases, sales, profit } = summary;
   return (
     <>
       <Helmet>
@@ -35,16 +57,16 @@ const Dashboard = () => {
         <Container maxWidth={false}>
           <Grid container spacing={3}>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <TotalItems />
+              <TotalItems value={items} loading={loading} />
             </Grid>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <TotalPurchase />
+              <TotalPurchase value={purchases} loading={loading} />
             </Grid>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <TotalSales />
+              <TotalSales value={sales} loading={loading} />
             </Grid>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <TotalProfit />
+              <TotalProfit value={profit} loading={loading} />
             </Grid>
 
             <Grid item lg={8} md={12} xl={9} xs={12}>

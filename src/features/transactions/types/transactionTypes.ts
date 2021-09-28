@@ -114,6 +114,7 @@ export type Inventory = {
 
 export type TransactionsState = {
   inventories: Inventory[];
+  inventorySummary: InventorySummary;
   selectedInventory?: Inventory;
   headers: TransactionHeader[];
   lines: TransactionLine[];
@@ -156,4 +157,11 @@ export type Setting = {
   lastSalesUpdated?: Date;
   lastItemsUpdated?: Date;
   lastBusinessPartnersUpdated?: Date;
+};
+
+export type InventorySummary = {
+  warehouseId?: number;
+  totalItems: number;
+  totalPurchases: number;
+  totalSales: number;
 };

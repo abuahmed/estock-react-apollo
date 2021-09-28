@@ -8,6 +8,7 @@ import { RootState } from "../../app/store";
 
 import { AuthError } from "../auth/types/authType";
 import {
+  InventorySummary,
   TransactionArgs,
   TransactionHeader,
   TransactionLine,
@@ -26,12 +27,14 @@ import {
 import {
   GET_ALL_TRANSACTIONS,
   GET_INVENTORIES,
+  GET_INVENTORY_SUMMARY,
   GET_ITEM_INVENTORY,
   GET_SELECTED_HEADER,
   GET_TRANSACTION_LINES,
 } from "../../apollo/queries";
 import { Inventory } from "./types/transactionTypes";
 import { endOfDay, startOfDay } from "date-fns";
+import { sleep } from "../../utils/sleep";
 
 export const fetchInventories = createAsyncThunk<
   any,
@@ -373,6 +376,31 @@ export const getItemInventory = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
+export const getSummary = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: AuthError }
+>("transactions/getSummary", async (_arg, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    //await sleep(5000);
+    const response = await apolloClient.query({
+      query: GET_INVENTORY_SUMMARY,
+    });
+
+    if (response && response.data && response.data.getInventorySummary) {
+      return response.data.getInventorySummary as InventorySummary[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 async function setSuccessAction(
   dispatch: ThunkDispatch<any, any, any>,
   payload: any
@@ -401,6 +429,7 @@ const defaultValues: TransactionLine = {
 
 const initialState: TransactionsState = {
   inventories: [],
+  inventorySummary: { totalItems: 0, totalPurchases: 0, totalSales: 0 },
   selectedInventory: { id: 0 },
   headers: [],
   lines: [],
@@ -470,6 +499,18 @@ export const transactionsSlice = createSlice({
       state.headers = payload;
     });
     builder.addCase(fetchHeaders.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
+
+    builder.addCase(getSummary.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(getSummary.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.inventorySummary = payload;
+    });
+    builder.addCase(getSummary.rejected, (state, { payload }) => {
       state.loading = "idle";
       state.error = payload;
     });

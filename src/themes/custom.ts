@@ -13,8 +13,8 @@ const customTheme = {
       contrastText: "#000",
     },
     text: {
-      primary: "#ffffff",
-      secondary: "#000000",
+      primary: "#4A4A4A",
+      secondary: "#6E6E6E",
       hint: "#5D5D5D",
     },
     background: {
