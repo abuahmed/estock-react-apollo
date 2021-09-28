@@ -9,6 +9,8 @@ import { RootState } from "../../app/store";
 import { AuthError } from "../auth/types/authType";
 import {
   InventorySummary,
+  LineSummary,
+  LineSummaryType,
   TransactionArgs,
   TransactionHeader,
   TransactionLine,
@@ -30,6 +32,7 @@ import {
   GET_INVENTORY_SUMMARY,
   GET_ITEM_INVENTORY,
   GET_SELECTED_HEADER,
+  GET_TOP_ITEMS,
   GET_TRANSACTION_LINES,
 } from "../../apollo/queries";
 import { Inventory } from "./types/transactionTypes";
@@ -57,10 +60,7 @@ export const fetchInventories = createAsyncThunk<
     }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -394,10 +394,32 @@ export const getSummary = createAsyncThunk<
     }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const getTopItems = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: AuthError }
+>("transactions/getTopItems", async (_arg, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    const includeSales = _arg === "sale" ? true : false;
+    const includePurchases = _arg === "purchase" ? true : false;
+    const response = await apolloClient.query({
+      query: GET_TOP_ITEMS,
+      variables: { includePurchases, includeSales },
+    });
+
+    if (response && response.data && response.data.topItems) {
+      const result = response.data.topItems as LineSummary[];
+      return { type: _arg, lineSummary: result } as LineSummaryType;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -430,6 +452,8 @@ const defaultValues: TransactionLine = {
 const initialState: TransactionsState = {
   inventories: [],
   inventorySummary: { totalItems: 0, totalPurchases: 0, totalSales: 0 },
+  topPurchasesItems: [],
+  topSalesItems: [],
   selectedInventory: { id: 0 },
   headers: [],
   lines: [],
@@ -511,6 +535,20 @@ export const transactionsSlice = createSlice({
       state.inventorySummary = payload;
     });
     builder.addCase(getSummary.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
+
+    builder.addCase(getTopItems.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(getTopItems.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      if (payload.type === "purchase")
+        state.topPurchasesItems = payload.lineSummary;
+      else state.topSalesItems = payload.lineSummary;
+    });
+    builder.addCase(getTopItems.rejected, (state, { payload }) => {
       state.loading = "idle";
       state.error = payload;
     });
