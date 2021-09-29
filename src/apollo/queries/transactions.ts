@@ -11,9 +11,9 @@ export const GET_INVENTORY_SUMMARY = gql`
   }
 `;
 export const GET_DAILY_TRANSACTIONS_SUMMARY = gql`
-  query GetDailyTransactions {
+  query GetDailyTransactions($type: TransactionType!) {
     dailyTransactions(
-      type: Sale
+      type: $type
       durationBegin: "2021-08-11"
       durationEnd: "2021-10-11"
     ) {

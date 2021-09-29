@@ -30,7 +30,6 @@ import {
   removeLine,
   postHeader,
   unPostHeader,
-  getItemInventory,
   fetchInventories,
 } from "./transactionsSlice";
 import {
@@ -53,11 +52,11 @@ import {
   Table,
   TableHead,
   Paper,
-  Skeleton,
   TableBody,
   Stack,
   IconButton,
   Autocomplete,
+  LinearProgress,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
 import { selectItems } from "../items/itemsSlice";
@@ -253,182 +252,180 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
           {selectedHeader?.status === TransactionStatus.Draft &&
             isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
               <Box sx={{ mb: 3 }}>
-                {loading === "pending" ? (
-                  <TransactionSkeleton />
-                ) : (
-                  <>
-                    <Formik
-                      enableReinitialize={true}
-                      initialValues={tranHeader as TransactionHeader}
-                      onSubmit={(values, actions) => {
-                        actions.setSubmitting(false);
-                        //dispatch(addTransactionHeader(values));
-                      }}
-                    >
-                      {(props: FormikProps<TransactionHeader>) => (
-                        <Form>
-                          <Grid container spacing={1} alignItems="center">
-                            <Grid item sm={4} xs={12}>
-                              <LocalizationProvider
-                                dateAdapter={AdapterDateFns}
-                              >
-                                <DateTimePicker
-                                  label={type + " Date"}
-                                  inputFormat="MMM-dd-yyyy"
-                                  minDate={new Date("2021-01-01")}
-                                  value={props.values.transactionDate}
-                                  onChange={(value) => {
-                                    setTranHeader({
-                                      ...tranHeader,
-                                      transactionDate: value as Date,
-                                    });
-                                    props.setFieldValue(
-                                      "transactionDate",
-                                      value
-                                    );
-                                  }}
-                                  renderInput={(params) => (
-                                    <TextField
-                                      {...params}
-                                      fullWidth
-                                      helperText=""
-                                    />
-                                  )}
-                                />
-                              </LocalizationProvider>
-                            </Grid>
-
-                            <Grid item sm={2} xs={12}>
-                              <TextField
-                                value={props.values.number}
-                                variant="outlined"
-                                fullWidth
-                                disabled
-                              />
-                            </Grid>
-
-                            <Grid item sm={2} xs={12}>
-                              <TextField
-                                value={
-                                  props.values.businessPartner?.displayName
-                                }
-                                variant="outlined"
-                                fullWidth
-                                disabled
-                              />
-                            </Grid>
-                            <Grid item sm={2} xs={12}>
-                              <Button
-                                sx={{ width: "100%", p: 1.5 }}
-                                type="submit"
-                                color="secondary"
-                                variant="contained"
-                                disabled={!props.isValid}
-                              >
-                                <Save /> Save
-                              </Button>
-                            </Grid>
-                          </Grid>
-                        </Form>
-                      )}
-                    </Formik>
-                    <Divider variant="middle" sx={{ my: 2 }} />
-                    <Formik
-                      enableReinitialize={true}
-                      validationSchema={lineSchema}
-                      initialValues={tranLine as TransactionLine}
-                      onSubmit={(values, actions) => {
-                        actions.setSubmitting(false);
-                        if (type === TransactionType.PI) {
-                          values = {
-                            ...values,
-                            diff:
-                              (values.qty as number) -
-                              (selectedInventory?.qtyOnHand as number),
-                          };
-                        }
-                        values = { ...values, header: { ...tranHeader, type } };
-                        dispatch(addLine(values));
-                      }}
-                    >
-                      {(props: FormikProps<TransactionLine>) => (
-                        <Form>
-                          <Grid container spacing={1} alignItems="center">
-                            <Grid item sm={4} xs={12}>
-                              <Autocomplete
-                                id="itemId"
-                                options={leftItems}
-                                value={props.values?.item}
-                                getOptionLabel={(option) =>
-                                  option.displayName as string
-                                }
-                                sx={{ mt: 1 }}
-                                onChange={(e, value) => {
-                                  props.setFieldValue(
-                                    "item",
-                                    value !== null ? value : null
-                                  );
-                                  setSelectedItem(value?.id as number);
+                <>
+                  <Formik
+                    enableReinitialize={true}
+                    initialValues={tranHeader as TransactionHeader}
+                    onSubmit={(values, actions) => {
+                      actions.setSubmitting(false);
+                      //dispatch(addTransactionHeader(values));
+                    }}
+                  >
+                    {(props: FormikProps<TransactionHeader>) => (
+                      <Form>
+                        <Grid container spacing={1} alignItems="center">
+                          <Grid item sm={4} xs={12}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                              <DateTimePicker
+                                label={type + " Date"}
+                                inputFormat="MMM-dd-yyyy"
+                                minDate={new Date("2021-01-01")}
+                                value={props.values.transactionDate}
+                                onChange={(value) => {
+                                  setTranHeader({
+                                    ...tranHeader,
+                                    transactionDate: value as Date,
+                                  });
+                                  props.setFieldValue("transactionDate", value);
                                 }}
                                 renderInput={(params) => (
                                   <TextField
-                                    label="Items"
-                                    name="itemId"
                                     {...params}
+                                    fullWidth
+                                    helperText=""
                                   />
                                 )}
                               />
-                            </Grid>
-                            <Grid item sm={2} xs={12}>
-                              <FormikTextField
-                                formikKey="qty"
-                                label="Quantity"
-                                type={"number"}
-                              />
-                            </Grid>
-                            <Grid item sm={2} xs={12}>
-                              {type === TransactionType.Purchase ||
-                              type === TransactionType.Sale ? (
-                                <FormikTextField
-                                  formikKey="eachPrice"
-                                  label="Each Price"
-                                  type={"number"}
-                                />
-                              ) : (
+                            </LocalizationProvider>
+                          </Grid>
+
+                          <Grid item sm={2} xs={12}>
+                            <TextField
+                              value={props.values.number}
+                              variant="outlined"
+                              fullWidth
+                              disabled
+                            />
+                          </Grid>
+
+                          <Grid item sm={2} xs={12}>
+                            <TextField
+                              value={props.values.businessPartner?.displayName}
+                              variant="outlined"
+                              fullWidth
+                              disabled
+                            />
+                          </Grid>
+                          <Grid item sm={2} xs={12}>
+                            <Button
+                              sx={{ width: "100%", p: 1.5 }}
+                              type="submit"
+                              color="secondary"
+                              variant="contained"
+                              disabled={!props.isValid}
+                            >
+                              <Save /> Save
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </Form>
+                    )}
+                  </Formik>
+                  <Divider variant="middle" sx={{ my: 2 }} />
+                  <Formik
+                    enableReinitialize={true}
+                    validationSchema={lineSchema}
+                    initialValues={tranLine as TransactionLine}
+                    onSubmit={(values, actions) => {
+                      actions.setSubmitting(false);
+                      if (type === TransactionType.PI) {
+                        values = {
+                          ...values,
+                          diff:
+                            (values.qty as number) -
+                            (selectedInventory?.qtyOnHand as number),
+                        };
+                      }
+                      values = { ...values, header: { ...tranHeader, type } };
+                      dispatch(addLine(values));
+                    }}
+                  >
+                    {(props: FormikProps<TransactionLine>) => (
+                      <Form>
+                        <Grid container spacing={1} alignItems="center">
+                          <Grid item sm={4} xs={12}>
+                            <Autocomplete
+                              id="itemId"
+                              options={leftItems}
+                              value={props.values?.item}
+                              getOptionLabel={(option) =>
+                                option.displayName as string
+                              }
+                              sx={{ mt: 1 }}
+                              onChange={(e, value) => {
+                                props.setFieldValue(
+                                  "item",
+                                  value !== null ? value : null
+                                );
+                                setSelectedItem(value?.id as number);
+                              }}
+                              renderInput={(params) => (
                                 <TextField
-                                  id="outlined-basic"
-                                  label="Current Qty"
-                                  value={
-                                    selectedInventory
-                                      ? selectedInventory.qtyOnHand
-                                      : 0
-                                  }
-                                  variant="outlined"
-                                  disabled
-                                  sx={{ mt: 1 }}
+                                  label="Items"
+                                  name="itemId"
+                                  {...params}
                                 />
                               )}
-                            </Grid>
-
-                            <Grid item sm={2} xs={12}>
-                              <Button
-                                sx={{ width: "100%", mt: 1, p: 1.5 }}
-                                type="submit"
-                                color="secondary"
-                                variant="contained"
-                                disabled={!props.isValid}
-                              >
-                                <Save /> Add
-                              </Button>
-                            </Grid>
+                            />
                           </Grid>
-                        </Form>
-                      )}
-                    </Formik>
-                  </>
-                )}
+                          <Grid item sm={2} xs={12}>
+                            <FormikTextField
+                              formikKey="qty"
+                              label="Quantity"
+                              type={"number"}
+                            />
+                          </Grid>
+                          <Grid item sm={2} xs={12}>
+                            {type === TransactionType.Purchase ||
+                            type === TransactionType.Sale ? (
+                              <FormikTextField
+                                formikKey="eachPrice"
+                                label="Each Price"
+                                type={"number"}
+                              />
+                            ) : (
+                              <TextField
+                                id="outlined-basic"
+                                label="Current Qty"
+                                value={
+                                  selectedInventory
+                                    ? selectedInventory.qtyOnHand
+                                    : 0
+                                }
+                                variant="outlined"
+                                disabled
+                                sx={{ mt: 1 }}
+                              />
+                            )}
+                          </Grid>
+
+                          <Grid item sm={2} xs={12}>
+                            <Button
+                              sx={{ width: "100%", mt: 1, p: 1.5 }}
+                              type="submit"
+                              color="secondary"
+                              variant="contained"
+                              disabled={!props.isValid}
+                            >
+                              <Save /> Add
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </Form>
+                    )}
+                  </Formik>
+                </>
               </Box>
             )}
+          <Box sx={{ my: 1 }}>
+            {loading === "pending" && (
+              <Stack sx={{ width: "100%", color: "grey.500" }} spacing={2}>
+                <LinearProgress color="secondary" />
+                <LinearProgress color="inherit" />
+                <LinearProgress color="primary" />
+              </Stack>
+            )}
+          </Box>
           <TableContainer component={Paper} sx={{ mt: "8px" }}>
             <Table size="small" aria-label="a dense table">
               <TableHead>
@@ -452,10 +449,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                 </StyledTableRow>
               </TableHead>
               <TableBody>
-                {loading === "pending" ? (
-                  <TableSkeleton numRows={10} numColumns={4} />
-                ) : (
-                  lines &&
+                {lines &&
                   lines.map((row) => (
                     <StyledTableRow key={row.id}>
                       <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
@@ -528,8 +522,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                           )}
                       </StyledTableCell>
                     </StyledTableRow>
-                  ))
-                )}
+                  ))}
                 <StyledTableRow>
                   <StyledTableCell
                     sx={{ fontWeight: "900" }}

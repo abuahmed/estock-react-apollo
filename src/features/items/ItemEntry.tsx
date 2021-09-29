@@ -47,6 +47,7 @@ import {
   TextField,
   Divider,
   TableHead,
+  LinearProgress,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
@@ -74,8 +75,8 @@ export const ItemEntry = () => {
 
   useEffect(() => {
     dispatch(changePageTitle(`Item Entry`));
-    if (categories.length === 0) dispatch(fetchItemCategories("all"));
-    if (uoms.length === 0) dispatch(fetchItemUoms("all"));
+    dispatch(fetchItemCategories("all"));
+    dispatch(fetchItemUoms("all"));
     if (id && id !== "0") {
       const itm = items.find((h) => h.id === parseInt(id));
       if (itm) dispatch(setSelectedItem(itm));
@@ -135,138 +136,130 @@ export const ItemEntry = () => {
       <Box>
         <Container maxWidth="lg">
           <Box sx={{ mb: 3 }}>
-            {/* <Typography variant="h4" component="div">
-              Add/Edit Item
-            </Typography> */}
-            {/* {success && redirectToLogin} */}
-            {loading === "pending" ? (
-              <ItemSkeleton />
-            ) : (
-              <>
-                <Formik
-                  enableReinitialize={true}
-                  initialValues={selectedItem as ItemType}
-                  validationSchema={registerSchema}
-                  onSubmit={(values, actions) => {
-                    actions.setSubmitting(false);
-                    dispatch(addItem(values));
-                  }}
-                >
-                  {(props: FormikProps<ItemType>) => (
-                    <Form>
-                      <Grid container spacing={2}>
-                        <Grid item sm={4} xs={12}>
-                          <FormikTextField
-                            formikKey="displayName"
-                            label="Name"
-                          />
-                        </Grid>
-                        <Grid item sm={4} xs={12}>
-                          <TextField
-                            fullWidth
-                            sx={{ mt: 1 }}
-                            variant="outlined"
-                            name="itemCategoryId"
-                            id="itemCategoryId"
-                            select
-                            label="Item Category"
-                            value={props.values.itemCategoryId}
-                            onChange={props.handleChange}
-                          >
-                            {categories.map((option) => (
-                              <MenuItem key={option.id} value={option.id}>
-                                {option.displayName}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </Grid>
-                        <Grid item sm={4} xs={12}>
-                          <TextField
-                            fullWidth
-                            sx={{ mt: 1 }}
-                            variant="outlined"
-                            name="unitOfMeasureId"
-                            id="unitOfMeasureId"
-                            select
-                            label="Unit Of Measure"
-                            value={props.values.unitOfMeasureId}
-                            onChange={props.handleChange}
-                          >
-                            {uoms.map((option) => (
-                              <MenuItem key={option.id} value={option.id}>
-                                {option.displayName}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </Grid>
+            <>
+              <Formik
+                enableReinitialize={true}
+                initialValues={selectedItem as ItemType}
+                validationSchema={registerSchema}
+                onSubmit={(values, actions) => {
+                  actions.setSubmitting(false);
+                  dispatch(addItem(values));
+                }}
+              >
+                {(props: FormikProps<ItemType>) => (
+                  <Form>
+                    <Grid container spacing={2}>
+                      <Grid item sm={4} xs={12}>
+                        <FormikTextField formikKey="displayName" label="Name" />
                       </Grid>
+                      <Grid item sm={4} xs={12}>
+                        <TextField
+                          fullWidth
+                          sx={{ mt: 1 }}
+                          variant="outlined"
+                          name="itemCategoryId"
+                          id="itemCategoryId"
+                          select
+                          label="Item Category"
+                          value={props.values.itemCategoryId}
+                          onChange={props.handleChange}
+                        >
+                          {categories.map((option) => (
+                            <MenuItem key={option.id} value={option.id}>
+                              {option.displayName}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </Grid>
+                      <Grid item sm={4} xs={12}>
+                        <TextField
+                          fullWidth
+                          sx={{ mt: 1 }}
+                          variant="outlined"
+                          name="unitOfMeasureId"
+                          id="unitOfMeasureId"
+                          select
+                          label="Unit Of Measure"
+                          value={props.values.unitOfMeasureId}
+                          onChange={props.handleChange}
+                        >
+                          {uoms.map((option) => (
+                            <MenuItem key={option.id} value={option.id}>
+                              {option.displayName}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </Grid>
+                    </Grid>
 
-                      <Grid container spacing={2}>
-                        {/* <Grid item sm={4} xs={12}>
+                    <Grid container spacing={2}>
+                      {/* <Grid item sm={4} xs={12}>
                           <FormikTextField formikKey="code" label="Code" />
                         </Grid> */}
-                        <Grid item xs={12}>
-                          <FormikTextField
-                            formikKey="description"
-                            label="Description"
-                          />
-                        </Grid>
+                      <Grid item xs={12}>
+                        <FormikTextField
+                          formikKey="description"
+                          label="Description"
+                        />
                       </Grid>
+                    </Grid>
 
-                      <Grid container spacing={2}>
-                        <Grid item sm={4} xs={12}>
-                          <FormikTextField
-                            formikKey="purchasePrice"
-                            label="Purchasing Price"
-                            type={"number"}
-                          />
-                        </Grid>
-                        <Grid item sm={4} xs={12}>
-                          <FormikTextField
-                            formikKey="sellingPrice"
-                            label="Selling Price"
-                            type={"number"}
-                          />
-                        </Grid>
-                        <Grid item sm={4} xs={12}>
-                          <FormikTextField
-                            formikKey="safeQty"
-                            label="Safe Qty."
-                            type={"number"}
-                          />
-                        </Grid>
+                    <Grid container spacing={2}>
+                      <Grid item sm={4} xs={12}>
+                        <FormikTextField
+                          formikKey="purchasePrice"
+                          label="Purchasing Price"
+                          type={"number"}
+                        />
                       </Grid>
+                      <Grid item sm={4} xs={12}>
+                        <FormikTextField
+                          formikKey="sellingPrice"
+                          label="Selling Price"
+                          type={"number"}
+                        />
+                      </Grid>
+                      <Grid item sm={4} xs={12}>
+                        <FormikTextField
+                          formikKey="safeQty"
+                          label="Safe Qty."
+                          type={"number"}
+                        />
+                      </Grid>
+                    </Grid>
 
-                      {/* <Grid container>
+                    {/* <Grid container>
                         <Grid item sm={4} xs={12}></Grid>
                         <Grid item sm={4} xs={12}></Grid>
                         <Grid item sm={4} xs={12}></Grid>
                       </Grid> */}
 
-                      <br />
-                      {success && (
-                        <Toast severity="success">{success.message}</Toast>
-                      )}
-                      {error && <Toast severity="error">{error.message}</Toast>}
-                      <Button
-                        sx={{ width: "100%" }}
-                        type="submit"
-                        color="secondary"
-                        variant="contained"
-                        disabled={!props.isValid}
-                      >
-                        <Save />
-                        Save Item
-                      </Button>
-                    </Form>
-                  )}
-                </Formik>
-              </>
-            )}
+                    <br />
+                    {success && (
+                      <Toast severity="success">{success.message}</Toast>
+                    )}
+                    {error && <Toast severity="error">{error.message}</Toast>}
+                    <Button
+                      sx={{ width: "100%" }}
+                      type="submit"
+                      color="secondary"
+                      variant="contained"
+                      disabled={!props.isValid}
+                    >
+                      <Save />
+                      Save Item
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </>
           </Box>
         </Container>
       </Box>
-      <Divider variant="middle" sx={{ my: 2 }} />
+      {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
+      {loading === "pending" && <LinearProgress color="secondary" />}
+
+      {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
       <Container maxWidth="lg">
         <Grid container spacing={2}>
           <Grid item md={6} xs={12} justifyContent="flex-start">
@@ -313,25 +306,7 @@ export const ItemEntry = () => {
                   </StyledTableRow>
                 </TableHead>
                 <TableBody>
-                  {loading === "pending" ? (
-                    <StyledTableRow>
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ) : (
-                    categories &&
+                  {categories &&
                     categories.map((row) => (
                       <StyledTableRow key={row.id}>
                         <StyledTableCell component="th" scope="row">
@@ -365,8 +340,7 @@ export const ItemEntry = () => {
                           </Stack>
                         </StyledTableCell>
                       </StyledTableRow>
-                    ))
-                  )}
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -417,25 +391,7 @@ export const ItemEntry = () => {
                   </StyledTableRow>
                 </TableHead>
                 <TableBody>
-                  {loading === "pending" ? (
-                    <StyledTableRow>
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ) : (
-                    uoms &&
+                  {uoms &&
                     uoms.map((row) => (
                       <StyledTableRow key={row.id}>
                         <StyledTableCell component="th" scope="row">
@@ -467,8 +423,7 @@ export const ItemEntry = () => {
                           </Stack>
                         </StyledTableCell>
                       </StyledTableRow>
-                    ))
-                  )}
+                    ))}
                 </TableBody>
               </Table>
             </TableContainer>

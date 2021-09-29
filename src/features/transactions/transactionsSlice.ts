@@ -8,6 +8,8 @@ import { RootState } from "../../app/store";
 
 import { AuthError } from "../auth/types/authType";
 import {
+  DailySummary,
+  DailySummaryType,
   InventorySummary,
   LineSummary,
   LineSummaryType,
@@ -28,6 +30,7 @@ import {
 } from "../../apollo/mutations";
 import {
   GET_ALL_TRANSACTIONS,
+  GET_DAILY_TRANSACTIONS_SUMMARY,
   GET_INVENTORIES,
   GET_INVENTORY_SUMMARY,
   GET_ITEM_INVENTORY,
@@ -423,6 +426,32 @@ export const getTopItems = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
+export const GetDailyTransactions = createAsyncThunk<
+  any,
+  TransactionType,
+  { rejectValue: AuthError }
+>("transactions/GetDailyTransactions", async (type, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    console.log(type);
+
+    const response = await apolloClient.query({
+      query: GET_DAILY_TRANSACTIONS_SUMMARY,
+      variables: { type },
+    });
+
+    if (response && response.data && response.data.dailyTransactions) {
+      const result = response.data.dailyTransactions as DailySummary[];
+      console.log(result);
+      return { type, dailySummary: result } as DailySummaryType;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 async function setSuccessAction(
   dispatch: ThunkDispatch<any, any, any>,
   payload: any
@@ -454,6 +483,8 @@ const initialState: TransactionsState = {
   inventorySummary: { totalItems: 0, totalPurchases: 0, totalSales: 0 },
   topPurchasesItems: [],
   topSalesItems: [],
+  dailyPurchasesSummary: [],
+  dailySalesSummary: [],
   selectedInventory: { id: 0 },
   headers: [],
   lines: [],
@@ -549,6 +580,23 @@ export const transactionsSlice = createSlice({
       else state.topSalesItems = payload.lineSummary;
     });
     builder.addCase(getTopItems.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
+
+    builder.addCase(GetDailyTransactions.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(
+      GetDailyTransactions.fulfilled,
+      (state, { payload, meta }) => {
+        state.loading = "idle";
+        if (payload.type === TransactionType.Purchase)
+          state.dailyPurchasesSummary = payload.dailySummary;
+        else state.dailySalesSummary = payload.dailySummary;
+      }
+    );
+    builder.addCase(GetDailyTransactions.rejected, (state, { payload }) => {
       state.loading = "idle";
       state.error = payload;
     });

@@ -10,13 +10,7 @@ import { addUserRoles, getUser, selectUsers } from "./usersSlice";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Toast from "../../components/Layout/Toast";
-import {
-  Button,
-  Divider,
-  Skeleton,
-  Switch,
-  Typography,
-} from "@material-ui/core";
+import { Button, Divider, Switch, Typography } from "@material-ui/core";
 
 import { changePageTitle } from "../settings/settingsSlice";
 import Table from "@material-ui/core/Table";
@@ -26,6 +20,7 @@ import TableHead from "@material-ui/core/TableHead";
 import { Helmet } from "react-helmet";
 import { StyledTableRow, StyledTableCell } from "../styles/tableStyles";
 import { Backspace } from "@material-ui/icons";
+import TableSkeleton from "../../components/Layout/TableSkeleton";
 
 export const User = () => {
   const { id } = useParams() as {
@@ -112,23 +107,7 @@ export const User = () => {
                 selectedUser.roles &&
                 selectedUser.roles.map((role) => {
                   return loading === "pending" ? (
-                    <StyledTableRow>
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-
-                      <StyledTableCell>
-                        <Skeleton
-                          variant="rectangular"
-                          height={10}
-                          width={100}
-                        />
-                      </StyledTableCell>
-                    </StyledTableRow>
+                    <TableSkeleton numRows={1} numColumns={1} />
                   ) : (
                     <StyledTableRow key={role.id}>
                       <StyledTableCell>{role.displayName}</StyledTableCell>

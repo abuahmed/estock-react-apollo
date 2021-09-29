@@ -117,6 +117,8 @@ export type TransactionsState = {
   inventorySummary: InventorySummary;
   topSalesItems: LineSummary[];
   topPurchasesItems: LineSummary[];
+  dailyPurchasesSummary: DailySummary[];
+  dailySalesSummary: DailySummary[];
   selectedInventory?: Inventory;
   headers: TransactionHeader[];
   lines: TransactionLine[];
@@ -178,4 +180,15 @@ export type LineSummary = {
 export type LineSummaryType = {
   type?: string;
   lineSummary?: LineSummary;
+};
+
+export type DailySummary = {
+  warehouseId?: number;
+  transactionDate?: string;
+  totalTransactions?: number;
+  totalAmount?: number;
+};
+export type DailySummaryType = {
+  type?: TransactionType;
+  dailySummary?: DailySummary;
 };

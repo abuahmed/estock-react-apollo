@@ -10,7 +10,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
-import Skeleton from "@material-ui/core/Skeleton";
 import { NavLink as RouterLink } from "react-router-dom";
 
 import { changePageTitle } from "../settings/settingsSlice";
@@ -19,31 +18,24 @@ import { IconButton, Stack } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import TableSkeleton from "../../components/Layout/TableSkeleton";
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
 });
-// Components
-//import { SimpleGrid } from '@chakra-ui/core/dist'
 
 export const Users = () => {
   const classes = useStyles();
 
   const dispatch = useAppDispatch();
   const { entities: users, loading } = useAppSelector(selectUsers);
-  //const { user } = useAppSelector(selectAuth)
 
   useEffect(() => {
     dispatch(fetchUsers("all"));
     dispatch(changePageTitle("Users List"));
   }, [dispatch]);
-  //const notify = () => toast('Wow so easy!')
-
-  // if (!user) {
-  //   return <Redirect to="/login" />
-  // }
 
   const DeleteUser = (id: number) => {};
   return (
@@ -64,18 +56,7 @@ export const Users = () => {
             </TableHead>
             <TableBody>
               {loading === "pending" ? (
-                <StyledTableRow>
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-
-                  <StyledTableCell>
-                    <Skeleton variant="rectangular" height={10} width={100} />
-                  </StyledTableCell>
-                </StyledTableRow>
+                <TableSkeleton numRows={5} numColumns={3} />
               ) : (
                 users.map((row) => (
                   <StyledTableRow key={row.id}>

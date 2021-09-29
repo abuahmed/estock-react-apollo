@@ -40,11 +40,11 @@ export const Items = () => {
   const { items, categories, uoms, loading } = useAppSelector(selectItems);
 
   useEffect(() => {
-    if (items.length === 0) dispatch(fetchItems("all"));
-    if (categories.length === 0) dispatch(fetchItemCategories("all"));
-    if (uoms.length === 0) dispatch(fetchItemUoms("all"));
     dispatch(changePageTitle("Items List"));
-  }, [categories.length, dispatch, items.length, uoms.length]);
+    dispatch(fetchItems("all"));
+    dispatch(fetchItemCategories("all"));
+    dispatch(fetchItemUoms("all"));
+  }, [dispatch]);
 
   const DeleteItem = (id: number) => {
     dispatch(removeItem(id));
