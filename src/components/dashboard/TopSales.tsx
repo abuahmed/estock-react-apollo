@@ -66,13 +66,12 @@ export const TopSales = ({ type }: PropTypes) => {
   };
 
   return (
-    <Card sx={{ height: "100%", minHeight: "550px" }}>
-      <CardHeader title={`Top ${type} Items`} />
+    <Card sx={{ height: "100%" }}>
+      <CardHeader title={`TOP 5 ${type.toUpperCase()} ITEMS`} />
       <Divider />
       <CardContent>
         <Box
           sx={{
-            height: 300,
             position: "relative",
           }}
         >

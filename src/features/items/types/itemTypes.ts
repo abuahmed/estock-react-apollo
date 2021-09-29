@@ -50,7 +50,6 @@ export type Item = {
   displayName?: string;
   description?: string;
   type?: ItemType;
-  code?: string;
   pictureUrl?: string;
   itemCategoryId?: number;
   itemCategory?: Category;

@@ -10,6 +10,19 @@ export const GET_INVENTORY_SUMMARY = gql`
     }
   }
 `;
+export const GET_DAILY_TRANSACTIONS_SUMMARY = gql`
+  query GetDailyTransactions {
+    dailyTransactions(
+      type: Sale
+      durationBegin: "2021-08-11"
+      durationEnd: "2021-10-11"
+    ) {
+      transactionDate
+      totalTransactions
+      totalAmount
+    }
+  }
+`;
 export const GET_TOP_ITEMS = gql`
   query GetTopItems($includeSales: Boolean, $includePurchases: Boolean) {
     topItems(

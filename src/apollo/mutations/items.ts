@@ -24,7 +24,6 @@ export const ADD_UPDATE_ITEM = gql`
     $description: String
     $itemCategoryId: Int
     $unitOfMeasureId: Int
-    $code: String
     $purchasePrice: Float
     $sellingPrice: Float
     $safeQty: Float
@@ -36,7 +35,6 @@ export const ADD_UPDATE_ITEM = gql`
         description: $description
         itemCategory: { id: $itemCategoryId }
         unitOfMeasure: { id: $unitOfMeasureId }
-        code: $code
         purchasePrice: $purchasePrice
         sellingPrice: $sellingPrice
         safeQty: $safeQty
@@ -45,7 +43,7 @@ export const ADD_UPDATE_ITEM = gql`
       id
       displayName
       description
-      code
+
       pictureUrl
       itemCategory {
         id

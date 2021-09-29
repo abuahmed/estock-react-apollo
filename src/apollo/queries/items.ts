@@ -6,7 +6,6 @@ export const GET_ALL_ITEMS = gql`
       id
       displayName
       description
-      code
       pictureUrl
       itemCategoryId
       itemCategory {
@@ -49,7 +48,6 @@ export const GET_SELECTED_ITEM = gql`
       id
       displayName
       description
-      code
       pictureUrl
       itemCategoryId
       itemCategory {

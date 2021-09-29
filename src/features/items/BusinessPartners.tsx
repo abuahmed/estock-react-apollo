@@ -80,7 +80,6 @@ export const BusinessPartners = () => {
                 <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Category</StyledTableCell>
                 <StyledTableCell>UOM</StyledTableCell>
-                <StyledTableCell>Code</StyledTableCell>
                 <StyledTableCell>Purchase Price</StyledTableCell>
                 <StyledTableCell>Selling Price</StyledTableCell>
                 <StyledTableCell>Safe Qty.</StyledTableCell>
@@ -116,7 +115,6 @@ export const BusinessPartners = () => {
                         row.unitOfMeasure &&
                         row.unitOfMeasure.displayName}
                     </StyledTableCell>
-                    <StyledTableCell>{row.code}</StyledTableCell>
                     <StyledTableCell>{row.purchasePrice}</StyledTableCell>
                     <StyledTableCell>{row.sellingPrice}</StyledTableCell>
                     <StyledTableCell>{row.safeQty}</StyledTableCell>

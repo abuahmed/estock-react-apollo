@@ -81,7 +81,7 @@ export const Items = () => {
                 <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Category</StyledTableCell>
                 <StyledTableCell>UOM</StyledTableCell>
-                <StyledTableCell>Code</StyledTableCell>
+
                 <StyledTableCell>Purchase Price</StyledTableCell>
                 <StyledTableCell>Selling Price</StyledTableCell>
                 <StyledTableCell>Safe Qty.</StyledTableCell>
@@ -90,7 +90,7 @@ export const Items = () => {
             </TableHead>
             <TableBody>
               {loading === "pending" ? (
-                <TableSkeleton numRows={10} numColumns={7} />
+                <TableSkeleton numRows={10} numColumns={6} />
               ) : (
                 items &&
                 items.map((row) => (
@@ -106,7 +106,7 @@ export const Items = () => {
                         row.unitOfMeasure &&
                         row.unitOfMeasure.displayName}
                     </StyledTableCell>
-                    <StyledTableCell>{row.code}</StyledTableCell>
+
                     <StyledTableCell>{row.purchasePrice}</StyledTableCell>
                     <StyledTableCell>{row.sellingPrice}</StyledTableCell>
                     <StyledTableCell>{row.safeQty}</StyledTableCell>

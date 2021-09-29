@@ -202,10 +202,10 @@ export const ItemEntry = () => {
                       </Grid>
 
                       <Grid container spacing={2}>
-                        <Grid item sm={4} xs={12}>
+                        {/* <Grid item sm={4} xs={12}>
                           <FormikTextField formikKey="code" label="Code" />
-                        </Grid>
-                        <Grid item sm={8} xs={12}>
+                        </Grid> */}
+                        <Grid item xs={12}>
                           <FormikTextField
                             formikKey="description"
                             label="Description"

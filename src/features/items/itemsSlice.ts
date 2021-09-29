@@ -128,7 +128,7 @@ export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
       item.unitOfMeasure = {
         id: item.unitOfMeasureId as number,
       };
-      console.log(arg);
+      //console.log(arg);
       const response = await apolloClient.mutate({
         mutation: ADD_UPDATE_ITEM,
         variables: {
@@ -340,7 +340,6 @@ async function setErrorAction(
 
 const defaultValues: Item = {
   displayName: "",
-  code: "",
   description: "",
   purchasePrice: 0,
   sellingPrice: 0,
