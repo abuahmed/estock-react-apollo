@@ -110,6 +110,9 @@ export type Inventory = {
   qtyOnHand?: number;
   warehouse?: Warehouse;
   item?: Item;
+  totalPurchaseValue?: number;
+  totalSaleValue?: number;
+  totalProfitValue?: number;
 };
 
 export type TransactionsState = {

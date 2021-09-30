@@ -9,7 +9,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
-import Skeleton from "@material-ui/core/Skeleton";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
@@ -199,13 +198,16 @@ export const Inventories = () => {
                     <StyledTableCell>Category</StyledTableCell>
                     <StyledTableCell>UOM</StyledTableCell>
                     <StyledTableCell>Qty. OnHand</StyledTableCell>
+                    <StyledTableCell>Total Purchase</StyledTableCell>
+                    <StyledTableCell>Total Sale</StyledTableCell>
+                    <StyledTableCell>Expected Profit</StyledTableCell>
 
                     <StyledTableCell>View Item History</StyledTableCell>
                   </StyledTableRow>
                 </TableHead>
                 <TableBody>
                   {loading === "pending" ? (
-                    <TableSkeleton numRows={10} numColumns={5} />
+                    <TableSkeleton numRows={10} numColumns={8} />
                   ) : (
                     inventories &&
                     inventories.map((row) => (
@@ -222,7 +224,18 @@ export const Inventories = () => {
                         <StyledTableCell>
                           {row.item?.unitOfMeasure?.displayName}
                         </StyledTableCell>
-                        <StyledTableCell>{row.qtyOnHand}</StyledTableCell>
+                        <StyledTableCell>
+                          {row.qtyOnHand?.toLocaleString()}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.totalPurchaseValue?.toLocaleString()}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.totalSaleValue?.toLocaleString()}
+                        </StyledTableCell>
+                        <StyledTableCell>
+                          {row.totalProfitValue?.toLocaleString()}
+                        </StyledTableCell>
 
                         <StyledTableCell>
                           <Stack

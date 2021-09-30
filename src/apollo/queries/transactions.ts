@@ -93,6 +93,9 @@ export const GET_INVENTORIES = gql`
         displayName
       }
       qtyOnHand
+      totalPurchaseValue
+      totalSaleValue
+      totalProfitValue
     }
   }
 `;

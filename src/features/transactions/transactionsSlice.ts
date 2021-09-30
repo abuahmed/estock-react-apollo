@@ -434,8 +434,6 @@ export const GetDailyTransactions = createAsyncThunk<
   const { rejectWithValue } = thunkAPI;
 
   try {
-    console.log(type);
-
     const response = await apolloClient.query({
       query: GET_DAILY_TRANSACTIONS_SUMMARY,
       variables: { type },
@@ -443,7 +441,6 @@ export const GetDailyTransactions = createAsyncThunk<
 
     if (response && response.data && response.data.dailyTransactions) {
       const result = response.data.dailyTransactions as DailySummary[];
-      console.log(result);
       return { type, dailySummary: result } as DailySummaryType;
     }
   } catch (error: any) {

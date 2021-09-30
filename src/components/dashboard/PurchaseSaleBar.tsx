@@ -45,26 +45,12 @@ export const PurchaseSaleBar = () => {
     }
   }, [dailySalesSummary, dailyPurchasesSummary]);
 
-  const data = {
+  const purchaseData = {
     datasets: [
       {
         backgroundColor: theme.palette.primary.main,
-        data: salesValues,
-        label: "Purchase",
-        borderWidth: 8,
-        borderColor: colors.common.white,
-        hoverBorderColor: colors.common.white,
-      },
-    ],
-    labels: salesLabels,
-  };
-
-  const data2 = {
-    datasets: [
-      {
-        backgroundColor: theme.palette.secondary.main,
         data: purchasesValues,
-        label: "Sale",
+        label: "Purchase",
         borderWidth: 8,
         borderColor: colors.common.white,
         hoverBorderColor: colors.common.white,
@@ -73,19 +59,33 @@ export const PurchaseSaleBar = () => {
     labels: purchasesLabels,
   };
 
+  const saleData = {
+    datasets: [
+      {
+        backgroundColor: theme.palette.secondary.main,
+        data: salesValues,
+        label: "Sale",
+        borderWidth: 8,
+        borderColor: colors.common.white,
+        hoverBorderColor: colors.common.white,
+      },
+    ],
+    labels: salesLabels,
+  };
+
   return (
     <Card sx={{ height: "100%" }}>
       <CardContent>
         <Grid container spacing={2}>
           <Grid item md={6} xs={12}>
-            <CardHeader title={`Last 10 Day Purchases`} />
+            <CardHeader title={`Last 7 Day Purchases`} />
             <Divider />
-            <Bar data={data} />
+            <Bar data={purchaseData} />
           </Grid>
           <Grid item md={6} xs={12}>
-            <CardHeader title={`Last 10 Day Sales`} />
+            <CardHeader title={`Last 7 Day Sales`} />
             <Divider />
-            <Bar data={data2} />
+            <Bar data={saleData} />
           </Grid>
         </Grid>
       </CardContent>
