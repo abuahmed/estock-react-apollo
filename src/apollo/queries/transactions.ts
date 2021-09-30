@@ -169,6 +169,8 @@ export const GET_TRANSACTION_LINES = gql`
       qty
       eachPrice
       diff
+      totalPurchaseSaleValue
+      totalPIValue
     }
   }
 `;
