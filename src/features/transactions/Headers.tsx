@@ -15,7 +15,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
-import Skeleton from "@material-ui/core/Skeleton";
 import { NavLink as RouterLink } from "react-router-dom";
 import { DatePicker, LocalizationProvider } from "@material-ui/lab";
 import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
@@ -223,8 +222,12 @@ export const Headers = ({ type }: HeaderProps) => {
                       {row.number}
                     </StyledTableCell>
                     <StyledTableCell>{row.numberOfItems}</StyledTableCell>
-                    <StyledTableCell>{row.totalQty}</StyledTableCell>
-                    <StyledTableCell>{row.totalAmount}</StyledTableCell>
+                    <StyledTableCell>
+                      {row.totalQty?.toLocaleString()}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {row.totalAmount?.toLocaleString()}
+                    </StyledTableCell>
                     <StyledTableCell>{row.status}</StyledTableCell>
 
                     <StyledTableCell>

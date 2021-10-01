@@ -421,21 +421,18 @@ export const Inventories = () => {
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell>Type</StyledTableCell>
-                  {/* <StyledTableCell>Warehouse</StyledTableCell> */}
+                  <StyledTableCell>Warehouse</StyledTableCell>
                   <StyledTableCell>Date</StyledTableCell>
                   <StyledTableCell align="center">Number</StyledTableCell>
                   <StyledTableCell align="center">Item</StyledTableCell>
-                  <StyledTableCell align="right">Qty</StyledTableCell>
-                  <StyledTableCell align="right">
-                    Each Price (Difference)
-                  </StyledTableCell>
-
-                  <StyledTableCell align="right">Total</StyledTableCell>
+                  <StyledTableCell align="right">Qty(Diff)</StyledTableCell>
+                  <StyledTableCell align="right">Each Price</StyledTableCell>
+                  <StyledTableCell align="right">Line Price</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
                 {loading === "pending" ? (
-                  <TableSkeleton numRows={10} numColumns={6} />
+                  <TableSkeleton numRows={10} numColumns={8} />
                 ) : (
                   lines &&
                   lines.map((row) => (
@@ -444,9 +441,9 @@ export const Inventories = () => {
                         {row.header?.type}
                       </StyledTableCell>
 
-                      {/* <StyledTableCell component="th" scope="row">
+                      <StyledTableCell component="th" scope="row">
                         {row.header?.warehouse?.displayName}
-                      </StyledTableCell> */}
+                      </StyledTableCell>
 
                       <StyledTableCell component="th" scope="row">
                         {format(
@@ -485,33 +482,25 @@ export const Inventories = () => {
                         sx={{ padding: "0px 16px" }}
                         align="right"
                       >
-                        {row.qty}
+                        {row.header?.type === TransactionType.PI
+                          ? row.diff?.toLocaleString()
+                          : row.qty?.toLocaleString()}
                       </StyledTableCell>
 
-                      {row.header?.type === TransactionType.Sale ||
-                      row.header?.type === TransactionType.Purchase ? (
-                        <StyledTableCell
-                          scope="row"
-                          sx={{ padding: "0px 16px" }}
-                          align="right"
-                        >
-                          {row.eachPrice}
-                        </StyledTableCell>
-                      ) : (
-                        <StyledTableCell
-                          scope="row"
-                          sx={{ padding: "0px 16px" }}
-                          align="right"
-                        >
-                          {row.diff}
-                        </StyledTableCell>
-                      )}
                       <StyledTableCell
                         scope="row"
                         sx={{ padding: "0px 16px" }}
                         align="right"
                       >
-                        {(row.qty as number) * (row.eachPrice as number)}
+                        {row.eachPrice?.toLocaleString()}
+                      </StyledTableCell>
+
+                      <StyledTableCell
+                        scope="row"
+                        sx={{ padding: "0px 16px" }}
+                        align="right"
+                      >
+                        {row.linePrice?.toLocaleString()}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))

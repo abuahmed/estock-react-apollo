@@ -384,9 +384,9 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                                   props.setFieldValue(
                                     "eachPrice",
                                     value !== null
-                                      ? type === TransactionType.Sale
-                                        ? value.sellingPrice
-                                        : value.purchasePrice
+                                      ? type === TransactionType.Purchase
+                                        ? value.purchasePrice
+                                        : value.sellingPrice
                                       : null
                                   );
                                   setSelectedItemId(value?.id as number);
@@ -484,7 +484,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         sx={{ padding: "0px 16px" }}
                         align="right"
                       >
-                        {row.qty}
+                        {row.qty?.toLocaleString()}
                       </StyledTableCell>
 
                       {type === TransactionType.PI && (
@@ -493,7 +493,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                           sx={{ padding: "0px 16px" }}
                           align="right"
                         >
-                          {row.diff}
+                          {row.diff?.toLocaleString()}
                         </StyledTableCell>
                       )}
 
@@ -502,7 +502,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         sx={{ padding: "0px 16px" }}
                         align="right"
                       >
-                        {row.eachPrice}
+                        {row.eachPrice?.toLocaleString()}
                       </StyledTableCell>
 
                       <StyledTableCell
@@ -510,7 +510,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         sx={{ padding: "0px 16px" }}
                         align="right"
                       >
-                        {row.linePrice}
+                        {row.linePrice?.toLocaleString()}
                       </StyledTableCell>
                       <StyledTableCell sx={{ padding: "0px 16px" }}>
                         {selectedHeader?.status === TransactionStatus.Draft &&
