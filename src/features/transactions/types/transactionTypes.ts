@@ -45,8 +45,7 @@ export type TransactionLine = {
   diff?: number;
   header?: TransactionHeader;
   item?: Item;
-  totalPurchaseSaleValue?: number;
-  totalPIValue?: number;
+  linePrice?: number;
 };
 
 export type TransactionHeader = {

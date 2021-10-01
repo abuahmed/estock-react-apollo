@@ -510,9 +510,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         sx={{ padding: "0px 16px" }}
                         align="right"
                       >
-                        {type === TransactionType.PI
-                          ? row.totalPIValue
-                          : row.totalPurchaseSaleValue}
+                        {row.linePrice}
                       </StyledTableCell>
                       <StyledTableCell sx={{ padding: "0px 16px" }}>
                         {selectedHeader?.status === TransactionStatus.Draft &&

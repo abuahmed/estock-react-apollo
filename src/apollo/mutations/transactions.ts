@@ -65,6 +65,7 @@ export const CREATE_UPDATE_LINE = gql`
       qty
       eachPrice
       diff
+      linePrice
       header {
         id
         number
