@@ -40,10 +40,7 @@ export const fetchItems = createAsyncThunk<
     }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -109,10 +106,7 @@ export const getItem = createAsyncThunk<
     }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -128,7 +122,7 @@ export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
       item.unitOfMeasure = {
         id: item.unitOfMeasureId as number,
       };
-      //console.log(arg);
+
       const response = await apolloClient.mutate({
         mutation: ADD_UPDATE_ITEM,
         variables: {
@@ -147,6 +141,7 @@ export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
         }
         restItems.push(addedItem);
         dispatch(setItems(restItems));
+
         await setSuccessAction(dispatch, {
           message: "Item Successfully Saved",
         });
