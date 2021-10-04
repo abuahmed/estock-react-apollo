@@ -10,7 +10,7 @@ import {
 
 import { RootState } from "../../app/store";
 import {
-  AuthError,
+  RejectWithValueType,
   AuthState,
   AuthUser,
   ForgotAuth,
@@ -26,7 +26,7 @@ import { PROFILE } from "../../apollo/queries/users";
 export const uploadFile = createAsyncThunk<
   any,
   string,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/uploadImage", async (image, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
   const {
@@ -59,7 +59,7 @@ export const uploadFile = createAsyncThunk<
 export const uploadFileMulter = createAsyncThunk<
   any,
   File,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/uploadImage", async (image, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
   const {
@@ -93,7 +93,7 @@ export const uploadFileMulter = createAsyncThunk<
 export const deleteFile = createAsyncThunk<
   any,
   string,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/deleteFile", async (fileName, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
 
@@ -128,7 +128,7 @@ export const deleteFile = createAsyncThunk<
 export const signUp = createAsyncThunk<
   any,
   NewUser,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/signUp", async (newUser, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
@@ -154,7 +154,7 @@ export const signUp = createAsyncThunk<
 export const updateProfile = createAsyncThunk<
   any,
   AuthUser,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/updateProfile", async (editProfile, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
   const {
@@ -188,7 +188,7 @@ export const updateProfile = createAsyncThunk<
 export const changePassword = createAsyncThunk<
   any,
   UpdatePassword,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/changePassword", async (editProfile, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
   const {
@@ -221,7 +221,7 @@ export const changePassword = createAsyncThunk<
 export const signInApollo = createAsyncThunk<
   any,
   UserCredentials,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/signIn", async (authUser, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   const { email, password } = authUser;
@@ -249,7 +249,7 @@ export const signInApollo = createAsyncThunk<
 export const signIn = createAsyncThunk<
   any,
   UserCredentials,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/signIn", async (authUser, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   const { email, password } = authUser;
@@ -279,7 +279,7 @@ export const signIn = createAsyncThunk<
 export const profileApollo = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/profile", async (id, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
@@ -305,7 +305,7 @@ export const profileApollo = createAsyncThunk<
 export const profile = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/profile", async (id, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
 
@@ -341,7 +341,7 @@ export type GoogleIdToken = {
 export const google = createAsyncThunk<
   any,
   GoogleIdToken,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/google", async (res, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   const { idToken } = res;
@@ -383,7 +383,7 @@ export type FacebookIdToken = {
 export const facebook = createAsyncThunk<
   any,
   FacebookIdToken,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/facebook", async (res, thunkAPI) => {
   //console.log(res);
   const { rejectWithValue } = thunkAPI;
@@ -424,7 +424,7 @@ export const facebook = createAsyncThunk<
 export const forgot = createAsyncThunk<
   any,
   ForgotAuth,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/forgot", async (authUser, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   const { email } = authUser;
@@ -454,7 +454,7 @@ export const forgot = createAsyncThunk<
 export const reset = createAsyncThunk<
   any,
   ResetAuth,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/reset", async (authUser, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   const { password, confirmPassword, id, token } = authUser;
@@ -483,7 +483,7 @@ export const reset = createAsyncThunk<
 export const verify = createAsyncThunk<
   any,
   VerifyAuth,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/verify", async (authUser, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   const { expires, id, token, signature } = authUser;
@@ -511,7 +511,7 @@ export const verify = createAsyncThunk<
 export const resend = createAsyncThunk<
   any,
   VerifyResendAuth,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("auth/resend", async (authUser, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   const { id } = authUser;

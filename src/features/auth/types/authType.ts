@@ -55,7 +55,7 @@ export type AuthState = {
   loading: "idle" | "pending";
   currentRequestId: undefined | string;
   fileUploadUri: undefined | string;
-  error: AuthError | undefined;
+  error: RejectWithValueType | undefined;
   success: AuthSuccess | undefined;
 };
 
@@ -71,12 +71,6 @@ export type User = {
 
 export type NewUser = User & UserCredentials;
 
-export type AuthError = {
-  code: string;
-  message: string;
-  stack: string;
-  id: string;
-};
 export type AuthSuccess = {
   message: string;
 };
@@ -158,3 +152,10 @@ export enum RoleTypes {
   DeletePurchase = "Delete Purchase",
   //HistoryPurchase = "Purchase Lines History",
 }
+
+export type RejectWithValueType = {
+  code: string;
+  message: string;
+  stack: string;
+  id: string;
+};

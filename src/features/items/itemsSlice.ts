@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice, ThunkDispatch } from "@reduxjs/toolkit";
-//import { store } from "../../app/store";
 
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
@@ -18,13 +17,13 @@ import {
 import { RootState } from "../../app/store";
 //import { sleep } from "../../utils/sleep";
 
-import { AuthError } from "../auth/types/authType";
+import { RejectWithValueType } from "../auth/types/authType";
 import { Category, CategoryType, Item, ItemsState } from "./types/itemTypes";
 
 export const fetchItems = createAsyncThunk<
   any,
   string,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("items/fetchItems", async (_arg, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
@@ -46,9 +45,7 @@ export const fetchItems = createAsyncThunk<
 
 export const fetchItemCategories = createAsyncThunk<
   any,
-  string,
-  { rejectValue: AuthError }
->("items/fetchItemCategories", async (_arg, thunkAPI) => {
+  { rejectValue: RejectWithValueType }
   const { rejectWithValue } = thunkAPI;
 
   try {
@@ -93,7 +90,7 @@ export const fetchItemUoms = createAsyncThunk<
 export const getItem = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("items/getItem", async (_id, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
@@ -111,10 +108,7 @@ export const getItem = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
-export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
-  "items/addItem",
-  async (arg, thunkAPI) => {
-    const { rejectWithValue, getState, dispatch } = thunkAPI;
+  { rejectValue: RejectWithValueType }
     try {
       let item = { ...arg };
       item.itemCategory = {
@@ -163,8 +157,7 @@ export const addItem = createAsyncThunk<any, Item, { rejectValue: AuthError }>(
 export const addItemCategory = createAsyncThunk<
   any,
   Category,
-  { rejectValue: AuthError }
->("items/addItemCategory", async (arg, thunkAPI) => {
+  { rejectValue: RejectWithValueType }
   const { rejectWithValue, getState } = thunkAPI;
   try {
     console.log(arg);
@@ -231,7 +224,7 @@ export const addItemUom = createAsyncThunk<
 export const removeItem = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("items/removeItem", async (id, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
@@ -262,7 +255,7 @@ export const removeItem = createAsyncThunk<
 export const removeItemCategory = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("items/removeItemCategory", async (id, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
   try {
@@ -290,7 +283,7 @@ export const removeItemCategory = createAsyncThunk<
 export const removeItemUom = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("items/removeItemUom", async (id, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
   try {

@@ -9,7 +9,7 @@ import {
 } from "../../apollo/queries";
 import { RootState } from "../../app/store";
 
-import { AuthError, AuthUser, Role } from "../auth/types/authType";
+import { RejectWithValueType, AuthUser, Role } from "../auth/types/authType";
 
 export type UsersState = {
   entities: AuthUser[];
@@ -23,7 +23,7 @@ export type UsersState = {
 export const fetchUsers = createAsyncThunk<
   any,
   string,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("users/fetchUsers", async (_arg, thunkAPI) => {
   const { rejectWithValue, getState, requestId } = thunkAPI;
 
@@ -55,7 +55,7 @@ export const fetchUsers = createAsyncThunk<
 export const getUser = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("users/getUser", async (_id, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
@@ -106,7 +106,7 @@ export const getUser = createAsyncThunk<
 export const addUserRoles = createAsyncThunk<
   any,
   number[],
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("users/addUserRoles", async (arg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
@@ -131,7 +131,7 @@ export const addUserRoles = createAsyncThunk<
 export const fetchRoles = createAsyncThunk<
   any,
   string,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("users/fetchRoles", async (_arg, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 

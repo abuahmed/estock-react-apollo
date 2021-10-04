@@ -6,7 +6,7 @@ import { apolloClient } from "../../apollo/graphql";
 
 import { RootState } from "../../app/store";
 
-import { AuthError } from "../auth/types/authType";
+import { RejectWithValueType } from "../auth/types/authType";
 import {
   DailySummary,
   DailySummaryType,
@@ -45,7 +45,7 @@ import { sleep } from "../../utils/sleep";
 export const fetchInventories = createAsyncThunk<
   any,
   string,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/fetchInventories", async (_arg, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
@@ -71,7 +71,7 @@ export const fetchInventories = createAsyncThunk<
 export const fetchHeaders = createAsyncThunk<
   any,
   TransactionArgs,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/fetchHeaders", async (_arg, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
@@ -102,7 +102,7 @@ export const fetchHeaders = createAsyncThunk<
 export const fetchLines = createAsyncThunk<
   any,
   TransactionArgs,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/fetchLines", async (transactionArgs, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   //const { headerId,itemId } = transactionArgs;
@@ -133,7 +133,7 @@ export const fetchLines = createAsyncThunk<
 export const getHeader = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/getHeader", async (_id, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
@@ -155,7 +155,7 @@ export const getHeader = createAsyncThunk<
 export const addHeader = createAsyncThunk<
   any,
   TransactionHeader,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/addHeader", async (arg, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
@@ -197,7 +197,7 @@ export const addHeader = createAsyncThunk<
 export const addLine = createAsyncThunk<
   any,
   TransactionLine,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/addLine", async (tranLine, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
@@ -253,7 +253,7 @@ export const addLine = createAsyncThunk<
 export const postHeader = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/postHeader", async (id, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
@@ -278,7 +278,7 @@ export const postHeader = createAsyncThunk<
 export const unPostHeader = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/unPostHeader", async (id, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
@@ -302,7 +302,7 @@ export const unPostHeader = createAsyncThunk<
 export const removeHeader = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/removeHeader", async (id, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
@@ -330,7 +330,7 @@ export const removeHeader = createAsyncThunk<
 export const removeLine = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/removeLine", async (id, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
@@ -361,7 +361,7 @@ export const removeLine = createAsyncThunk<
 export const getItemInventory = createAsyncThunk<
   any,
   number,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/getItemInventory", async (_id, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
@@ -382,7 +382,7 @@ export const getItemInventory = createAsyncThunk<
 export const getSummary = createAsyncThunk<
   any,
   string,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/getSummary", async (_arg, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
@@ -404,7 +404,7 @@ export const getSummary = createAsyncThunk<
 export const getTopItems = createAsyncThunk<
   any,
   string,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/getTopItems", async (_arg, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
@@ -429,7 +429,7 @@ export const getTopItems = createAsyncThunk<
 export const GetDailyTransactions = createAsyncThunk<
   any,
   TransactionType,
-  { rejectValue: AuthError }
+  { rejectValue: RejectWithValueType }
 >("transactions/GetDailyTransactions", async (type, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
