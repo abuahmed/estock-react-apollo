@@ -5,13 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 //import { useDispatch, useSelector } from 'react-redux'
 
 // Slices
-import {
-  fetchItemCategories,
-  fetchItems,
-  fetchItemUoms,
-  removeItem,
-  selectItems,
-} from "./itemsSlice";
+import { fetchItems, removeItem, selectItems } from "./itemsSlice";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -39,9 +33,8 @@ export const BusinessPartners = () => {
   const { items, categories, uoms, loading } = useAppSelector(selectItems);
 
   useEffect(() => {
-    if (items.length === 0) dispatch(fetchItems("all"));
-    if (categories.length === 0) dispatch(fetchItemCategories("all"));
-    if (uoms.length === 0) dispatch(fetchItemUoms("all"));
+    dispatch(fetchItems("all"));
+
     dispatch(changePageTitle("Items List"));
   }, [categories.length, dispatch, items.length, uoms.length]);
 

@@ -34,7 +34,7 @@ import {
 import { Add, Edit, Visibility, Refresh } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
-import { fetchItems, selectItems } from "../items/itemsSlice";
+import { fetchItems, selectItems } from "../setups/itemsSlice";
 import { HeaderProps, TransactionStatus } from "./types/transactionTypes";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { Role } from "../auth/types/authType";

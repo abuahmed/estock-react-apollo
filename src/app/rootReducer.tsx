@@ -5,7 +5,7 @@ import counterReducer from "../features/counter/counterSlice";
 import authReducer from "../features/auth/authReducers";
 import usersReducer from "../features/users/usersSlice";
 import settingsReducer from "../features/settings/settingsSlice";
-import itemsReducer from "../features/items/itemsSlice";
+import itemsReducer from "../features/setups/itemsSlice";
 import transactionsReducer from "../features/transactions/transactionsSlice";
 
 const rootReducer = combineReducers({

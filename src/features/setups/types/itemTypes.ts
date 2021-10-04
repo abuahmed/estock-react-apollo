@@ -11,33 +11,16 @@ export type Category = {
   childCategories?: [Category];
 };
 
+export type RemoveCategory = {
+  type?: CategoryType;
+  id?: number;
+};
+
 export enum CategoryType {
   ItemCategory = "ItemCategory",
   UnitOfMeasure = "UnitOfMeasure",
   Bank = "Bank",
 }
-
-// export type Item = {
-//   id: number;
-//   uuid: string;
-//   isEnabled: boolean;
-//   createdByUserId: number;
-//   modifiedByUserId: number;
-//   dateRecordCreated: Date;
-//   dateLastModified: Date;
-//   displayName: string;
-//   description: string;
-//   type: ItemType;
-//   code: string;
-//   pictureUrl: string;
-//   itemCategoryId: number;
-//   itemCategory: Category;
-//   unitOfMeasureId: number;
-//   unitOfMeasure: Category;
-//   purchasePrice: number;
-//   sellingPrice: number;
-//   safeQty: number;
-// };
 
 export type Item = {
   id?: number;

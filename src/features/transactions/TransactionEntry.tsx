@@ -61,9 +61,9 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
-import { selectItems } from "../items/itemsSlice";
+import { selectItems } from "../setups/itemsSlice";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
-import { Item } from "../items/types/itemTypes";
+import { Item } from "../setups/types/itemTypes";
 import { lineSchema } from "./validation";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";

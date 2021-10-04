@@ -85,8 +85,8 @@ export const ADD_UPDATE_ITEM_UOM = gql`
 `;
 
 export const REMOVE_CATEGORY = gql`
-  mutation removeItemCategory($id: Int!) {
-    removeItemCategory(id: $id) {
+  mutation removeCategory($id: Int!) {
+    removeCategory(id: $id) {
       affectedRows
     }
   }

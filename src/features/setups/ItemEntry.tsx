@@ -19,12 +19,9 @@ import {
   selectItems,
   getItem,
   resetSelectedItem,
-  addItemCategory,
-  removeItemCategory,
-  addItemUom,
-  removeItemUom,
-  fetchItemCategories,
-  fetchItemUoms,
+  addCategory,
+  removeCategory,
+  fetchCategories,
 } from "./itemsSlice";
 import { Category, CategoryType, Item as ItemType } from "./types/itemTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
@@ -44,7 +41,6 @@ import {
   Divider,
   TableHead,
   LinearProgress,
-  Select,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
@@ -72,8 +68,8 @@ export const ItemEntry = () => {
 
   useEffect(() => {
     dispatch(changePageTitle(`Item Entry`));
-    dispatch(fetchItemCategories("all"));
-    dispatch(fetchItemUoms("all"));
+    dispatch(fetchCategories(CategoryType.ItemCategory));
+    dispatch(fetchCategories(CategoryType.UnitOfMeasure));
     if (id && id !== "0") {
       dispatch(getItem(parseInt(id)));
     } else {
@@ -85,13 +81,13 @@ export const ItemEntry = () => {
     dispatch(resetSelectedItem());
   }
   const DeleteCategory = (id: number) => {
-    dispatch(removeItemCategory(id));
+    dispatch(removeCategory({ type: CategoryType.ItemCategory, id }));
   };
   const SetSelectedCategory = (id: number) => {
     setSelectedCategory(categories.find((cat) => cat.id === id) as Category);
   };
   const DeleteUom = (id: number) => {
-    dispatch(removeItemUom(id));
+    dispatch(removeCategory({ type: CategoryType.UnitOfMeasure, id }));
   };
   const SetSelectedUom = (id: number) => {
     setSelectedUom(uoms.find((cat) => cat.id === id) as Category);
@@ -277,7 +273,7 @@ export const ItemEntry = () => {
               validationSchema={registerSchema}
               onSubmit={(values, actions) => {
                 actions.setSubmitting(false);
-                dispatch(addItemCategory(values));
+                dispatch(addCategory(values));
                 setSelectedCategory(defaultItemCategory);
               }}
             >
@@ -361,7 +357,7 @@ export const ItemEntry = () => {
               validationSchema={registerSchema}
               onSubmit={(values, actions) => {
                 actions.setSubmitting(false);
-                dispatch(addItemUom(values));
+                dispatch(addCategory(values));
                 setSelectedUom(defaultItemUom);
               }}
             >
