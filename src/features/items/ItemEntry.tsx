@@ -9,8 +9,6 @@ import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 
-import ItemSkeleton from "./ItemSkeleton";
-
 import { registerSchema } from "./validation";
 
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
@@ -21,13 +19,12 @@ import {
   selectItems,
   getItem,
   resetSelectedItem,
-  fetchItemCategories,
-  fetchItemUoms,
   addItemCategory,
   removeItemCategory,
   addItemUom,
   removeItemUom,
-  setSelectedItem,
+  fetchItemCategories,
+  fetchItemUoms,
 } from "./itemsSlice";
 import { Category, CategoryType, Item as ItemType } from "./types/itemTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
@@ -39,7 +36,6 @@ import {
   IconButton,
   MenuItem,
   Paper,
-  Skeleton,
   Stack,
   Table,
   TableBody,
@@ -48,39 +44,38 @@ import {
   Divider,
   TableHead,
   LinearProgress,
+  Select,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 
 const defaultItemCategory = {
   displayName: "",
-  id: undefined,
+  id: 0,
   type: CategoryType.ItemCategory,
 };
 const defaultItemUom = {
   displayName: "",
-  id: undefined,
+  id: 0,
   type: CategoryType.UnitOfMeasure,
 };
 export const ItemEntry = () => {
   const { id } = useParams() as {
     id: string;
   };
+  const { loading, error, success, selectedItem, categories, uoms } =
+    useAppSelector(selectItems);
+  const dispatch = useAppDispatch();
   const [selectedCategory, setSelectedCategory] =
     useState<Category>(defaultItemCategory);
   const [selectedUom, setSelectedUom] = useState<Category>(defaultItemUom);
-  const { loading, error, success, items, selectedItem, categories, uoms } =
-    useAppSelector(selectItems);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(changePageTitle(`Item Entry`));
     dispatch(fetchItemCategories("all"));
     dispatch(fetchItemUoms("all"));
     if (id && id !== "0") {
-      const itm = items.find((h) => h.id === parseInt(id));
-      if (itm) dispatch(setSelectedItem(itm));
-      else dispatch(getItem(parseInt(id)));
+      dispatch(getItem(parseInt(id)));
     } else {
       resetFields();
     }
@@ -153,42 +148,52 @@ export const ItemEntry = () => {
                         <FormikTextField formikKey="displayName" label="Name" />
                       </Grid>
                       <Grid item sm={4} xs={12}>
-                        <TextField
-                          fullWidth
-                          sx={{ mt: 1 }}
-                          variant="outlined"
-                          name="itemCategoryId"
-                          id="itemCategoryId"
-                          select
-                          label="Item Category"
-                          value={props.values.itemCategoryId}
-                          onChange={props.handleChange}
-                        >
-                          {categories.map((option) => (
-                            <MenuItem key={option.id} value={option.id}>
-                              {option.displayName}
+                        {categories.length > 0 && (
+                          <TextField
+                            fullWidth
+                            sx={{ mt: 1 }}
+                            variant="outlined"
+                            name="itemCategoryId"
+                            id="itemCategoryId"
+                            select
+                            label="Item Category"
+                            value={props.values.itemCategoryId}
+                            onChange={props.handleChange}
+                          >
+                            <MenuItem key="0" value={0}>
+                              <em>Select Category</em>
                             </MenuItem>
-                          ))}
-                        </TextField>
+                            {categories.map((option) => (
+                              <MenuItem key={option.id} value={option.id}>
+                                {option.displayName}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        )}
                       </Grid>
                       <Grid item sm={4} xs={12}>
-                        <TextField
-                          fullWidth
-                          sx={{ mt: 1 }}
-                          variant="outlined"
-                          name="unitOfMeasureId"
-                          id="unitOfMeasureId"
-                          select
-                          label="Unit Of Measure"
-                          value={props.values.unitOfMeasureId}
-                          onChange={props.handleChange}
-                        >
-                          {uoms.map((option) => (
-                            <MenuItem key={option.id} value={option.id}>
-                              {option.displayName}
+                        {uoms.length > 0 && (
+                          <TextField
+                            fullWidth
+                            sx={{ mt: 1 }}
+                            variant="outlined"
+                            name="unitOfMeasureId"
+                            id="unitOfMeasureId"
+                            select
+                            label="Unit Of Measure"
+                            value={props.values.unitOfMeasureId}
+                            onChange={props.handleChange}
+                          >
+                            <MenuItem key="0" value={0}>
+                              <em>Select UOM</em>
                             </MenuItem>
-                          ))}
-                        </TextField>
+                            {uoms.map((option) => (
+                              <MenuItem key={option.id} value={option.id}>
+                                {option.displayName}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        )}
                       </Grid>
                     </Grid>
 

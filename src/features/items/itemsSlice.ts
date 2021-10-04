@@ -337,6 +337,8 @@ async function setErrorAction(
 const defaultValues: Item = {
   displayName: "",
   description: "",
+  itemCategoryId: 0,
+  unitOfMeasureId: 0,
   purchasePrice: 0,
   sellingPrice: 0,
   safeQty: 0,

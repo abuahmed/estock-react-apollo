@@ -5,20 +5,13 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 //import { useDispatch, useSelector } from 'react-redux'
 
 // Slices
-import {
-  fetchItemCategories,
-  fetchItems,
-  fetchItemUoms,
-  removeItem,
-  selectItems,
-} from "./itemsSlice";
+import { fetchItems, removeItem, selectItems } from "./itemsSlice";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
-import Skeleton from "@material-ui/core/Skeleton";
 import { NavLink as RouterLink } from "react-router-dom";
 
 import { changePageTitle } from "../settings/settingsSlice";
@@ -37,13 +30,11 @@ import TableSkeleton from "../../components/Layout/TableSkeleton";
 
 export const Items = () => {
   const dispatch = useAppDispatch();
-  const { items, categories, uoms, loading } = useAppSelector(selectItems);
+  const { items, loading } = useAppSelector(selectItems);
 
   useEffect(() => {
     dispatch(changePageTitle("Items List"));
     dispatch(fetchItems("all"));
-    dispatch(fetchItemCategories("all"));
-    dispatch(fetchItemUoms("all"));
   }, [dispatch]);
 
   const DeleteItem = (id: number) => {
