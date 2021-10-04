@@ -24,19 +24,11 @@ export const GET_ALL_ITEMS = gql`
   }
 `;
 
-export const GET_ALL_ITEM_CATEGORIES = gql`
-  query GetItemCategories {
-    getItemCategories {
+export const GET_ALL_CATEGORIES = gql`
+  query GetCategories($type: CategoryType!) {
+    getCategories(type: $type) {
       id
-      displayName
-    }
-  }
-`;
-
-export const GET_ALL_ITEM_UOMS = gql`
-  query GetItemUoms {
-    getItemUoms {
-      id
+      type
       displayName
     }
   }

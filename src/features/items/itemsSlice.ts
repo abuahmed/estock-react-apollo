@@ -10,9 +10,8 @@ import {
   REMOVE_ITEM,
 } from "../../apollo/mutations";
 import {
+  GET_ALL_CATEGORIES,
   GET_ALL_ITEMS,
-  GET_ALL_ITEM_CATEGORIES,
-  GET_ALL_ITEM_UOMS,
   GET_SELECTED_ITEM,
 } from "../../apollo/queries";
 
@@ -20,7 +19,7 @@ import { RootState } from "../../app/store";
 //import { sleep } from "../../utils/sleep";
 
 import { AuthError } from "../auth/types/authType";
-import { Category, Item, ItemsState } from "./types/itemTypes";
+import { Category, CategoryType, Item, ItemsState } from "./types/itemTypes";
 
 export const fetchItems = createAsyncThunk<
   any,
@@ -54,11 +53,12 @@ export const fetchItemCategories = createAsyncThunk<
 
   try {
     const response = await apolloClient.query({
-      query: GET_ALL_ITEM_CATEGORIES,
+      query: GET_ALL_CATEGORIES,
+      variables: { type: CategoryType.ItemCategory },
     });
 
-    if (response && response.data && response.data.getItemCategories) {
-      return response.data.getItemCategories as Category[];
+    if (response && response.data && response.data.getCategories) {
+      return response.data.getCategories as Category[];
     }
   } catch (error: any) {
     const { code, stack } = error;
@@ -76,11 +76,12 @@ export const fetchItemUoms = createAsyncThunk<
 
   try {
     const response = await apolloClient.query({
-      query: GET_ALL_ITEM_UOMS,
+      query: GET_ALL_CATEGORIES,
+      variables: { type: CategoryType.UnitOfMeasure },
     });
 
-    if (response && response.data && response.data.getItemUoms) {
-      return response.data.getItemUoms as Category[];
+    if (response && response.data && response.data.getCategories) {
+      return response.data.getCategories as Category[];
     }
   } catch (error: any) {
     const { code, stack } = error;
