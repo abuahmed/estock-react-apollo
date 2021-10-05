@@ -12,13 +12,17 @@ import { Role, RoleTypes } from "../features/auth/types/authType";
 import Dashboard from "../features/dashboard/Dashboard";
 import Error from "../features/error/Error";
 import LandingPage from "../features/home/LandingPage";
+import { BusinessPartnerEntry } from "../features/setups/BusinessPartnerEntry";
 import { BusinessPartners } from "../features/setups/BusinessPartners";
 import { ItemEntry } from "../features/setups/ItemEntry";
 import { Items } from "../features/setups/Items";
 import { Headers } from "../features/transactions/Headers";
 import { Inventories } from "../features/transactions/Inventories";
 import { TransactionEntry } from "../features/transactions/TransactionEntry";
-import { TransactionType } from "../features/transactions/types/transactionTypes";
+import {
+  BusinessPartnerType,
+  TransactionType,
+} from "../features/transactions/types/transactionTypes";
 import { Users } from "../features/users";
 import { User } from "../features/users/User";
 import DashboardLayout from "./DashboardLayout";
@@ -89,11 +93,31 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         },
         {
           path: "customers",
-          element: isPrivileged(<BusinessPartners />, RoleTypes.Customers),
+          element: isPrivileged(
+            <BusinessPartners type={BusinessPartnerType.Customer} />,
+            RoleTypes.Customers
+          ),
+        },
+        {
+          path: "customer/:id",
+          element: isPrivileged(
+            <BusinessPartnerEntry type={BusinessPartnerType.Customer} />,
+            RoleTypes.Customers
+          ),
         },
         {
           path: "vendors",
-          element: isPrivileged(<BusinessPartners />, RoleTypes.Vendors),
+          element: isPrivileged(
+            <BusinessPartners type={BusinessPartnerType.Vendor} />,
+            RoleTypes.Vendors
+          ),
+        },
+        {
+          path: "vendor/:id",
+          element: isPrivileged(
+            <BusinessPartnerEntry type={BusinessPartnerType.Vendor} />,
+            RoleTypes.Vendors
+          ),
         },
         { path: "profile", element: <Profile /> },
         { path: "users", element: <Users /> },

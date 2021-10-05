@@ -6,6 +6,7 @@ import authReducer from "../features/auth/authReducers";
 import usersReducer from "../features/users/usersSlice";
 import settingsReducer from "../features/settings/settingsSlice";
 import itemsReducer from "../features/setups/itemsSlice";
+import businessPartnersReducer from "../features/setups/bpsSlice";
 import transactionsReducer from "../features/transactions/transactionsSlice";
 
 const rootReducer = combineReducers({
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   users: usersReducer,
   items: itemsReducer,
+  businessPartners: businessPartnersReducer,
   transactions: transactionsReducer,
   settings: settingsReducer,
 });
