@@ -6,6 +6,26 @@ export const GET_ALL_BUSINESS_PARTNERS = gql`
       id
       displayName
       description
+      type
+      initialOutstandingCredit
+      creditLimit
+      creditTransactionsLimit
+      address {
+        id
+        mobile
+        telephone
+        email
+      }
+      contact {
+        id
+        fullName
+        address {
+          id
+          mobile
+          telephone
+          email
+        }
+      }
     }
   }
 `;
@@ -16,6 +36,26 @@ export const GET_SELECTED_BUSINESS_PARTNER = gql`
       id
       displayName
       description
+      type
+      initialOutstandingCredit
+      creditLimit
+      creditTransactionsLimit
+      address {
+        id
+        mobile
+        telephone
+        email
+      }
+      contact {
+        id
+        fullName
+        address {
+          id
+          mobile
+          telephone
+          email
+        }
+      }
     }
   }
 `;

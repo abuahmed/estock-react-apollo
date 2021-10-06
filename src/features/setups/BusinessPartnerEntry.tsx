@@ -3,17 +3,20 @@ import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
 import { NavLink as RouterLink } from "react-router-dom";
-
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-
+import { Add, Backspace } from "@material-ui/icons";
+import { Grid, Divider, LinearProgress } from "@material-ui/core";
+import Save from "@material-ui/icons/Save";
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { registerSchema } from "./validation";
-
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import Toast from "../../components/Layout/Toast";
-
 import {
   addBusinessPartner,
   selectBusinessPartners,
@@ -22,11 +25,7 @@ import {
 } from "./bpsSlice";
 import { BusinessPartner, BusinessPartnerProps } from "./types/bpTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
-
 import { changePageTitle } from "../settings/settingsSlice";
-import { Add, Backspace } from "@material-ui/icons";
-import { Grid, Divider, LinearProgress } from "@material-ui/core";
-import Save from "@material-ui/icons/Save";
 
 export const BusinessPartnerEntry = ({ type }: BusinessPartnerProps) => {
   const { id } = useParams() as {
@@ -48,7 +47,7 @@ export const BusinessPartnerEntry = ({ type }: BusinessPartnerProps) => {
   }, [dispatch]);
 
   function resetFields() {
-    dispatch(resetSelectedBusinessPartner());
+    dispatch(resetSelectedBusinessPartner({ type }));
   }
 
   return (
@@ -98,18 +97,84 @@ export const BusinessPartnerEntry = ({ type }: BusinessPartnerProps) => {
               >
                 {(props: FormikProps<BusinessPartner>) => (
                   <Form>
-                    <Grid container spacing={2}>
-                      <Grid item sm={4} xs={12}>
-                        <FormikTextField formikKey="displayName" label="Name" />
-                      </Grid>
-                      <Grid item sm={8} xs={12}>
-                        <FormikTextField
-                          formikKey="description"
-                          label="Description"
-                        />
-                      </Grid>
-                    </Grid>
+                    <Accordion sx={{ m: 1 }} expanded={true}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                      >
+                        <Typography>Detail</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Grid container spacing={2}>
+                          <Grid item md={4} xs={12}>
+                            <FormikTextField
+                              formikKey="displayName"
+                              label="Name"
+                            />
+                          </Grid>
+                          <Grid item md={8} xs={12}>
+                            <FormikTextField
+                              formikKey="description"
+                              label="Description"
+                            />
+                          </Grid>
+                          <Grid item md={4} xs={12}>
+                            <FormikTextField
+                              formikKey="initialOutstandingCredit"
+                              label="Initial Credit"
+                              type={"number"}
+                            />
+                          </Grid>
+                          <Grid item md={4} xs={12}>
+                            <FormikTextField
+                              formikKey="creditLimit"
+                              label="Max. Credit"
+                              type={"number"}
+                            />
+                          </Grid>
+                          <Grid item md={4} xs={12}>
+                            <FormikTextField
+                              formikKey="creditTransactionsLimit"
+                              label="Max. Transactions"
+                              type={"number"}
+                            />
+                          </Grid>
+                        </Grid>
+                      </AccordionDetails>
+                    </Accordion>
 
+                    <Accordion sx={{ m: 1 }} expanded={true}>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                      >
+                        <Typography>Address</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Grid container spacing={2}>
+                          <Grid item md={4} xs={12}>
+                            <FormikTextField
+                              formikKey="address.mobile"
+                              label="Mobile"
+                            />
+                          </Grid>
+                          <Grid item md={4} xs={12}>
+                            <FormikTextField
+                              formikKey="address.telephone"
+                              label="Telephone"
+                            />
+                          </Grid>
+                          <Grid item md={4} xs={12}>
+                            <FormikTextField
+                              formikKey="address.email"
+                              label="Email"
+                            />
+                          </Grid>
+                        </Grid>
+                      </AccordionDetails>
+                    </Accordion>
                     <br />
                     {success && (
                       <Toast severity="success">{success.message}</Toast>

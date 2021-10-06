@@ -71,14 +71,33 @@ export const addBusinessPartner = createAsyncThunk<
 >("BusinessPartners/addBusinessPartner", async (arg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    let BusinessPartner = { ...arg };
+    let bp = { ...arg };
+    //console.log({ ...businessPartner });
+    const { address, contact } = bp;
 
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_BUSINESS_PARTNER,
       variables: {
-        ...BusinessPartner,
+        id: bp.id,
+        type: bp.type,
+        displayName: bp.displayName,
+        initialOutstandingCredit: bp.initialOutstandingCredit,
+        creditLimit: bp.creditLimit,
+        creditTransactionsLimit: bp.creditTransactionsLimit,
+        addressId: address?.id,
+        mobile: address?.mobile,
+        telephone: address?.telephone,
+        email: address?.email,
+        contactId: contact?.id,
+        fullName: contact?.fullName,
+        contactAddressId: contact?.address?.id,
+        contactMobile: contact?.address?.mobile,
+        contactTelephone: contact?.address?.telephone,
+        contactEmail: contact?.address?.email,
       },
-      refetchQueries: [{ query: GET_ALL_BUSINESS_PARTNERS }],
+      refetchQueries: [
+        { query: GET_ALL_BUSINESS_PARTNERS, variables: { type: bp.type } },
+      ],
     });
 
     if (response && response.data && response.data.createBusinessPartner) {
@@ -87,15 +106,18 @@ export const addBusinessPartner = createAsyncThunk<
 
       await setSuccessAction(dispatch, {
         message: "BusinessPartner Successfully Saved",
+        type: bp.type,
       });
 
       return addedBusinessPartner;
     }
+    // return businessPartner;
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
     dispatch(setSelectedBusinessPartner(arg));
     await setErrorAction(dispatch, { message });
+    console.log(error.graphQLErrors[0].message);
     //error.graphQLErrors[0].extensions.exception.response.status;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
@@ -138,7 +160,7 @@ async function setSuccessAction(
 ) {
   dispatch(setSuccess(payload));
   setTimeout(() => {
-    dispatch(resetSelectedBusinessPartner());
+    dispatch(resetSelectedBusinessPartner(payload.type));
     dispatch(resetSuccess());
   }, 2000);
 }
@@ -153,8 +175,14 @@ async function setErrorAction(
 }
 
 const defaultValues: BusinessPartner = {
+  type: BusinessPartnerType.Customer,
   displayName: "",
   description: "",
+  initialOutstandingCredit: 0,
+  creditLimit: 0,
+  creditTransactionsLimit: 0,
+  address: { mobile: "", telephone: "", email: "" },
+  contact: { fullName: "", address: { mobile: "", telephone: "", email: "" } },
 };
 
 const initialState: BusinessPartnersState = {
@@ -182,8 +210,8 @@ export const businessPartnersSlice = createSlice({
     resetError: (state) => {
       state.error = null;
     },
-    resetSelectedBusinessPartner: (state) => {
-      state.selectedBusinessPartner = { ...defaultValues };
+    resetSelectedBusinessPartner: (state, { payload }) => {
+      state.selectedBusinessPartner = { ...defaultValues, type: payload.type };
     },
     setSelectedBusinessPartner: (state, { payload }) => {
       state.selectedBusinessPartner = payload;
