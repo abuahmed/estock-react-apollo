@@ -16,7 +16,11 @@ import { RootState } from "../../app/store";
 
 import { RejectWithValueType } from "../auth/types/authType";
 import { BusinessPartnerType } from "../transactions/types/transactionTypes";
-import { BusinessPartner, BusinessPartnersState } from "./types/bpTypes";
+import {
+  BusinessPartner,
+  BusinessPartnersState,
+  RemoveBusinessPartner,
+} from "./types/bpTypes";
 
 export const fetchBusinessPartners = createAsyncThunk<
   any,
@@ -117,7 +121,7 @@ export const addBusinessPartner = createAsyncThunk<
     const message = error.message;
     dispatch(setSelectedBusinessPartner(arg));
     await setErrorAction(dispatch, { message });
-    console.log(error.graphQLErrors[0].message);
+    //console.log(error.graphQLErrors[0].message);
     //error.graphQLErrors[0].extensions.exception.response.status;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
@@ -125,15 +129,17 @@ export const addBusinessPartner = createAsyncThunk<
 
 export const removeBusinessPartner = createAsyncThunk<
   any,
-  number,
+  RemoveBusinessPartner,
   { rejectValue: RejectWithValueType }
->("BusinessPartners/removeBusinessPartner", async (id, thunkAPI) => {
+>("BusinessPartners/removeBusinessPartner", async ({ id, type }, thunkAPI) => {
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_BUSINESS_PARTNER,
       variables: { id },
-      refetchQueries: [{ query: GET_ALL_BUSINESS_PARTNERS }],
+      refetchQueries: [
+        { query: GET_ALL_BUSINESS_PARTNERS, variables: { type } },
+      ],
     });
 
     if (response && response.data && response.data.removeBusinessPartner) {

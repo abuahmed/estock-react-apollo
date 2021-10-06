@@ -94,6 +94,11 @@ export enum BusinessPartnerCategory {
   Individual = "Individual",
 }
 
+export type RemoveBusinessPartner = {
+  type?: BusinessPartnerType;
+  id?: number;
+};
+
 export type BusinessPartnersState = {
   businessPartners: BusinessPartner[];
   selectedBusinessPartner: BusinessPartner;

@@ -42,7 +42,7 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
   }, [dispatch, type]);
 
   const DeleteBusinessPartner = (id: number) => {
-    dispatch(removeBusinessPartner(id));
+    dispatch(removeBusinessPartner({ id, type }));
   };
 
   return (
@@ -86,7 +86,13 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
                 businessPartners.map((row) => (
                   <StyledTableRow key={row.id}>
                     <StyledTableCell component="th" scope="row">
-                      {row.displayName}
+                      <Button
+                        color="primary"
+                        component={RouterLink}
+                        to={`/app/${type}/` + row.id}
+                      >
+                        {row.displayName}
+                      </Button>
                     </StyledTableCell>
 
                     <StyledTableCell>

@@ -87,7 +87,13 @@ export const Items = () => {
                 items.map((row) => (
                   <StyledTableRow key={row.id}>
                     <StyledTableCell component="th" scope="row">
-                      {row.displayName}
+                      <Button
+                        color="primary"
+                        component={RouterLink}
+                        to={"/app/item/" + row.id}
+                      >
+                        {row.displayName}
+                      </Button>
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       {row && row.itemCategory && row.itemCategory.displayName}
