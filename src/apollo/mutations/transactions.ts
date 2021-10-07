@@ -2,13 +2,13 @@ import { gql } from "@apollo/client";
 
 export const CREATE_UPDATE_HEADER = gql`
   mutation createUpdateTransaction(
-    $type: TransactionType
-    $transactionDate: Date
+    $type: TransactionType!
+    $transactionDate: DateTime
     $id: Int
     $warehouseId: Int
     $businessPartnerId: Int
   ) {
-    createUpdateHeader(
+    createTransaction(
       input: {
         type: $type
         transactionDate: $transactionDate
@@ -19,7 +19,15 @@ export const CREATE_UPDATE_HEADER = gql`
     ) {
       id
       number
-      warehouseId
+      transactionDate
+      status
+      numberOfItems
+      totalAmount
+      totalQty
+      warehouse {
+        id
+        displayName
+      }
       businessPartner {
         id
         displayName

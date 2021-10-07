@@ -33,6 +33,7 @@ import {
   postHeader,
   unPostHeader,
   fetchInventories,
+  addHeader,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -68,21 +69,35 @@ import { lineSchema } from "./validation";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
 import { Role } from "../auth/types/authType";
-import TableSkeleton from "../../components/Layout/TableSkeleton";
+import {
+  fetchBusinessPartners,
+  selectBusinessPartners,
+} from "../setups/bpsSlice";
+import { BusinessPartner, BusinessPartnerType } from "../setups/types/bpTypes";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
     id: string;
   };
+
+  const bpType =
+    type === TransactionType.Sale
+      ? BusinessPartnerType.Customer
+      : BusinessPartnerType.Vendor;
+
   const [selectedItemId, setSelectedItemId] = useState(0);
   const [selectedInventory, setSelectedInventory] = useState<Inventory>({
     qtyOnHand: 0,
   });
-  const [tranHeader, setTranHeader] = useState<TransactionHeader>({ type });
+  const [tranHeader, setTranHeader] = useState<TransactionHeader>({
+    type,
+    businessPartner: { displayName: `select ${bpType}`, id: 0 },
+  });
   const [tranLine, setTranLine] = useState<TransactionLine>({});
   const dispatch = useAppDispatch();
   const [leftItems, setLeftItems] = useState<Item[]>([]);
   const { items } = useAppSelector(selectItems);
+  const { businessPartners } = useAppSelector(selectBusinessPartners);
   const { user } = useAppSelector(selectAuth);
 
   const {
@@ -99,6 +114,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   useEffect(() => {
     dispatch(changePageTitle(`${type} Entry`));
     dispatch(fetchInventories("all"));
+    dispatch(fetchBusinessPartners(bpType));
     if (id && id !== "0") {
       if (headers.length === 0) {
         dispatch(fetchHeaders({ type }));
@@ -124,8 +140,9 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   }, [lines, items]);
 
   useEffect(() => {
+    //console.log(selectedHeader);
     setTranHeader(selectedHeader);
-  }, [selectedHeader]);
+  }, [selectedHeader, businessPartners]);
 
   useEffect(() => {
     setTranLine(selectedLine);
@@ -147,6 +164,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       type,
       transactionDate: new Date(),
       status: TransactionStatus.Draft,
+      businessPartner: { displayName: `select ${bpType}`, id: 0 },
       number: "...",
     };
     dispatch(setSelectedHeader(hd));
@@ -254,7 +272,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
           {selectedHeader?.status === TransactionStatus.Draft &&
             isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
               <>
-                <Accordion sx={{ my: 1 }}>
+                <Accordion sx={{ my: 1 }} expanded={true}>
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
@@ -268,7 +286,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       initialValues={tranHeader as TransactionHeader}
                       onSubmit={(values, actions) => {
                         actions.setSubmitting(false);
-                        //dispatch(addTransactionHeader(values));
+                        dispatch(addHeader(values));
                       }}
                     >
                       {(props: FormikProps<TransactionHeader>) => (
@@ -304,7 +322,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                               </LocalizationProvider>
                             </Grid>
 
-                            <Grid item md={2} xs={12}>
+                            <Grid item md={3} xs={12}>
                               <TextField
                                 value={props.values.number}
                                 variant="outlined"
@@ -313,15 +331,43 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                               />
                             </Grid>
 
-                            <Grid item md={2} xs={12}>
-                              <TextField
+                            <Grid item md={3} xs={12}>
+                              <Autocomplete
+                                id="businessPartnerId"
+                                options={businessPartners}
+                                value={props.values?.businessPartner}
+                                getOptionLabel={(option) =>
+                                  option.displayName as string
+                                }
+                                isOptionEqualToValue={(option, value) =>
+                                  option.id === value.id
+                                }
+                                onChange={(e, value) => {
+                                  setTranHeader({
+                                    ...tranHeader,
+                                    businessPartner: value as BusinessPartner,
+                                  });
+                                  props.setFieldValue(
+                                    "businessPartner",
+                                    value !== null ? value : null
+                                  );
+                                }}
+                                renderInput={(params) => (
+                                  <TextField
+                                    label={bpType}
+                                    name="businessPartnerId"
+                                    {...params}
+                                  />
+                                )}
+                              />
+                              {/* <TextField
                                 value={
                                   props.values.businessPartner?.displayName
                                 }
                                 variant="outlined"
                                 fullWidth
                                 disabled
-                              />
+                              /> */}
                             </Grid>
                             <Grid item md={2} xs={12}>
                               <Button

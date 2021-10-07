@@ -54,6 +54,7 @@ export const GET_ALL_TRANSACTIONS = gql`
     ) {
       id
       transactionDate
+      type
       number
       status
       numberOfItems
@@ -160,9 +161,11 @@ export const GET_TRANSACTION_LINES = gql`
         number
         status
         warehouse {
+          id
           displayName
         }
         businessPartner {
+          id
           displayName
         }
       }
@@ -178,6 +181,7 @@ export const GET_SELECTED_HEADER = gql`
   query GetSelectedHeader($id: Int!) {
     getHeaderById(id: $id) {
       id
+      type
       transactionDate
       number
       numberOfItems

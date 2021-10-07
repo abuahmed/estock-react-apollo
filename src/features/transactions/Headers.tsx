@@ -35,17 +35,26 @@ import { Add, Edit, Visibility, Refresh } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import { fetchItems, selectItems } from "../setups/itemsSlice";
-import { HeaderProps, TransactionStatus } from "./types/transactionTypes";
+import {
+  HeaderProps,
+  TransactionStatus,
+  TransactionType,
+} from "./types/transactionTypes";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { Role } from "../auth/types/authType";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
+import { BusinessPartnerType } from "../setups/types/bpTypes";
 
 export const Headers = ({ type }: HeaderProps) => {
   const [startDate, setStartDate] = useState<Date | null>(
     addMonths(new Date(), -1)
   );
+  const bpType =
+    type === TransactionType.Sale
+      ? BusinessPartnerType.Customer
+      : BusinessPartnerType.Vendor;
   const [endDate, setEndDate] = useState<Date | null>(new Date());
   const dispatch = useAppDispatch();
   const { headers, loading } = useAppSelector(selectTransactions);
@@ -188,6 +197,7 @@ export const Headers = ({ type }: HeaderProps) => {
               <StyledTableRow>
                 <StyledTableCell>Date</StyledTableCell>
                 <StyledTableCell>Warehouse</StyledTableCell>
+                <StyledTableCell>{bpType}</StyledTableCell>
                 <StyledTableCell>Number</StyledTableCell>
                 <StyledTableCell>No of Items</StyledTableCell>
                 <StyledTableCell>Total Qty</StyledTableCell>
@@ -217,6 +227,9 @@ export const Headers = ({ type }: HeaderProps) => {
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       {row.warehouse && row.warehouse.displayName}
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {row.businessPartner && row.businessPartner.displayName}
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       {row.number}

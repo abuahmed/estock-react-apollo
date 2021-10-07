@@ -105,7 +105,6 @@ export const fetchLines = createAsyncThunk<
   { rejectValue: RejectWithValueType }
 >("transactions/fetchLines", async (transactionArgs, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
-  //const { headerId,itemId } = transactionArgs;
   try {
     let lastUpdated = startOfDay(new Date());
     if (transactionArgs.refreshList === "refresh") lastUpdated = new Date();
@@ -157,29 +156,38 @@ export const addHeader = createAsyncThunk<
   TransactionHeader,
   { rejectValue: RejectWithValueType }
 >("transactions/addHeader", async (arg, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
+    const { id, businessPartner, warehouseId, transactionDate, type } = arg;
+    console.log(arg);
     const response = await apolloClient.mutate({
       mutation: CREATE_UPDATE_HEADER,
       variables: {
-        ...arg,
+        type,
+        id,
+        businessPartnerId: businessPartner?.id,
+        warehouseId,
+        transactionDate,
       },
+      refetchQueries: [
+        { query: GET_ALL_TRANSACTIONS, variables: { type: type } },
+      ],
     });
 
-    if (response && response.data && response.data.createUpdateHeader) {
-      const {
-        transactions: { headers },
-      } = getState() as { transactions: TransactionsState };
-      let restItems = [...headers];
+    if (response && response.data && response.data.createTransaction) {
+      // const {
+      //   transactions: { headers },
+      // } = getState() as { transactions: TransactionsState };
+      // let restItems = [...headers];
       const addedItem = (await response.data
-        .createUpdateHeader) as TransactionHeader;
-      if (arg && arg.id) {
-        restItems = restItems.filter((it) => it.id !== arg.id);
-      }
-      restItems.push(addedItem);
-      dispatch(setHeaders(restItems));
+        .createTransaction) as TransactionHeader;
+      // if (arg && arg.id) {
+      //   restItems = restItems.filter((it) => it.id !== arg.id);
+      // }
+      // restItems.push(addedItem);
+      // dispatch(setHeaders(restItems));
       await setSuccessAction(dispatch, {
-        message: "Item Successfully Saved",
+        message: "Transaction Successfully Saved",
       });
 
       return addedItem;
@@ -189,7 +197,6 @@ export const addHeader = createAsyncThunk<
     const message = error.message;
     dispatch(setSelectedHeader(arg));
     await setErrorAction(dispatch, { message });
-
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -211,7 +218,7 @@ export const addLine = createAsyncThunk<
         headerId: header?.id,
         type: header?.type,
         transactionDate: header?.transactionDate,
-        businessPartnerId: 1,
+        businessPartnerId: header?.businessPartnerId,
         warehouseId: 3,
         itemId: item?.id,
         qty: qty,
@@ -489,6 +496,7 @@ const initialState: TransactionsState = {
     type: TransactionType.Purchase,
     status: TransactionStatus.Draft,
     transactionDate: new Date(),
+    businessPartner: { displayName: "select Customer/Vendor", id: 0 },
   },
   selectedLine: {
     item: { displayName: "select item", id: 0 },
