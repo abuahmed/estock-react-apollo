@@ -15,7 +15,7 @@ import { RootState } from "../../app/store";
 //import { sleep } from "../../utils/sleep";
 
 import { RejectWithValueType } from "../auth/types/authType";
-import { BusinessPartnerType } from "../transactions/types/transactionTypes";
+import { BusinessPartnerType } from "./types/bpTypes";
 import {
   BusinessPartner,
   BusinessPartnersState,

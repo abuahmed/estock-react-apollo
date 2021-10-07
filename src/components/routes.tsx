@@ -16,13 +16,11 @@ import { BusinessPartnerEntry } from "../features/setups/BusinessPartnerEntry";
 import { BusinessPartners } from "../features/setups/BusinessPartners";
 import { ItemEntry } from "../features/setups/ItemEntry";
 import { Items } from "../features/setups/Items";
+import { BusinessPartnerType } from "../features/setups/types/bpTypes";
 import { Headers } from "../features/transactions/Headers";
 import { Inventories } from "../features/transactions/Inventories";
 import { TransactionEntry } from "../features/transactions/TransactionEntry";
-import {
-  BusinessPartnerType,
-  TransactionType,
-} from "../features/transactions/types/transactionTypes";
+import { TransactionType } from "../features/transactions/types/transactionTypes";
 import { Users } from "../features/users";
 import { User } from "../features/users/User";
 import DashboardLayout from "./DashboardLayout";

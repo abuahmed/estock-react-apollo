@@ -1,35 +1,9 @@
 import { Warehouse } from "../../auth/types/authType";
+import { BusinessPartner } from "../../setups/types/bpTypes";
 import { Item } from "../../setups/types/itemTypes";
 
 export interface HeaderProps {
   type: TransactionType;
-}
-
-export type BusinessPartner = {
-  id?: number;
-  uuid?: string;
-  isEnabled?: boolean;
-  createdByUserId?: number;
-  modifiedByUserId?: number;
-  displayName?: string;
-  description?: string;
-  tinNumber?: string;
-  vatNumber?: string;
-  code?: string;
-  creditLimit?: number;
-  type?: BusinessPartnerType;
-  category?: BusinessPartnerCategory;
-  transactions?: [TransactionHeader];
-};
-
-export enum BusinessPartnerType {
-  Customer = "Customer",
-  Vendor = "Vendor",
-}
-
-export enum BusinessPartnerCategory {
-  Organization = "Organization",
-  Individual = "Individual",
 }
 
 export type TransactionLine = {
