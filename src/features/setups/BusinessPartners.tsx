@@ -5,10 +5,10 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 // Slices
 import {
-  fetchBusinessPartners,
+  selectSetups,
   removeBusinessPartner,
-  selectBusinessPartners,
-} from "./bpsSlice";
+  fetchBusinessPartners,
+} from "./setupSlices";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -34,7 +34,7 @@ import { BusinessPartnerProps } from "./types/bpTypes";
 
 export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
   const dispatch = useAppDispatch();
-  const { businessPartners, loading } = useAppSelector(selectBusinessPartners);
+  const { businessPartners, loading } = useAppSelector(selectSetups);
 
   useEffect(() => {
     dispatch(changePageTitle(`${type} List`));

@@ -34,7 +34,7 @@ import {
 import { Add, Edit, Visibility, Refresh } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
-import { fetchItems, selectItems } from "../setups/itemsSlice";
+import { fetchItems, selectSetups } from "../setups/setupSlices";
 import {
   HeaderProps,
   TransactionStatus,
@@ -59,7 +59,7 @@ export const Headers = ({ type }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const { headers, loading } = useAppSelector(selectTransactions);
 
-  const { items } = useAppSelector(selectItems);
+  const { items } = useAppSelector(selectSetups);
   const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {

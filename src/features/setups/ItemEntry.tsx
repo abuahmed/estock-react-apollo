@@ -16,13 +16,13 @@ import Toast from "../../components/Layout/Toast";
 
 import {
   addItem,
-  selectItems,
+  selectSetups,
   getItem,
   resetSelectedItem,
   addCategory,
   removeCategory,
   fetchCategories,
-} from "./itemsSlice";
+} from "./setupSlices";
 import { Category, CategoryType, Item as ItemType } from "./types/itemTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
@@ -60,7 +60,7 @@ export const ItemEntry = () => {
     id: string;
   };
   const { loading, error, success, selectedItem, categories, uoms } =
-    useAppSelector(selectItems);
+    useAppSelector(selectSetups);
   const dispatch = useAppDispatch();
   const [selectedCategory, setSelectedCategory] =
     useState<Category>(defaultItemCategory);

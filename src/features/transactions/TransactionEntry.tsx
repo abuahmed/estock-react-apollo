@@ -62,17 +62,13 @@ import {
   LinearProgress,
 } from "@material-ui/core";
 import Save from "@material-ui/icons/Save";
-import { selectItems } from "../setups/itemsSlice";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import { Item } from "../setups/types/itemTypes";
 import { lineSchema } from "./validation";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
 import { Role } from "../auth/types/authType";
-import {
-  fetchBusinessPartners,
-  selectBusinessPartners,
-} from "../setups/bpsSlice";
+import { fetchBusinessPartners, selectSetups } from "../setups/setupSlices";
 import { BusinessPartner, BusinessPartnerType } from "../setups/types/bpTypes";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
@@ -96,8 +92,8 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   const [tranLine, setTranLine] = useState<TransactionLine>({});
   const dispatch = useAppDispatch();
   const [leftItems, setLeftItems] = useState<Item[]>([]);
-  const { items } = useAppSelector(selectItems);
-  const { businessPartners } = useAppSelector(selectBusinessPartners);
+  const { items } = useAppSelector(selectSetups);
+  const { businessPartners } = useAppSelector(selectSetups);
   const { user } = useAppSelector(selectAuth);
 
   const {

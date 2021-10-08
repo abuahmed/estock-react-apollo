@@ -19,10 +19,10 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import Toast from "../../components/Layout/Toast";
 import {
   addBusinessPartner,
-  selectBusinessPartners,
+  selectSetups,
   getBusinessPartner,
-  resetSelectedBusinessPartner,
-} from "./bpsSlice";
+} from "./setupSlices";
+import { resetSelectedBusinessPartner } from "./setupSlices";
 import { BusinessPartner, BusinessPartnerProps } from "./types/bpTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import { changePageTitle } from "../settings/settingsSlice";
@@ -31,9 +31,8 @@ export const BusinessPartnerEntry = ({ type }: BusinessPartnerProps) => {
   const { id } = useParams() as {
     id: string;
   };
-  const { loading, error, success, selectedBusinessPartner } = useAppSelector(
-    selectBusinessPartners
-  );
+  const { loading, error, success, selectedBusinessPartner } =
+    useAppSelector(selectSetups);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

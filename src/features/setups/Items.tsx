@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 //import { useDispatch, useSelector } from 'react-redux'
 
 // Slices
-import { fetchItems, removeItem, selectItems } from "./itemsSlice";
+import { fetchItems, removeItem, selectSetups } from "./setupSlices";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -30,7 +30,7 @@ import TableSkeleton from "../../components/Layout/TableSkeleton";
 
 export const Items = () => {
   const dispatch = useAppDispatch();
-  const { items, loading } = useAppSelector(selectItems);
+  const { items, loading } = useAppSelector(selectSetups);
 
   useEffect(() => {
     dispatch(changePageTitle("Items List"));

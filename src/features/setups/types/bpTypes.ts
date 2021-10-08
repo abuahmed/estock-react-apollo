@@ -1,4 +1,6 @@
 import { TransactionHeader } from "../../transactions/types/transactionTypes";
+import { Category, Item } from "./itemTypes";
+import { Client, Organization, Warehouse } from "./warehouseTypes";
 
 export interface BusinessPartnerProps {
   type: BusinessPartnerType;
@@ -99,9 +101,19 @@ export type RemoveBusinessPartner = {
   id?: number;
 };
 
-export type BusinessPartnersState = {
+export type SetupsState = {
+  items: Item[];
+  categories: Category[];
+  uoms: Category[];
+  selectedItem: Item;
   businessPartners: BusinessPartner[];
   selectedBusinessPartner: BusinessPartner;
+  clients: Client[];
+  selectedClient: Client;
+  organizations: Organization[];
+  selectedOrganization: Organization;
+  warehouses: Warehouse[];
+  selectedWarehouse: Warehouse;
   loading: "idle" | "pending";
   currentRequestId: string | undefined;
   success: any;
