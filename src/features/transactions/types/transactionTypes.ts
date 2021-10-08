@@ -1,6 +1,6 @@
-import { Warehouse } from "../../auth/types/authType";
 import { BusinessPartner } from "../../setups/types/bpTypes";
 import { Item } from "../../setups/types/itemTypes";
+import { Warehouse } from "../../setups/types/warehouseTypes";
 
 export interface HeaderProps {
   type: TransactionType;

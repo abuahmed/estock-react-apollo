@@ -1,3 +1,5 @@
+import { Warehouse } from "../../setups/types/warehouseTypes";
+
 export type AuthUser = {
   id: number;
   uuid: string;
@@ -29,17 +31,6 @@ export type Role = {
   description: string;
   descriptionShort: string;
   isPrivileged: boolean;
-};
-export type Warehouse = {
-  id?: number;
-  uuid?: string;
-  isEnabled?: Boolean;
-  createdByUserId?: number;
-  modifiedByUserId?: number;
-  displayName?: string;
-  description?: string;
-  descriptionShort?: string;
-  isPrivileged?: boolean;
 };
 
 enum UserStatus {
@@ -82,12 +73,7 @@ export type AuthenticatedUser = {
   isAdmin: string;
   token: string;
 };
-// export type AuthProfile = {
-//   name: string;
-//   email: string;
-//   avatar: string;
-//   bio: string;
-// };
+
 export type UpdatePassword = {
   userId: string;
   oldPassword: string;
