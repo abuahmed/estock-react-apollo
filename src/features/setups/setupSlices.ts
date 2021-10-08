@@ -1083,7 +1083,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchClients.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = payload;
+      state.clients = payload;
     });
     builder.addCase(fetchClients.rejected, (state, { error }) => {
       state.loading = "idle";
@@ -1117,7 +1117,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeClient.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = payload;
+      state.clients = payload;
       state.success = { message: "Client Removed Successfully" };
     });
     builder.addCase(removeClient.rejected, (state, { error }) => {
@@ -1130,7 +1130,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchOrganizations.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = payload;
+      state.organizations = payload;
     });
     builder.addCase(fetchOrganizations.rejected, (state, { error }) => {
       state.loading = "idle";
@@ -1164,7 +1164,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeOrganization.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = payload;
+      state.organizations = payload;
       state.success = { message: "Organization Removed Successfully" };
     });
     builder.addCase(removeOrganization.rejected, (state, { error }) => {
@@ -1177,7 +1177,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchWarehouses.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = payload;
+      state.warehouses = payload;
     });
     builder.addCase(fetchWarehouses.rejected, (state, { error }) => {
       state.loading = "idle";
@@ -1211,7 +1211,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeWarehouse.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = payload;
+      state.warehouses = payload;
       state.success = { message: "Warehouse Removed Successfully" };
     });
     builder.addCase(removeWarehouse.rejected, (state, { error }) => {

@@ -14,6 +14,7 @@ import Error from "../features/error/Error";
 import LandingPage from "../features/home/LandingPage";
 import { BusinessPartnerEntry } from "../features/setups/BusinessPartnerEntry";
 import { BusinessPartners } from "../features/setups/BusinessPartners";
+import { Clients } from "../features/setups/Clients";
 import { ItemEntry } from "../features/setups/ItemEntry";
 import { Items } from "../features/setups/Items";
 import { BusinessPartnerType } from "../features/setups/types/bpTypes";
@@ -117,6 +118,7 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
             RoleTypes.Vendors
           ),
         },
+        { path: "clients", element: <Clients /> },
         { path: "profile", element: <Profile /> },
         { path: "users", element: <Users /> },
         { path: "user/:id", element: <User /> },

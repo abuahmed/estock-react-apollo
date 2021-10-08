@@ -1,13 +1,11 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_CLIENTS = gql`
-  query GetOrganizations {
+  query GetClients {
     clients {
       id
       displayName
       description
-      type
-
       address {
         id
         mobile
