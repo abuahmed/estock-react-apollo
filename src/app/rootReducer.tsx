@@ -5,16 +5,14 @@ import counterReducer from "../features/counter/counterSlice";
 import authReducer from "../features/auth/authReducers";
 import usersReducer from "../features/users/usersSlice";
 import settingsReducer from "../features/settings/settingsSlice";
-import itemsReducer from "../features/setups/itemsSlice";
-import businessPartnersReducer from "../features/setups/bpsSlice";
+import setupsReducer from "../features/setups/setupSlices";
 import transactionsReducer from "../features/transactions/transactionsSlice";
 
 const rootReducer = combineReducers({
   counter: counterReducer,
   auth: authReducer,
   users: usersReducer,
-  items: itemsReducer,
-  businessPartners: businessPartnersReducer,
+  setups: setupsReducer,
   transactions: transactionsReducer,
   settings: settingsReducer,
 });
