@@ -7,6 +7,14 @@ export const GET_ALL_USERS = gql`
       name
       email
       avatar
+      roles {
+        id
+        displayName
+      }
+      warehouses {
+        id
+        displayName
+      }
     }
   }
 `;
@@ -28,6 +36,10 @@ export const GET_SELECTED_USER = gql`
       email
       avatar
       roles {
+        id
+        displayName
+      }
+      warehouses {
         id
         displayName
       }
