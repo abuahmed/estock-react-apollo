@@ -22,8 +22,6 @@ export const GET_SELECTED_CLIENT = gql`
       id
       displayName
       description
-      type
-
       address {
         id
         mobile
