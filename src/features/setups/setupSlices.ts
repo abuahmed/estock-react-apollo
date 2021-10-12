@@ -191,28 +191,14 @@ export const addCategory = createAsyncThunk<
     });
 
     if (response && response.data && response.data.createItemCategory) {
-      const {
-        setups: { categories, uoms },
-      } = getState() as { setups: SetupsState };
-
       if (category.type === CategoryType.ItemCategory) {
-        let restCategories = [...categories];
         const addedCategory = (await response.data
           .createItemCategory) as Category;
-        if (category && category.id) {
-          restCategories = restCategories.filter((it) => it.id !== category.id);
-        }
-        restCategories.push(addedCategory);
-
-        return { type: category.type, data: restCategories };
+        return { type: category.type, data: addedCategory };
       } else {
-        let restUoms = [...uoms];
         const addedUom = (await response.data.createItemCategory) as Category;
-        if (category && category.id) {
-          restUoms = restUoms.filter((it) => it.id !== category.id);
-        }
-        restUoms.push(addedUom);
-        return { type: category.type, data: restUoms };
+
+        return { type: category.type, data: addedUom };
       }
     }
   } catch (error: any) {
@@ -270,21 +256,7 @@ export const removeCategory = createAsyncThunk<
     });
 
     if (response && response.data && response.data.removeCategory) {
-      const {
-        setups: { categories, uoms },
-      } = getState() as { setups: SetupsState };
-
-      if (category.type === CategoryType.ItemCategory) {
-        let restCategories = [...categories];
-        restCategories = restCategories.filter(
-          (item) => item.id !== category.id
-        );
-        return restCategories as Category[];
-      } else {
-        let restUoms = [...uoms];
-        restUoms = restUoms.filter((item) => item.id !== category.id);
-        return restUoms as Category[];
-      }
+      return category as RemoveCategory;
     }
   } catch (error: any) {
     const { code, stack } = error;
@@ -1024,9 +996,13 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(addCategory.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      if (payload.type === CategoryType.ItemCategory)
-        state.categories = payload.data;
-      else state.uoms = payload.data;
+      if (payload.type === CategoryType.ItemCategory) {
+        state.categories = state.categories.filter((c) => c.id !== payload.id);
+        state.categories.unshift(payload);
+      } else {
+        state.uoms = state.uoms.filter((c) => c.id !== payload.id);
+        state.uoms.unshift(payload);
+      }
     });
     builder.addCase(addCategory.rejected, (state, { payload }) => {
       state.loading = "idle";
@@ -1038,9 +1014,11 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeCategory.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      if (payload.type === CategoryType.ItemCategory)
-        state.categories = payload.data;
-      else state.uoms = payload.data;
+      if (payload.type === CategoryType.ItemCategory) {
+        state.categories = state.categories.filter((c) => c.id !== payload.id);
+      } else {
+        state.uoms = state.uoms.filter((c) => c.id !== payload.id);
+      }
     });
     builder.addCase(removeCategory.rejected, (state, { payload }) => {
       state.loading = "idle";
