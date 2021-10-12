@@ -153,6 +153,7 @@ export const addItem = createAsyncThunk<
 
       await setSuccessAction(dispatch, {
         message: "Item Successfully Saved",
+        setupType: "Item",
       });
 
       return addedItem;
@@ -376,6 +377,7 @@ export const addBusinessPartner = createAsyncThunk<
 
       await setSuccessAction(dispatch, {
         message: "BusinessPartner Successfully Saved",
+        setupType: "BusinessPartner",
         type: bp.type,
       });
 
@@ -497,6 +499,7 @@ export const addClient = createAsyncThunk<
 
       await setSuccessAction(dispatch, {
         message: "Client Successfully Saved",
+        setupType: "Client",
       });
 
       return addedClient;
@@ -621,6 +624,7 @@ export const addOrganization = createAsyncThunk<
 
       await setSuccessAction(dispatch, {
         message: "Organization Successfully Saved",
+        setupType: "Organization",
       });
 
       return addedOrganization;
@@ -747,6 +751,7 @@ export const addWarehouse = createAsyncThunk<
 
       await setSuccessAction(dispatch, {
         message: "Warehouse Successfully Saved",
+        setupType: "Warehouse",
       });
 
       return addedWarehouse;
@@ -799,7 +804,23 @@ async function setSuccessAction(
 ) {
   dispatch(setSuccess(payload));
   setTimeout(() => {
-    dispatch(resetSelectedBusinessPartner(payload.type));
+    switch (payload.setupType) {
+      case "BusinessPartner":
+        dispatch(resetSelectedBusinessPartner(payload.type));
+        break;
+      case "Item":
+        dispatch(resetSelectedItem());
+        break;
+      case "Client":
+        dispatch(resetSelectedClient());
+        break;
+      case "Organization":
+        dispatch(resetSelectedOrganization());
+        break;
+      case "Warehouse":
+        dispatch(resetSelectedWarehouse());
+        break;
+    }
     dispatch(resetSuccess());
   }, 2000);
 }
@@ -1107,6 +1128,8 @@ export const setupsSlice = createSlice({
     builder.addCase(addClient.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedClient = payload;
+      state.clients = state.clients.filter((c) => c.id !== payload.id);
+      state.clients.unshift(payload);
     });
     builder.addCase(addClient.rejected, (state) => {
       state.loading = "idle";

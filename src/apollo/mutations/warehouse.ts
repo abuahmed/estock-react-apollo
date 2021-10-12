@@ -24,8 +24,6 @@ export const ADD_UPDATE_CLIENT = gql`
       id
       displayName
       description
-      type
-
       address {
         id
         mobile
