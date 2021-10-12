@@ -38,14 +38,14 @@ export const GET_ALL_ORGANIZATIONS = gql`
       id
       displayName
       description
-
+      addressId
       address {
         id
         mobile
         telephone
         email
       }
-
+      clientId
       client {
         id
         displayName
@@ -60,14 +60,14 @@ export const GET_SELECTED_ORGANIZATION = gql`
       id
       displayName
       description
-
+      addressId
       address {
         id
         mobile
         telephone
         email
       }
-
+      clientId
       client {
         id
         displayName
@@ -82,14 +82,14 @@ export const GET_ALL_WAREHOUSES = gql`
       id
       displayName
       description
-
+      addressId
       address {
         id
         mobile
         telephone
         email
       }
-
+      organizationId
       organization {
         id
         displayName
@@ -104,15 +104,15 @@ export const GET_SELECTED_WAREHOUSE = gql`
       id
       displayName
       description
-
+      addressId
       address {
         id
         mobile
         telephone
         email
       }
-
-      client {
+      organizationId
+      organization {
         id
         displayName
       }

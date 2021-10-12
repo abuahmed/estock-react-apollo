@@ -6,9 +6,9 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 // Slices
 import {
   selectSetups,
-  removeClient,
-  fetchClients,
-  addClient,
+  removeOrganization,
+  fetchOrganizations,
+  addOrganization,
 } from "./setupSlices";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
@@ -16,7 +16,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import Paper from "@material-ui/core/Paper";
-import { NavLink as RouterLink } from "react-router-dom";
+import { NavLink as RouterLink, useParams } from "react-router-dom";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
@@ -34,43 +34,55 @@ import { Add, Edit, ListAltSharp, Save } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
-import { Client } from "./types/warehouseTypes";
+import { Organization } from "./types/warehouseTypes";
 import { Form, Formik, FormikProps } from "formik";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import { registerSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
 
-const defaultClient: Client = {
+const defaultOrganization: Organization = {
   displayName: "",
+  clientId: 0,
   description: "",
   address: { mobile: "", telephone: "", email: "" },
 };
 
-export const Clients = () => {
-  const [selectedClient, setSelectedClient] = useState<Client>(defaultClient);
+export const Organizations = () => {
+  const { clientId } = useParams() as {
+    clientId: string;
+  };
+
+  const [selectedOrganization, setSelectedOrganization] =
+    useState<Organization>({
+      ...defaultOrganization,
+      clientId: parseInt(clientId),
+    });
   const dispatch = useAppDispatch();
-  const { clients, success, error, loading } = useAppSelector(selectSetups);
+  const { organizations, success, error, loading } =
+    useAppSelector(selectSetups);
 
   useEffect(() => {
-    dispatch(changePageTitle(`Client List`));
-    dispatch(fetchClients("all"));
+    dispatch(changePageTitle(`Organization List`));
+    dispatch(fetchOrganizations(parseInt(clientId)));
   }, [dispatch]);
 
-  const DeleteClient = (id: number) => {
-    dispatch(removeClient(id));
+  const DeleteOrganization = (id: number) => {
+    dispatch(removeOrganization(id));
   };
 
-  const SetSelectedClient = (id: number) => {
-    setSelectedClient(clients.find((cat) => cat.id === id) as Client);
+  const SetSelectedOrganization = (id: number) => {
+    setSelectedOrganization(
+      organizations.find((cat) => cat.id === id) as Organization
+    );
   };
   const ResetFields = () => {
-    setSelectedClient(defaultClient);
+    setSelectedOrganization(defaultOrganization);
   };
 
   return (
     <>
       <Helmet>
-        <title>Client List | Pinna Stock</title>
+        <title>Organization List | Pinna Stock</title>
       </Helmet>
       <Box component="div">
         <Button color="secondary" variant="contained" onClick={ResetFields}>
@@ -79,7 +91,7 @@ export const Clients = () => {
             component="h5"
             sx={{ display: "flex", justifyItems: "center" }}
           >
-            <Add /> Add New Client
+            <Add /> Add New Organization
           </Typography>
         </Button>
       </Box>
@@ -87,15 +99,15 @@ export const Clients = () => {
 
       <Formik
         enableReinitialize={true}
-        initialValues={selectedClient as Client}
+        initialValues={selectedOrganization as Organization}
         validationSchema={registerSchema}
         onSubmit={(values, actions) => {
           actions.setSubmitting(false);
-          dispatch(addClient(values));
-          setSelectedClient(defaultClient);
+          dispatch(addOrganization(values));
+          setSelectedOrganization(defaultOrganization);
         }}
       >
-        {(props: FormikProps<Client>) => (
+        {(props: FormikProps<Organization>) => (
           <Form>
             <Accordion sx={{ m: 1 }} expanded={true}>
               <AccordionSummary
@@ -145,7 +157,7 @@ export const Clients = () => {
                   disabled={!props.isValid}
                 >
                   <Save />
-                  Save Client
+                  Save Organization
                 </Button>
               </AccordionDetails>
             </Accordion>
@@ -162,7 +174,6 @@ export const Clients = () => {
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Mobile</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
-
               <StyledTableCell>Actions</StyledTableCell>
             </StyledTableRow>
           </TableHead>
@@ -170,8 +181,8 @@ export const Clients = () => {
             {loading === "pending" ? (
               <TableSkeleton numRows={10} numColumns={1} />
             ) : (
-              clients &&
-              clients.map((row) => (
+              organizations &&
+              organizations.map((row) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
                     {row.displayName}
@@ -182,12 +193,13 @@ export const Clients = () => {
                   <StyledTableCell component="th" scope="row">
                     {row.address?.email}
                   </StyledTableCell>
+
                   <StyledTableCell>
                     <Stack direction="row" spacing={2} alignItems="center">
                       <IconButton
                         color="primary"
                         onClick={() =>
-                          SetSelectedClient(row ? (row.id as number) : 0)
+                          SetSelectedOrganization(row ? (row.id as number) : 0)
                         }
                       >
                         <Edit />
@@ -195,16 +207,15 @@ export const Clients = () => {
                       <IconButton
                         color="secondary"
                         onClick={() =>
-                          DeleteClient(row ? (row.id as number) : 0)
+                          DeleteOrganization(row ? (row.id as number) : 0)
                         }
                       >
                         <Delete />
                       </IconButton>
-
                       <IconButton
                         color="primary"
                         component={RouterLink}
-                        to={"/app/organizations/" + row.id}
+                        to={"/app/warehouses/" + row.id}
                       >
                         <ListAltSharp />
                       </IconButton>
@@ -217,7 +228,7 @@ export const Clients = () => {
         </Table>
       </TableContainer>
       <Typography variant="h4" component="div">
-        {clients.length} Clients
+        {organizations.length} Organizations
       </Typography>
     </>
   );

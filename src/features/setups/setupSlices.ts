@@ -574,7 +574,6 @@ export const addOrganization = createAsyncThunk<
   try {
     let org = { ...arg };
     const { address } = org;
-
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_ORGANIZATION,
       variables: {

@@ -68,14 +68,14 @@ export const ADD_UPDATE_ORGANIZATION = gql`
       id
       displayName
       description
-      type
-
+      addressId
       address {
         id
         mobile
         telephone
         email
       }
+      clientId
       client {
         id
         displayName
@@ -118,15 +118,15 @@ export const ADD_UPDATE_WAREHOUSE = gql`
       id
       displayName
       description
-      type
-
+      addressId
       address {
         id
         mobile
         telephone
         email
       }
-      client {
+      organizationId
+      organization {
         id
         displayName
       }
