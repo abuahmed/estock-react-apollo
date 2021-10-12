@@ -59,7 +59,7 @@ export const fetchItems = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("setups/fetchItems", async (_arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     //await sleep(5000);
@@ -73,6 +73,7 @@ export const fetchItems = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -82,7 +83,7 @@ export const fetchCategories = createAsyncThunk<
   CategoryType,
   { rejectValue: RejectWithValueType }
 >("setups/fetchCategories", async (categoryType, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -99,6 +100,7 @@ export const fetchCategories = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -108,7 +110,7 @@ export const getItem = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("setups/getItem", async (_id, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.query({
       query: GET_SELECTED_ITEM,
@@ -121,6 +123,7 @@ export const getItem = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -172,7 +175,7 @@ export const addCategory = createAsyncThunk<
   Category,
   { rejectValue: RejectWithValueType }
 >("setups/addCategory", async (category, thunkAPI) => {
-  const { rejectWithValue, getState } = thunkAPI;
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_ITEM_CATEGORY,
@@ -215,6 +218,7 @@ export const addCategory = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -233,17 +237,16 @@ export const removeItem = createAsyncThunk<
     });
 
     if (response && response.data && response.data.removeItem) {
-      const {
-        setups: { items },
-      } = getState() as { setups: SetupsState };
-      let restItems = [...items];
-      restItems = restItems.filter((item) => item.id !== id);
-      dispatch(setItems(restItems));
-      return restItems as Item[];
+      await setSuccessAction(dispatch, {
+        message: "Item Successfully Removed",
+        setupType: "Item",
+      });
+      return id as number;
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -253,7 +256,7 @@ export const removeCategory = createAsyncThunk<
   RemoveCategory,
   { rejectValue: RejectWithValueType }
 >("setups/removeCategory", async (category, thunkAPI) => {
-  const { rejectWithValue, getState } = thunkAPI;
+  const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_CATEGORY,
@@ -286,6 +289,7 @@ export const removeCategory = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -295,7 +299,7 @@ export const fetchBusinessPartners = createAsyncThunk<
   BusinessPartnerType,
   { rejectValue: RejectWithValueType }
 >("setups/fetchBusinessPartners", async (type, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -309,6 +313,7 @@ export const fetchBusinessPartners = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -410,19 +415,16 @@ export const removeBusinessPartner = createAsyncThunk<
     });
 
     if (response && response.data && response.data.removeBusinessPartner) {
-      const {
-        businessPartners: { businessPartners },
-      } = getState() as { businessPartners: SetupsState };
-      let restBusinessPartners = [...businessPartners];
-      restBusinessPartners = restBusinessPartners.filter(
-        (BusinessPartner) => BusinessPartner.id !== id
-      );
-      dispatch(setBusinessPartners(restBusinessPartners));
-      return restBusinessPartners as BusinessPartner[];
+      await setSuccessAction(dispatch, {
+        message: "BusinessPartner Successfully Removed",
+        setupType: "BusinessPartner",
+      });
+      return id as number;
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -432,7 +434,7 @@ export const fetchClients = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("setups/fetchClients", async (arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -445,6 +447,7 @@ export const fetchClients = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -468,6 +471,7 @@ export const getClient = createAsyncThunk<
     const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -529,17 +533,16 @@ export const removeClient = createAsyncThunk<
     });
 
     if (response && response.data && response.data.removeClient) {
-      const {
-        setups: { clients },
-      } = getState() as { setups: SetupsState };
-      let restClients = [...clients];
-      restClients = restClients.filter((Client) => Client.id !== id);
-      dispatch(setClients(restClients));
-      return restClients as Client[];
+      await setSuccessAction(dispatch, {
+        message: "Client Successfully Removed",
+        setupType: "Client",
+      });
+      return id as number;
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -549,7 +552,7 @@ export const fetchOrganizations = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("setups/fetchOrganizations", async (clientId, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -563,6 +566,7 @@ export const fetchOrganizations = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -654,19 +658,16 @@ export const removeOrganization = createAsyncThunk<
     });
 
     if (response && response.data && response.data.removeOrganization) {
-      const {
-        setups: { organizations },
-      } = getState() as { setups: SetupsState };
-      let restOrganizations = [...organizations];
-      restOrganizations = restOrganizations.filter(
-        (Organization) => Organization.id !== id
-      );
-      dispatch(setOrganizations(restOrganizations));
-      return restOrganizations as Organization[];
+      await setSuccessAction(dispatch, {
+        message: "Organization Successfully Removed",
+        setupType: "Organization",
+      });
+      return id as number;
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -676,7 +677,7 @@ export const fetchWarehouses = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("setups/fetchWarehouses", async (organizationId, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -690,6 +691,7 @@ export const fetchWarehouses = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -781,19 +783,16 @@ export const removeWarehouse = createAsyncThunk<
     });
 
     if (response && response.data && response.data.removeWarehouse) {
-      const {
-        setups: { warehouses },
-      } = getState() as { setups: SetupsState };
-      let restWarehouses = [...warehouses];
-      restWarehouses = restWarehouses.filter(
-        (Warehouse) => Warehouse.id !== id
-      );
-      dispatch(setWarehouses(restWarehouses));
-      return restWarehouses as Warehouse[];
+      await setSuccessAction(dispatch, {
+        message: "Warehouse Successfully Removed",
+        setupType: "Warehouse",
+      });
+      return id as number;
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -966,9 +965,8 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.items = payload;
     });
-    builder.addCase(fetchItems.rejected, (state, { payload, error }) => {
+    builder.addCase(fetchItems.rejected, (state) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(fetchCategories.pending, (state) => {
@@ -993,9 +991,8 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.selectedItem = payload;
     });
-    builder.addCase(getItem.rejected, (state, { payload, error }) => {
+    builder.addCase(getItem.rejected, (state) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(addItem.pending, (state) => {
@@ -1006,11 +1003,9 @@ export const setupsSlice = createSlice({
       state.selectedItem = payload;
       state.items = state.items.filter((c) => c.id !== payload.id);
       state.items.unshift(payload);
-      //state.success = true;
     });
-    builder.addCase(addItem.rejected, (state, { payload, error }) => {
+    builder.addCase(addItem.rejected, (state) => {
       state.loading = "idle";
-      //state.error = payload;
     });
 
     builder.addCase(removeItem.pending, (state) => {
@@ -1018,12 +1013,10 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeItem.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.items = payload;
-      state.success = { message: "Item Removed Successfully" };
+      state.items = state.items.filter((c) => c.id !== payload);
     });
-    builder.addCase(removeItem.rejected, (state, { payload, error }) => {
+    builder.addCase(removeItem.rejected, (state) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(addCategory.pending, (state) => {
@@ -1034,7 +1027,6 @@ export const setupsSlice = createSlice({
       if (payload.type === CategoryType.ItemCategory)
         state.categories = payload.data;
       else state.uoms = payload.data;
-      //state.success = true;
     });
     builder.addCase(addCategory.rejected, (state, { payload }) => {
       state.loading = "idle";
@@ -1063,7 +1055,6 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchBusinessPartners.rejected, (state, { error }) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(getBusinessPartner.pending, (state) => {
@@ -1097,12 +1088,12 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeBusinessPartner.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = payload;
-      state.success = { message: "BusinessPartner Removed Successfully" };
+      state.businessPartners = state.businessPartners.filter(
+        (c) => c.id !== payload
+      );
     });
     builder.addCase(removeBusinessPartner.rejected, (state, { error }) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(fetchClients.pending, (state) => {
@@ -1114,7 +1105,6 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchClients.rejected, (state, { error }) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(getClient.pending, (state) => {
@@ -1146,12 +1136,10 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeClient.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.clients = payload;
-      state.success = { message: "Client Removed Successfully" };
+      state.clients = state.clients.filter((c) => c.id !== payload);
     });
     builder.addCase(removeClient.rejected, (state, { error }) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(fetchOrganizations.pending, (state) => {
@@ -1163,7 +1151,6 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchOrganizations.rejected, (state, { error }) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(getOrganization.pending, (state) => {
@@ -1197,12 +1184,10 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeOrganization.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.organizations = payload;
-      state.success = { message: "Organization Removed Successfully" };
+      state.organizations = state.organizations.filter((c) => c.id !== payload);
     });
     builder.addCase(removeOrganization.rejected, (state, { error }) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(fetchWarehouses.pending, (state) => {
@@ -1214,7 +1199,6 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchWarehouses.rejected, (state, { error }) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(getWarehouse.pending, (state) => {
@@ -1246,12 +1230,10 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeWarehouse.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.warehouses = payload;
-      state.success = { message: "Warehouse Removed Successfully" };
+      state.warehouses = state.warehouses.filter((c) => c.id !== payload);
     });
     builder.addCase(removeWarehouse.rejected, (state, { error }) => {
       state.loading = "idle";
-      state.error = error;
     });
   },
 });
