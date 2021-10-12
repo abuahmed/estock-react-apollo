@@ -19,6 +19,7 @@ import { ItemEntry } from "../features/setups/ItemEntry";
 import { Items } from "../features/setups/Items";
 import { Organizations } from "../features/setups/Organizations";
 import { BusinessPartnerType } from "../features/setups/types/bpTypes";
+import { Warehouses } from "../features/setups/Warehouses";
 import { Headers } from "../features/transactions/Headers";
 import { Inventories } from "../features/transactions/Inventories";
 import { TransactionEntry } from "../features/transactions/TransactionEntry";
@@ -121,6 +122,7 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         },
         { path: "clients", element: <Clients /> },
         { path: "organizations/:clientId", element: <Organizations /> },
+        { path: "warehouses/:organizationId", element: <Warehouses /> },
         { path: "profile", element: <Profile /> },
         { path: "users", element: <Users /> },
         { path: "user/:id", element: <User /> },
