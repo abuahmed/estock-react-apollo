@@ -48,14 +48,3 @@ enum ItemType {
   Manufactured,
   Service,
 }
-
-export type ItemsState = {
-  items: Item[];
-  categories: Category[];
-  uoms: Category[];
-  selectedItem: Item;
-  loading: "idle" | "pending";
-  currentRequestId: string | undefined;
-  success: any;
-  error: any;
-};

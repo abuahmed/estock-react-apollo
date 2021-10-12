@@ -6,7 +6,6 @@ import {
   Category,
   CategoryType,
   Item,
-  ItemsState,
   RemoveCategory,
 } from "./types/itemTypes";
 import { BusinessPartnerType } from "./types/bpTypes";
@@ -190,25 +189,26 @@ export const addCategory = createAsyncThunk<
 
     if (response && response.data && response.data.createItemCategory) {
       const {
-        items: { categories, uoms },
-      } = getState() as { items: ItemsState };
+        setups: { categories, uoms },
+      } = getState() as { setups: SetupsState };
 
       if (category.type === CategoryType.ItemCategory) {
         let restCategories = [...categories];
-        const addedItem = (await response.data.createItemCategory) as Category;
+        const addedCategory = (await response.data
+          .createItemCategory) as Category;
         if (category && category.id) {
           restCategories = restCategories.filter((it) => it.id !== category.id);
         }
-        restCategories.push(addedItem);
+        restCategories.push(addedCategory);
 
         return { type: category.type, data: restCategories };
       } else {
         let restUoms = [...uoms];
-        const addedItem = (await response.data.createItemCategory) as Category;
+        const addedUom = (await response.data.createItemCategory) as Category;
         if (category && category.id) {
           restUoms = restUoms.filter((it) => it.id !== category.id);
         }
-        restUoms.push(addedItem);
+        restUoms.push(addedUom);
         return { type: category.type, data: restUoms };
       }
     }
@@ -234,8 +234,8 @@ export const removeItem = createAsyncThunk<
 
     if (response && response.data && response.data.removeItem) {
       const {
-        items: { items },
-      } = getState() as { items: ItemsState };
+        setups: { items },
+      } = getState() as { setups: SetupsState };
       let restItems = [...items];
       restItems = restItems.filter((item) => item.id !== id);
       dispatch(setItems(restItems));
@@ -268,8 +268,8 @@ export const removeCategory = createAsyncThunk<
 
     if (response && response.data && response.data.removeCategory) {
       const {
-        items: { categories, uoms },
-      } = getState() as { items: ItemsState };
+        setups: { categories, uoms },
+      } = getState() as { setups: SetupsState };
 
       if (category.type === CategoryType.ItemCategory) {
         let restCategories = [...categories];
@@ -1004,6 +1004,8 @@ export const setupsSlice = createSlice({
     builder.addCase(addItem.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedItem = payload;
+      state.items = state.items.filter((c) => c.id !== payload.id);
+      state.items.unshift(payload);
       //state.success = true;
     });
     builder.addCase(addItem.rejected, (state, { payload, error }) => {
@@ -1081,6 +1083,10 @@ export const setupsSlice = createSlice({
     builder.addCase(addBusinessPartner.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedBusinessPartner = payload;
+      state.businessPartners = state.businessPartners.filter(
+        (c) => c.id !== payload.id
+      );
+      state.businessPartners.unshift(payload);
     });
     builder.addCase(addBusinessPartner.rejected, (state) => {
       state.loading = "idle";
@@ -1177,6 +1183,10 @@ export const setupsSlice = createSlice({
     builder.addCase(addOrganization.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedOrganization = payload;
+      state.organizations = state.organizations.filter(
+        (c) => c.id !== payload.id
+      );
+      state.organizations.unshift(payload);
     });
     builder.addCase(addOrganization.rejected, (state) => {
       state.loading = "idle";
@@ -1224,6 +1234,8 @@ export const setupsSlice = createSlice({
     builder.addCase(addWarehouse.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedWarehouse = payload;
+      state.warehouses = state.warehouses.filter((c) => c.id !== payload.id);
+      state.warehouses.unshift(payload);
     });
     builder.addCase(addWarehouse.rejected, (state) => {
       state.loading = "idle";
