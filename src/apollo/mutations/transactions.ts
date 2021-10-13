@@ -6,6 +6,7 @@ export const CREATE_UPDATE_HEADER = gql`
     $transactionDate: DateTime
     $id: Int
     $warehouseId: Int
+    $toWarehouseId: Int
     $businessPartnerId: Int
   ) {
     createTransaction(
@@ -14,6 +15,7 @@ export const CREATE_UPDATE_HEADER = gql`
         transactionDate: $transactionDate
         id: $id
         warehouseId: $warehouseId
+        toWarehouseId: $toWarehouseId
         businessPartnerId: $businessPartnerId
       }
     ) {
@@ -25,6 +27,10 @@ export const CREATE_UPDATE_HEADER = gql`
       totalAmount
       totalQty
       warehouse {
+        id
+        displayName
+      }
+      toWarehouse {
         id
         displayName
       }

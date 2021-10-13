@@ -65,6 +65,11 @@ export const GET_ALL_TRANSACTIONS = gql`
         id
         displayName
       }
+      toWarehouseId
+      toWarehouse {
+        id
+        displayName
+      }
       businessPartnerId
       businessPartner {
         id
@@ -120,6 +125,10 @@ export const GET_ITEM_INVENTORY = gql`
         id
         displayName
       }
+      toWarehouse {
+        id
+        displayName
+      }
       qtyOnHand
     }
   }
@@ -160,7 +169,13 @@ export const GET_TRANSACTION_LINES = gql`
         transactionDate
         number
         status
+        warehouseId
         warehouse {
+          id
+          displayName
+        }
+        toWarehouseId
+        toWarehouse {
           id
           displayName
         }
@@ -189,6 +204,11 @@ export const GET_SELECTED_HEADER = gql`
       totalAmount
       warehouseId
       warehouse {
+        id
+        displayName
+      }
+      toWarehouseId
+      toWarehouse {
         id
         displayName
       }
