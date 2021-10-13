@@ -9,6 +9,9 @@ import {
   removeWarehouse,
   fetchWarehouses,
   addWarehouse,
+  setSelectedWarehouse,
+  resetSelectedWarehouse,
+  getOrganization,
 } from "./setupSlices";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
@@ -30,7 +33,7 @@ import {
   Stack,
   Typography,
 } from "@material-ui/core";
-import { Add, Edit, Save } from "@material-ui/icons";
+import { Add, Backspace, Edit, Save } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
@@ -51,17 +54,26 @@ export const Warehouses = () => {
   const { organizationId } = useParams() as {
     organizationId: string;
   };
-  const [expanded, setExpanded] = useState(false);
-  const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>({
+  const initializeWarehouse = {
     ...defaultWarehouse,
     organizationId: parseInt(organizationId),
-  });
+  };
+  const [expanded, setExpanded] = useState(false);
+
   const dispatch = useAppDispatch();
-  const { warehouses, success, error, loading } = useAppSelector(selectSetups);
+  const {
+    warehouses,
+    selectedWarehouse,
+    selectedOrganization,
+    success,
+    error,
+    loading,
+  } = useAppSelector(selectSetups);
 
   useEffect(() => {
     dispatch(changePageTitle(`Warehouse List`));
     dispatch(fetchWarehouses(parseInt(organizationId)));
+    dispatch(getOrganization(parseInt(organizationId)));
   }, [dispatch]);
 
   const ToggleAccordion = () => {
@@ -72,12 +84,14 @@ export const Warehouses = () => {
   };
 
   const SetSelectedWarehouse = (id: number) => {
-    setSelectedWarehouse(warehouses.find((cat) => cat.id === id) as Warehouse);
+    dispatch(
+      setSelectedWarehouse(warehouses.find((cat) => cat.id === id) as Warehouse)
+    );
     setExpanded(true);
   };
   const ResetFields = () => {
-    setSelectedWarehouse(defaultWarehouse);
     setExpanded(true);
+    dispatch(resetSelectedWarehouse(initializeWarehouse));
   };
 
   return (
@@ -85,7 +99,25 @@ export const Warehouses = () => {
       <Helmet>
         <title>Warehouse List | Pinna Stock</title>
       </Helmet>
-      <Box component="div">
+      <Box
+        component="div"
+        sx={{ display: "flex", justifyContent: "space-between" }}
+      >
+        <Button
+          color="secondary"
+          variant="contained"
+          component={RouterLink}
+          to={`/app/organizations/${selectedOrganization.clientId}`}
+        >
+          <Typography
+            variant="h5"
+            component="h5"
+            sx={{ display: "flex", justifyItems: "center" }}
+          >
+            <Backspace />
+          </Typography>
+        </Button>
+
         <Button color="secondary" variant="contained" onClick={ResetFields}>
           <Typography
             variant="h5"
@@ -105,7 +137,6 @@ export const Warehouses = () => {
         onSubmit={(values, actions) => {
           actions.setSubmitting(false);
           dispatch(addWarehouse(values));
-          setSelectedWarehouse(defaultWarehouse);
         }}
       >
         {(props: FormikProps<Warehouse>) => (

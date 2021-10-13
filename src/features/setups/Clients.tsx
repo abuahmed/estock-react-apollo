@@ -9,6 +9,8 @@ import {
   removeClient,
   fetchClients,
   addClient,
+  setSelectedClient,
+  resetSelectedClient,
 } from "./setupSlices";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
@@ -40,31 +42,32 @@ import { FormikTextField } from "../../components/Layout/FormikTextField";
 import { registerSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
 
-const defaultClient: Client = {
-  displayName: "",
-  description: "",
-  address: { mobile: "", telephone: "", email: "" },
-};
-
 export const Clients = () => {
-  const [selectedClient, setSelectedClient] = useState<Client>(defaultClient);
+  const [expanded, setExpanded] = useState(false);
+
   const dispatch = useAppDispatch();
-  const { clients, success, error, loading } = useAppSelector(selectSetups);
+  const { clients, selectedClient, success, error, loading } =
+    useAppSelector(selectSetups);
 
   useEffect(() => {
     dispatch(changePageTitle(`Client List`));
     dispatch(fetchClients("all"));
   }, [dispatch]);
 
+  const ToggleAccordion = () => {
+    setExpanded(!expanded);
+  };
   const DeleteClient = (id: number) => {
     dispatch(removeClient(id));
   };
 
   const SetSelectedClient = (id: number) => {
-    setSelectedClient(clients.find((cat) => cat.id === id) as Client);
+    dispatch(setSelectedClient(clients.find((cat) => cat.id === id) as Client));
+    setExpanded(true);
   };
   const ResetFields = () => {
-    setSelectedClient(defaultClient);
+    dispatch(resetSelectedClient());
+    setExpanded(true);
   };
 
   return (
@@ -92,13 +95,13 @@ export const Clients = () => {
         onSubmit={(values, actions) => {
           actions.setSubmitting(false);
           dispatch(addClient(values));
-          setSelectedClient(defaultClient);
         }}
       >
         {(props: FormikProps<Client>) => (
           <Form>
-            <Accordion sx={{ m: 1 }} expanded={true}>
+            <Accordion sx={{ m: 1 }} expanded={expanded}>
               <AccordionSummary
+                onClick={ToggleAccordion}
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"

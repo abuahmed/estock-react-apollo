@@ -93,6 +93,7 @@ export const GET_ALL_WAREHOUSES = gql`
       organization {
         id
         displayName
+        clientId
       }
     }
   }
@@ -115,6 +116,7 @@ export const GET_SELECTED_WAREHOUSE = gql`
       organization {
         id
         displayName
+        clientId
       }
     }
   }

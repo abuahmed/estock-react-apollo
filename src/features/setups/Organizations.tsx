@@ -9,6 +9,8 @@ import {
   removeOrganization,
   fetchOrganizations,
   addOrganization,
+  setSelectedOrganization,
+  resetSelectedOrganization,
 } from "./setupSlices";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
@@ -30,7 +32,7 @@ import {
   Stack,
   Typography,
 } from "@material-ui/core";
-import { Add, Edit, ListAltSharp, Save } from "@material-ui/icons";
+import { Add, Backspace, Edit, ListAltSharp, Save } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
@@ -52,13 +54,14 @@ export const Organizations = () => {
     clientId: string;
   };
 
-  const [selectedOrganization, setSelectedOrganization] =
-    useState<Organization>({
-      ...defaultOrganization,
-      clientId: parseInt(clientId),
-    });
+  const initializeOrganization = {
+    ...defaultOrganization,
+    clientId: parseInt(clientId),
+  };
+  const [expanded, setExpanded] = useState(false);
+
   const dispatch = useAppDispatch();
-  const { organizations, success, error, loading } =
+  const { organizations, selectedOrganization, success, error, loading } =
     useAppSelector(selectSetups);
 
   useEffect(() => {
@@ -66,25 +69,54 @@ export const Organizations = () => {
     dispatch(fetchOrganizations(parseInt(clientId)));
   }, [dispatch]);
 
+  const ToggleAccordion = () => {
+    setExpanded(!expanded);
+  };
   const DeleteOrganization = (id: number) => {
     dispatch(removeOrganization(id));
   };
 
   const SetSelectedOrganization = (id: number) => {
-    setSelectedOrganization(
-      organizations.find((cat) => cat.id === id) as Organization
+    setExpanded(true);
+    dispatch(
+      setSelectedOrganization(
+        organizations.find((cat) => cat.id === id) as Organization
+      )
     );
   };
   const ResetFields = () => {
-    setSelectedOrganization(defaultOrganization);
+    setExpanded(true);
+    //console.log(initializeOrganization);
+    dispatch(resetSelectedOrganization(initializeOrganization));
   };
+
+  // useEffect(() => {
+  //   console.log(selectedOrganization);
+  // }, [selectedOrganization]);
 
   return (
     <>
       <Helmet>
         <title>Organization List | Pinna Stock</title>
       </Helmet>
-      <Box component="div">
+      <Box
+        component="div"
+        sx={{ display: "flex", justifyContent: "space-between" }}
+      >
+        <Button
+          color="secondary"
+          variant="contained"
+          component={RouterLink}
+          to={`/app/clients`}
+        >
+          <Typography
+            variant="h5"
+            component="h5"
+            sx={{ display: "flex", justifyItems: "center" }}
+          >
+            <Backspace />
+          </Typography>
+        </Button>
         <Button color="secondary" variant="contained" onClick={ResetFields}>
           <Typography
             variant="h5"
@@ -104,13 +136,13 @@ export const Organizations = () => {
         onSubmit={(values, actions) => {
           actions.setSubmitting(false);
           dispatch(addOrganization(values));
-          setSelectedOrganization(defaultOrganization);
         }}
       >
         {(props: FormikProps<Organization>) => (
           <Form>
-            <Accordion sx={{ m: 1 }} expanded={true}>
+            <Accordion sx={{ m: 1 }} expanded={expanded}>
               <AccordionSummary
+                onClick={ToggleAccordion}
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"

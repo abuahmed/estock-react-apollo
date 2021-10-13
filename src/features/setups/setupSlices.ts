@@ -573,6 +573,7 @@ export const addOrganization = createAsyncThunk<
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
     let org = { ...arg };
+    //console.log(org);
     const { address } = org;
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_ORGANIZATION,
@@ -600,6 +601,7 @@ export const addOrganization = createAsyncThunk<
       await setSuccessAction(dispatch, {
         message: "Organization Successfully Saved",
         setupType: "Organization",
+        parentId: org.clientId,
       });
 
       return addedOrganization;
@@ -696,15 +698,15 @@ export const addWarehouse = createAsyncThunk<
 >("setups/addWarehouse", async (arg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    let org = { ...arg };
-    const { address } = org;
-
+    let ware = { ...arg };
+    const { address } = ware;
+    //console.log(ware);
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_WAREHOUSE,
       variables: {
-        id: org.id,
-        organizationId: org.organizationId,
-        displayName: org.displayName,
+        id: ware.id,
+        organizationId: ware.organizationId,
+        displayName: ware.displayName,
         addressId: address?.id,
         mobile: address?.mobile,
         telephone: address?.telephone,
@@ -713,7 +715,7 @@ export const addWarehouse = createAsyncThunk<
       refetchQueries: [
         {
           query: GET_ALL_WAREHOUSES,
-          variables: { organizationId: org.organizationId },
+          variables: { organizationId: ware.organizationId },
         },
       ],
     });
@@ -725,6 +727,7 @@ export const addWarehouse = createAsyncThunk<
       await setSuccessAction(dispatch, {
         message: "Warehouse Successfully Saved",
         setupType: "Warehouse",
+        parentId: ware.organizationId,
       });
 
       return addedWarehouse;
@@ -785,10 +788,20 @@ async function setSuccessAction(
         dispatch(resetSelectedClient());
         break;
       case "Organization":
-        dispatch(resetSelectedOrganization());
+        dispatch(
+          resetSelectedOrganization({
+            ...defaultOrganization,
+            clientId: payload.parentId,
+          })
+        );
         break;
       case "Warehouse":
-        dispatch(resetSelectedWarehouse());
+        dispatch(
+          resetSelectedWarehouse({
+            ...defaultWarehouse,
+            organizationId: payload.parentId,
+          })
+        );
         break;
     }
     dispatch(resetSuccess());
@@ -829,11 +842,13 @@ const defaultClient: Client = {
 };
 const defaultOrganization: Organization = {
   displayName: "",
+  clientId: 0,
   description: "",
   address: { mobile: "", telephone: "", email: "" },
 };
 const defaultWarehouse: Warehouse = {
   displayName: "",
+  organizationId: 0,
   description: "",
   address: { mobile: "", telephone: "", email: "" },
 };
@@ -911,10 +926,8 @@ export const setupsSlice = createSlice({
     setOrganizations: (state, { payload }) => {
       state.organizations = payload;
     },
-    resetSelectedOrganization: (state) => {
-      state.selectedOrganization = {
-        ...defaultOrganization,
-      };
+    resetSelectedOrganization: (state, { payload }) => {
+      state.selectedOrganization = payload;
     },
     setSelectedWarehouse: (state, { payload }) => {
       state.selectedWarehouse = payload;
@@ -922,10 +935,8 @@ export const setupsSlice = createSlice({
     setWarehouses: (state, { payload }) => {
       state.warehouses = payload;
     },
-    resetSelectedWarehouse: (state) => {
-      state.selectedWarehouse = {
-        ...defaultWarehouse,
-      };
+    resetSelectedWarehouse: (state, { payload }) => {
+      state.selectedWarehouse = payload;
     },
   },
   extraReducers: (builder) => {
