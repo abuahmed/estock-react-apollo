@@ -137,6 +137,12 @@ export enum RoleTypes {
   UnPostPurchase = "UnPost Purchase",
   DeletePurchase = "Delete Purchase",
   //HistoryPurchase = "Purchase Lines History",
+
+  ViewTransfer = "View Transfer",
+  AddTransfer = "Add Transfer",
+  PostTransfer = "Post Transfer",
+  UnPostTransfer = "UnPost Transfer",
+  DeleteTransfer = "Delete Transfer",
 }
 
 export type RejectWithValueType = {

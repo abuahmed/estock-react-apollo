@@ -12,12 +12,13 @@ import {
   AccountCircle as UserIcon,
   People as UsersIcon,
   List as ListIcon,
-  Inventory2Outlined,
   ShoppingCartOutlined,
   ShoppingBagOutlined,
   DescriptionOutlined,
   BusinessOutlined,
   PeopleOutline,
+  CompareArrowsOutlined,
+  CreditCardOutlined,
 } from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -285,8 +286,13 @@ const getNavBarItems = (userRoles: string[]) => {
       title: RoleTypes.ViewPurchase,
     },
     {
+      href: "/app/transfer",
+      icon: <CompareArrowsOutlined />,
+      title: RoleTypes.ViewTransfer,
+    },
+    {
       href: "/app/pi",
-      icon: <Inventory2Outlined />,
+      icon: <CreditCardOutlined />,
       title: RoleTypes.ViewPI,
     },
     {

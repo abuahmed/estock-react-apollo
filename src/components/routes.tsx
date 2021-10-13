@@ -87,6 +87,20 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
             RoleTypes.AddPI
           ),
         },
+        {
+          path: "transfer",
+          element: isPrivileged(
+            <Headers type={TransactionType.Transfer} />,
+            RoleTypes.ViewTransfer
+          ),
+        },
+        {
+          path: "transfer/:id",
+          element: isPrivileged(
+            <TransactionEntry type={TransactionType.Transfer} />,
+            RoleTypes.AddTransfer
+          ),
+        },
         { path: "items", element: isPrivileged(<Items />, RoleTypes.Items) },
         {
           path: "item/:id",
