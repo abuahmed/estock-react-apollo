@@ -260,32 +260,34 @@ export const Headers = ({ type }: HeaderProps) => {
 
                     <StyledTableCell>
                       <Stack direction="row" spacing={2} alignItems="center">
-                        {isPrivilegedTransaction(
-                          user?.roles as Role[],
-                          type,
-                          "View"
-                        ) && (
-                          <IconButton
-                            color="primary"
-                            component={RouterLink}
-                            to={`/app/${type}/${row.id}`}
-                          >
-                            <Visibility />
-                          </IconButton>
-                        )}
-                        {isPrivilegedTransaction(
-                          user?.roles as Role[],
-                          type,
-                          "Add"
-                        ) && (
-                          <IconButton
-                            color="primary"
-                            component={RouterLink}
-                            to={`/app/${type}/${row.id}`}
-                          >
-                            <Edit />
-                          </IconButton>
-                        )}
+                        {row?.status !== TransactionStatus.Draft &&
+                          isPrivilegedTransaction(
+                            user?.roles as Role[],
+                            type,
+                            "View"
+                          ) && (
+                            <IconButton
+                              color="primary"
+                              component={RouterLink}
+                              to={`/app/${type}/${row.id}`}
+                            >
+                              <Visibility />
+                            </IconButton>
+                          )}
+                        {row?.status === TransactionStatus.Draft &&
+                          isPrivilegedTransaction(
+                            user?.roles as Role[],
+                            type,
+                            "Add"
+                          ) && (
+                            <IconButton
+                              color="primary"
+                              component={RouterLink}
+                              to={`/app/${type}/${row.id}`}
+                            >
+                              <Edit />
+                            </IconButton>
+                          )}
                         {row?.status === TransactionStatus.Draft &&
                           isPrivilegedTransaction(
                             user?.roles as Role[],
