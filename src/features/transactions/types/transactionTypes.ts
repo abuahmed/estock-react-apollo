@@ -37,6 +37,8 @@ export type TransactionHeader = {
   transactionDate?: Date;
   warehouseId?: number;
   warehouse?: Warehouse;
+  toWarehouseId?: number;
+  toWarehouse?: Warehouse;
   businessPartnerId?: number;
   businessPartner?: BusinessPartner;
   lines?: [TransactionLine];

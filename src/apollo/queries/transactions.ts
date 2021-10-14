@@ -199,6 +199,7 @@ export const GET_SELECTED_HEADER = gql`
       type
       transactionDate
       number
+      status
       numberOfItems
       totalQty
       totalAmount

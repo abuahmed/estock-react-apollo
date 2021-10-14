@@ -34,6 +34,7 @@ import {
   unPostHeader,
   fetchInventories,
   addHeader,
+  getHeader,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -68,8 +69,13 @@ import { lineSchema } from "./validation";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
 import { Role } from "../auth/types/authType";
-import { fetchBusinessPartners, selectSetups } from "../setups/setupSlices";
+import {
+  fetchBusinessPartners,
+  fetchWarehouses,
+  selectSetups,
+} from "../setups/setupSlices";
 import { BusinessPartner, BusinessPartnerType } from "../setups/types/bpTypes";
+import { Warehouse } from "../setups/types/warehouseTypes";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
@@ -88,12 +94,12 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   const [tranHeader, setTranHeader] = useState<TransactionHeader>({
     type,
     businessPartner: { displayName: `select ${bpType}`, id: 0 },
+    warehouse: { displayName: `select warehouse`, id: 0 },
   });
   const [tranLine, setTranLine] = useState<TransactionLine>({});
   const dispatch = useAppDispatch();
   const [leftItems, setLeftItems] = useState<Item[]>([]);
-  const { items } = useAppSelector(selectSetups);
-  const { businessPartners } = useAppSelector(selectSetups);
+  const { items, businessPartners, warehouses } = useAppSelector(selectSetups);
   const { user } = useAppSelector(selectAuth);
 
   const {
@@ -111,34 +117,29 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     dispatch(changePageTitle(`${type} Entry`));
     dispatch(fetchInventories("all"));
     dispatch(fetchBusinessPartners(bpType));
+    dispatch(fetchWarehouses(2));
     if (id && id !== "0") {
-      if (headers.length === 0) {
-        dispatch(fetchHeaders({ type }));
-      } else {
-        const hd = headers.find((h) => h.id === parseInt(id));
-        let ln: TransactionLine = {
-          header: hd,
-          item: { displayName: "select item", id: 0 },
-          qty: 0,
-          eachPrice: 0,
-        };
-        dispatch(setSelectedHeader(hd));
-        dispatch(setSelectedLine(ln));
-        dispatch(fetchLines({ headerId: parseInt(id) }));
-      }
+      dispatch(getHeader(parseInt(id)));
     } else {
       resetFields();
     }
-  }, [dispatch, type, headers, id]);
+  }, [dispatch, type, id]);
+
+  useEffect(() => {
+    setTranHeader(selectedHeader);
+    let ln: TransactionLine = {
+      header: selectedHeader,
+      item: { displayName: "select item", id: 0 },
+      qty: 0,
+      eachPrice: 0,
+    };
+    dispatch(setSelectedLine(ln));
+    dispatch(fetchLines({ headerId: parseInt(id) }));
+  }, [dispatch, id, selectedHeader, businessPartners, warehouses]);
 
   useEffect(() => {
     setLeftItems(items.filter((i) => !lines.some((l) => l.item?.id === i.id)));
   }, [lines, items]);
-
-  useEffect(() => {
-    //console.log(selectedHeader);
-    setTranHeader(selectedHeader);
-  }, [selectedHeader, businessPartners]);
 
   useEffect(() => {
     setTranLine(selectedLine);
@@ -152,10 +153,8 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     }
   }, [selectedItemId]);
 
-  // if (selectedItem !== 0) {
-  //   dispatch(getItemInventory(selectedItem as number));
-  // }
   function resetFields() {
+    dispatch(resetLines());
     const hd: TransactionHeader = {
       type,
       transactionDate: new Date(),
@@ -164,14 +163,13 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       number: "...",
     };
     dispatch(setSelectedHeader(hd));
-    let ln: TransactionLine = {
-      header: hd,
-      item: { displayName: "select item", id: 0 },
-      qty: 0,
-      eachPrice: 0,
-    };
-    dispatch(setSelectedLine(ln));
-    dispatch(resetLines());
+    // let ln: TransactionLine = {
+    //   header: hd,
+    //   item: { displayName: "select item", id: 0 },
+    //   qty: 0,
+    //   eachPrice: 0,
+    // };
+    // dispatch(setSelectedLine(ln));
   }
 
   const DeleteLine = (id: number) => {
@@ -319,11 +317,33 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                             </Grid>
 
                             <Grid item md={3} xs={12}>
-                              <TextField
-                                value={props.values.number}
-                                variant="outlined"
-                                fullWidth
-                                disabled
+                              <Autocomplete
+                                id="warehouseId"
+                                options={warehouses}
+                                value={props.values?.warehouse}
+                                getOptionLabel={(option) =>
+                                  option.displayName as string
+                                }
+                                isOptionEqualToValue={(option, value) =>
+                                  option.id === value.id
+                                }
+                                onChange={(e, value) => {
+                                  setTranHeader({
+                                    ...tranHeader,
+                                    warehouse: value as Warehouse,
+                                  });
+                                  props.setFieldValue(
+                                    "warehouse",
+                                    value !== null ? value : null
+                                  );
+                                }}
+                                renderInput={(params) => (
+                                  <TextField
+                                    label="Warehouse"
+                                    name="warehouseId"
+                                    {...params}
+                                  />
+                                )}
                               />
                             </Grid>
 
@@ -356,14 +376,6 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                                   />
                                 )}
                               />
-                              {/* <TextField
-                                value={
-                                  props.values.businessPartner?.displayName
-                                }
-                                variant="outlined"
-                                fullWidth
-                                disabled
-                              /> */}
                             </Grid>
                             <Grid item md={2} xs={12}>
                               <Button

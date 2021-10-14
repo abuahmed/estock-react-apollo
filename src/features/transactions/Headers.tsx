@@ -197,11 +197,19 @@ export const Headers = ({ type }: HeaderProps) => {
               <StyledTableRow>
                 <StyledTableCell>Date</StyledTableCell>
                 <StyledTableCell>Warehouse</StyledTableCell>
-                <StyledTableCell>{bpType}</StyledTableCell>
+                {(type === TransactionType.Sale ||
+                  type === TransactionType.Purchase) && (
+                  <StyledTableCell>{bpType}</StyledTableCell>
+                )}
+                {type === TransactionType.Transfer && (
+                  <StyledTableCell>To warehouse</StyledTableCell>
+                )}
                 <StyledTableCell>Number</StyledTableCell>
                 <StyledTableCell>No of Items</StyledTableCell>
                 <StyledTableCell>Total Qty</StyledTableCell>
-                <StyledTableCell>Total Amount</StyledTableCell>
+                {type !== TransactionType.Transfer && (
+                  <StyledTableCell>Total Amount</StyledTableCell>
+                )}
                 <StyledTableCell>Status</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
               </StyledTableRow>
@@ -228,9 +236,17 @@ export const Headers = ({ type }: HeaderProps) => {
                     <StyledTableCell component="th" scope="row">
                       {row.warehouse && row.warehouse.displayName}
                     </StyledTableCell>
-                    <StyledTableCell component="th" scope="row">
-                      {row.businessPartner && row.businessPartner.displayName}
-                    </StyledTableCell>
+                    {(type === TransactionType.Sale ||
+                      type === TransactionType.Purchase) && (
+                      <StyledTableCell component="th" scope="row">
+                        {row.businessPartner && row.businessPartner.displayName}
+                      </StyledTableCell>
+                    )}
+                    {type === TransactionType.Transfer && (
+                      <StyledTableCell>
+                        {row.toWarehouse && row.toWarehouse.displayName}
+                      </StyledTableCell>
+                    )}
                     <StyledTableCell component="th" scope="row">
                       {row.number}
                     </StyledTableCell>
@@ -238,9 +254,11 @@ export const Headers = ({ type }: HeaderProps) => {
                     <StyledTableCell>
                       {row.totalQty?.toLocaleString()}
                     </StyledTableCell>
-                    <StyledTableCell>
-                      {row.totalAmount?.toLocaleString()}
-                    </StyledTableCell>
+                    {type !== TransactionType.Transfer && (
+                      <StyledTableCell>
+                        {row.totalAmount?.toLocaleString()}
+                      </StyledTableCell>
+                    )}
                     <StyledTableCell>{row.status}</StyledTableCell>
 
                     <StyledTableCell>

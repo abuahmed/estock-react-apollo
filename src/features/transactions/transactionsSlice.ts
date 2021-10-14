@@ -39,7 +39,7 @@ import {
   GET_TRANSACTION_LINES,
 } from "../../apollo/queries";
 import { Inventory } from "./types/transactionTypes";
-import { endOfDay, startOfDay } from "date-fns";
+import { addMonths, endOfDay, startOfDay } from "date-fns";
 import { sleep } from "../../utils/sleep";
 
 export const fetchInventories = createAsyncThunk<
@@ -158,34 +158,46 @@ export const addHeader = createAsyncThunk<
 >("transactions/addHeader", async (arg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    const { id, businessPartner, warehouseId, transactionDate, type } = arg;
-    console.log(arg);
+    const {
+      id,
+      businessPartner,
+      warehouse,
+      toWarehouseId,
+      transactionDate,
+      type,
+    } = arg;
+    //console.log(arg);
+    let lastUpdated = new Date();
+
+    const durationBegin = addMonths(new Date(), -1);
+
     const response = await apolloClient.mutate({
       mutation: CREATE_UPDATE_HEADER,
       variables: {
         type,
         id,
         businessPartnerId: businessPartner?.id,
-        warehouseId,
+        warehouseId: warehouse?.id,
+        toWarehouseId: toWarehouseId,
         transactionDate,
       },
       refetchQueries: [
-        { query: GET_ALL_TRANSACTIONS, variables: { type: type } },
+        {
+          query: GET_ALL_TRANSACTIONS,
+          variables: {
+            type: type,
+            lastUpdated: lastUpdated,
+            durationBegin: startOfDay(durationBegin as Date).toISOString(),
+            durationEnd: endOfDay(lastUpdated as Date).toISOString(),
+          },
+        },
       ],
     });
 
     if (response && response.data && response.data.createTransaction) {
-      // const {
-      //   transactions: { headers },
-      // } = getState() as { transactions: TransactionsState };
-      // let restItems = [...headers];
       const addedItem = (await response.data
         .createTransaction) as TransactionHeader;
-      // if (arg && arg.id) {
-      //   restItems = restItems.filter((it) => it.id !== arg.id);
-      // }
-      // restItems.push(addedItem);
-      // dispatch(setHeaders(restItems));
+
       await setSuccessAction(dispatch, {
         message: "Transaction Successfully Saved",
       });
@@ -496,7 +508,8 @@ const initialState: TransactionsState = {
     type: TransactionType.Purchase,
     status: TransactionStatus.Draft,
     transactionDate: new Date(),
-    businessPartner: { displayName: "select Customer/Vendor", id: 0 },
+    businessPartner: { displayName: "select customer/vendor", id: 0 },
+    warehouse: { displayName: "select warehouse", id: 0 },
   },
   selectedLine: {
     item: { displayName: "select item", id: 0 },
