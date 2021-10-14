@@ -34,7 +34,6 @@ import {
 import { Add, Edit, Visibility, Refresh } from "@material-ui/icons";
 import Delete from "@material-ui/icons/Delete";
 import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
-import { fetchItems, selectSetups } from "../setups/setupSlices";
 import {
   HeaderProps,
   TransactionStatus,
@@ -59,10 +58,11 @@ export const Headers = ({ type }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const { headers, loading } = useAppSelector(selectTransactions);
 
-  const { items } = useAppSelector(selectSetups);
   const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {
+    dispatch(changePageTitle(`${type} List`));
+
     if (headers.length === 0)
       dispatch(
         fetchHeaders({
@@ -83,9 +83,6 @@ export const Headers = ({ type }: HeaderProps) => {
           })
         );
     }
-    if (items.length === 0) dispatch(fetchItems("all"));
-
-    dispatch(changePageTitle(`${type} List`));
   }, [dispatch, type, startDate, endDate]);
 
   const DeleteHeader = (id: number) => {
