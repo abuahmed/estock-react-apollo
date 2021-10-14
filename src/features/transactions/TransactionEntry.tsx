@@ -360,68 +360,70 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                             </Grid>
 
                             <Grid item md={3} xs={12}>
-                              <>
-                                {type === TransactionType.Transfer ? (
-                                  <Autocomplete
-                                    id="toWarehouseId"
-                                    options={warehouses}
-                                    value={props.values?.toWarehouse}
-                                    getOptionLabel={(option) =>
-                                      option.displayName as string
-                                    }
-                                    isOptionEqualToValue={(option, value) =>
-                                      option.id === value.id
-                                    }
-                                    onChange={(e, value) => {
-                                      setTranHeader({
-                                        ...tranHeader,
-                                        toWarehouse: value as Warehouse,
-                                      });
-                                      props.setFieldValue(
-                                        "toWarehouse",
-                                        value !== null ? value : null
-                                      );
-                                    }}
-                                    renderInput={(params) => (
-                                      <TextField
-                                        label="Destination"
-                                        name="toWarehouseId"
-                                        {...params}
-                                      />
-                                    )}
-                                  />
-                                ) : (
-                                  <Autocomplete
-                                    id="businessPartnerId"
-                                    options={businessPartners}
-                                    value={props.values?.businessPartner}
-                                    getOptionLabel={(option) =>
-                                      option.displayName as string
-                                    }
-                                    isOptionEqualToValue={(option, value) =>
-                                      option.id === value.id
-                                    }
-                                    onChange={(e, value) => {
-                                      setTranHeader({
-                                        ...tranHeader,
-                                        businessPartner:
-                                          value as BusinessPartner,
-                                      });
-                                      props.setFieldValue(
-                                        "businessPartner",
-                                        value !== null ? value : null
-                                      );
-                                    }}
-                                    renderInput={(params) => (
-                                      <TextField
-                                        label={bpType}
-                                        name="businessPartnerId"
-                                        {...params}
-                                      />
-                                    )}
-                                  />
-                                )}
-                              </>
+                              {type !== TransactionType.PI && (
+                                <>
+                                  {type === TransactionType.Transfer ? (
+                                    <Autocomplete
+                                      id="toWarehouseId"
+                                      options={warehouses}
+                                      value={props.values?.toWarehouse}
+                                      getOptionLabel={(option) =>
+                                        option.displayName as string
+                                      }
+                                      isOptionEqualToValue={(option, value) =>
+                                        option.id === value.id
+                                      }
+                                      onChange={(e, value) => {
+                                        setTranHeader({
+                                          ...tranHeader,
+                                          toWarehouse: value as Warehouse,
+                                        });
+                                        props.setFieldValue(
+                                          "toWarehouse",
+                                          value !== null ? value : null
+                                        );
+                                      }}
+                                      renderInput={(params) => (
+                                        <TextField
+                                          label="Destination"
+                                          name="toWarehouseId"
+                                          {...params}
+                                        />
+                                      )}
+                                    />
+                                  ) : (
+                                    <Autocomplete
+                                      id="businessPartnerId"
+                                      options={businessPartners}
+                                      value={props.values?.businessPartner}
+                                      getOptionLabel={(option) =>
+                                        option.displayName as string
+                                      }
+                                      isOptionEqualToValue={(option, value) =>
+                                        option.id === value.id
+                                      }
+                                      onChange={(e, value) => {
+                                        setTranHeader({
+                                          ...tranHeader,
+                                          businessPartner:
+                                            value as BusinessPartner,
+                                        });
+                                        props.setFieldValue(
+                                          "businessPartner",
+                                          value !== null ? value : null
+                                        );
+                                      }}
+                                      renderInput={(params) => (
+                                        <TextField
+                                          label={bpType}
+                                          name="businessPartnerId"
+                                          {...params}
+                                        />
+                                      )}
+                                    />
+                                  )}
+                                </>
+                              )}
                             </Grid>
                             <Grid item md={2} xs={12}>
                               <Button
