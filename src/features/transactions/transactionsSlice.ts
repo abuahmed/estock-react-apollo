@@ -162,23 +162,27 @@ export const addHeader = createAsyncThunk<
       id,
       businessPartner,
       warehouse,
-      toWarehouseId,
+      toWarehouse,
       transactionDate,
       type,
     } = arg;
     //console.log(arg);
     let lastUpdated = new Date();
-
     const durationBegin = addMonths(new Date(), -1);
+
+    const bpId =
+      businessPartner && businessPartner.id !== 0 ? businessPartner.id : null;
+    const toWareId =
+      toWarehouse && toWarehouse.id !== 0 ? toWarehouse.id : null;
 
     const response = await apolloClient.mutate({
       mutation: CREATE_UPDATE_HEADER,
       variables: {
         type,
         id,
-        businessPartnerId: businessPartner?.id,
+        businessPartnerId: bpId,
         warehouseId: warehouse?.id,
-        toWarehouseId: toWarehouseId,
+        toWarehouseId: toWareId,
         transactionDate,
       },
       refetchQueries: [
@@ -221,8 +225,11 @@ export const addLine = createAsyncThunk<
   const { rejectWithValue, getState, dispatch } = thunkAPI;
   try {
     const { id, item, header, qty, eachPrice, diff } = tranLine;
-
-    //console.log(tranLine);
+    const { businessPartner, toWarehouse } = header as TransactionHeader;
+    const bpId =
+      businessPartner && businessPartner.id !== 0 ? businessPartner.id : null;
+    const toWareId =
+      toWarehouse && toWarehouse.id !== 0 ? toWarehouse.id : null;
     const response = await apolloClient.mutate({
       mutation: CREATE_UPDATE_LINE,
       variables: {
@@ -230,8 +237,9 @@ export const addLine = createAsyncThunk<
         headerId: header?.id,
         type: header?.type,
         transactionDate: header?.transactionDate,
-        businessPartnerId: header?.businessPartnerId,
-        warehouseId: 3,
+        businessPartnerId: bpId,
+        warehouseId: header?.warehouse?.id,
+        toWarehouseId: toWareId,
         itemId: item?.id,
         qty: qty,
         eachPrice: eachPrice,
@@ -509,7 +517,8 @@ const initialState: TransactionsState = {
     status: TransactionStatus.Draft,
     transactionDate: new Date(),
     businessPartner: { displayName: "select customer/vendor", id: 0 },
-    warehouse: { displayName: "select warehouse", id: 0 },
+    warehouse: { displayName: "Warehouse", id: 0 },
+    toWarehouse: { displayName: "Destination", id: 0 },
   },
   selectedLine: {
     item: { displayName: "select item", id: 0 },

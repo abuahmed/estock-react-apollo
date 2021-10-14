@@ -49,6 +49,7 @@ export const CREATE_UPDATE_LINE = gql`
     $type: TransactionType!
     $transactionDate: DateTime
     $warehouseId: Int
+    $toWarehouseId: Int
     $businessPartnerId: Int
     $itemId: Int
     $qty: Float
@@ -63,6 +64,7 @@ export const CREATE_UPDATE_LINE = gql`
           type: $type
           transactionDate: $transactionDate
           warehouseId: $warehouseId
+          toWarehouseId: $toWarehouseId
           businessPartnerId: $businessPartnerId
         }
         itemId: $itemId
@@ -89,6 +91,10 @@ export const CREATE_UPDATE_LINE = gql`
         totalAmount
         totalQty
         warehouse {
+          id
+          displayName
+        }
+        toWarehouse {
           id
           displayName
         }
