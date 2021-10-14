@@ -82,12 +82,7 @@ export const getUser = createAsyncThunk<
         }
         rolesRes.push(element);
       }
-      // rlsRes.forEach((rlRes: Role, index, array) => {
-      //   if (rls.find((rl) => rlRes.id === rl.id)) {
-      //     console.log(rlRes);
-      //     //array[index].isPrivileged = true;
-      //   }
-      // });
+
       const usData = { ...userData };
       usData.roles = rolesRes;
 
