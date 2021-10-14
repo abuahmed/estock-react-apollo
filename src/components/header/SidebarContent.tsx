@@ -33,7 +33,11 @@ import { DrawerHeader } from "../DashboardSidebar";
 import CustomDialog from "../modals/CustomDialog";
 import ChangePassword from "../account/ChangePassword";
 import { logout } from "../../features/auth/authReducers";
-import { RoleTypes } from "../../features/auth/types/authType";
+
+import { RoleTypes } from "../../features/auth/types/roleTypes";
+import { Warehouses } from "../../features/setups/Warehouses";
+import { Organizations } from "../../features/setups/Organizations";
+import { Clients } from "../../features/setups/Clients";
 
 const SidebarContent = () => {
   const dispatch = useAppDispatch();
@@ -298,22 +302,40 @@ const getNavBarItems = (userRoles: string[]) => {
     {
       href: "/app/items",
       icon: <DescriptionOutlined />,
-      title: RoleTypes.Items,
+      title: RoleTypes.ViewItems,
     },
     {
       href: "/app/customers",
       icon: <PeopleOutline />,
-      title: RoleTypes.Customers,
+      title: RoleTypes.ViewCustomers,
     },
     {
       href: "/app/vendors",
       icon: <BusinessOutlined />,
-      title: RoleTypes.Vendors,
+      title: RoleTypes.ViewVendors,
     },
     {
       href: "/app/users",
       icon: <UsersIcon />,
-      title: RoleTypes.Users,
+      title: RoleTypes.ViewUsers,
+      click: "",
+    },
+    {
+      href: "/app/warehouses",
+      icon: <Warehouses />,
+      title: RoleTypes.ViewWarehouses,
+      click: "",
+    },
+    {
+      href: "/app/organizations",
+      icon: <Organizations />,
+      title: RoleTypes.ViewOrganizations,
+      click: "",
+    },
+    {
+      href: "/app/clients",
+      icon: <Clients />,
+      title: RoleTypes.ViewClients,
       click: "",
     },
   ];
@@ -325,6 +347,9 @@ const getNavBarItems = (userRoles: string[]) => {
       userRoles.some((userRole) => userRole === item.title) ||
       userRoles.some(
         (userRole) => userRole === item.title.replace("View", "Add")
+      ) ||
+      userRoles.some(
+        (userRole) => userRole === item.title.replace("View", "Manage")
       )
     ) {
       privilegedMenuItems.push(item);

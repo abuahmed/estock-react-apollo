@@ -104,47 +104,6 @@ export type Upload = {
   image: File;
 };
 
-export enum RoleTypes {
-  ViewDashboard = "View Dashboard",
-
-  Users = "Users",
-  Customers = "Customers Entry",
-  Vendors = "Vendors Entry",
-  Items = "Items Entry",
-
-  OnHandInventory = "OnHand Inventory",
-
-  //PI = "Physical Inventory",
-  ViewPI = "View PI",
-  AddPI = "Add PI",
-  PostPI = "Post PI",
-  UnPostPI = "UnPost PI",
-  DeletePI = "Delete PI",
-  // HistoryPI = "Pi Lines History", same as View PI
-
-  // Sales = "Sales",
-  ViewSale = "View Sale",
-  AddSale = "Add Sale",
-  PostSale = "Post Sale",
-  UnPostSale = "UnPost Sale",
-  DeleteSale = "Delete Sale",
-  //HistorySales = "Sales Lines History",
-
-  // Purchase = "Purchase",
-  ViewPurchase = "View Purchase",
-  AddPurchase = "Add Purchase",
-  PostPurchase = "Post Purchase",
-  UnPostPurchase = "UnPost Purchase",
-  DeletePurchase = "Delete Purchase",
-  //HistoryPurchase = "Purchase Lines History",
-
-  ViewTransfer = "View Transfer",
-  AddTransfer = "Add Transfer",
-  PostTransfer = "Post Transfer",
-  UnPostTransfer = "UnPost Transfer",
-  DeleteTransfer = "Delete Transfer",
-}
-
 export type RejectWithValueType = {
   code: string;
   message: string;

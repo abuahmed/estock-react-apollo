@@ -8,7 +8,8 @@ import {
   SignUp,
   Verify,
 } from "../features/auth";
-import { Role, RoleTypes } from "../features/auth/types/authType";
+import { Role } from "../features/auth/types/authType";
+import { RoleTypes } from "../features/auth/types/roleTypes";
 import Dashboard from "../features/dashboard/Dashboard";
 import Error from "../features/error/Error";
 import LandingPage from "../features/home/LandingPage";
@@ -101,42 +102,54 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
             RoleTypes.AddTransfer
           ),
         },
-        { path: "items", element: isPrivileged(<Items />, RoleTypes.Items) },
+        {
+          path: "items",
+          element: isPrivileged(<Items />, RoleTypes.ViewItems),
+        },
         {
           path: "item/:id",
-          element: isPrivileged(<ItemEntry />, RoleTypes.Items),
+          element: isPrivileged(<ItemEntry />, RoleTypes.ManageItems),
         },
         {
           path: "customers",
           element: isPrivileged(
             <BusinessPartners type={BusinessPartnerType.Customer} />,
-            RoleTypes.Customers
+            RoleTypes.ViewCustomers
           ),
         },
         {
           path: "customer/:id",
           element: isPrivileged(
             <BusinessPartnerEntry type={BusinessPartnerType.Customer} />,
-            RoleTypes.Customers
+            RoleTypes.ManageCustomers
           ),
         },
         {
           path: "vendors",
           element: isPrivileged(
             <BusinessPartners type={BusinessPartnerType.Vendor} />,
-            RoleTypes.Vendors
+            RoleTypes.ViewVendors
           ),
         },
         {
           path: "vendor/:id",
           element: isPrivileged(
             <BusinessPartnerEntry type={BusinessPartnerType.Vendor} />,
-            RoleTypes.Vendors
+            RoleTypes.ManageVendors
           ),
         },
-        { path: "clients", element: <Clients /> },
-        { path: "organizations/:clientId", element: <Organizations /> },
-        { path: "warehouses/:organizationId", element: <Warehouses /> },
+        {
+          path: "clients",
+          element: isPrivileged(<Clients />, RoleTypes.ViewClients),
+        },
+        {
+          path: "organizations/:clientId",
+          element: isPrivileged(<Organizations />, RoleTypes.ViewOrganizations),
+        },
+        {
+          path: "warehouses/:organizationId",
+          element: isPrivileged(<Warehouses />, RoleTypes.ViewWarehouses),
+        },
         { path: "profile", element: <Profile /> },
         { path: "users", element: <Users /> },
         { path: "user/:id", element: <User /> },

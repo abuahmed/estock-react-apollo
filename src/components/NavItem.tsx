@@ -60,7 +60,10 @@ const NavItem = ({ href, icon, title, onClick, ...rest }: Props) => {
       >
         <ListItemIcon color="text.secondary">{icon}</ListItemIcon>
         <ListItemText
-          primary={title.replace("View", "").replace("Entry", "")}
+          primary={title
+            .replace("View", "")
+            .replace("Manage", "")
+            .replace("Entry", "")}
         />
       </Button>
     </ListItem>
