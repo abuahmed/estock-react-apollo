@@ -72,7 +72,12 @@ export const Warehouses = () => {
 
   useEffect(() => {
     dispatch(changePageTitle(`Warehouse List`));
-    dispatch(fetchWarehouses(parseInt(organizationId)));
+    dispatch(
+      fetchWarehouses({
+        parent: "Organization",
+        parentId: parseInt(organizationId),
+      })
+    );
     dispatch(getOrganization(parseInt(organizationId)));
   }, [dispatch]);
 

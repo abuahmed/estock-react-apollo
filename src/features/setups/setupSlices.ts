@@ -15,7 +15,12 @@ import {
   RemoveBusinessPartner,
 } from "./types/bpTypes";
 import { RootState } from "../../app/store";
-import { Client, Organization, Warehouse } from "./types/warehouseTypes";
+import {
+  Client,
+  FetchWarehousesOptions,
+  Organization,
+  Warehouse,
+} from "./types/warehouseTypes";
 import {
   ADD_UPDATE_ITEM,
   ADD_UPDATE_ITEM_CATEGORY,
@@ -647,15 +652,15 @@ export const removeOrganization = createAsyncThunk<
 
 export const fetchWarehouses = createAsyncThunk<
   any,
-  number,
+  FetchWarehousesOptions,
   { rejectValue: RejectWithValueType }
->("setups/fetchWarehouses", async (organizationId, thunkAPI) => {
+>("setups/fetchWarehouses", async (fetchWarehousesOptions, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
       query: GET_ALL_WAREHOUSES,
-      variables: { organizationId },
+      variables: { ...fetchWarehousesOptions },
     });
 
     if (response && response.data && response.data.warehouses) {

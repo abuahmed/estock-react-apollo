@@ -120,7 +120,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     dispatch(changePageTitle(`${type} Entry`));
     dispatch(fetchInventories("all"));
     dispatch(fetchBusinessPartners(bpType));
-    dispatch(fetchWarehouses(2));
+    dispatch(fetchWarehouses({ parent: "Organization", parentId: 2 }));
     dispatch(fetchItems("all"));
     if (id && id !== "0") {
       dispatch(getHeader(parseInt(id)));

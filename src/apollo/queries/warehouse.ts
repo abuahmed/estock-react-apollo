@@ -77,8 +77,8 @@ export const GET_SELECTED_ORGANIZATION = gql`
 `;
 
 export const GET_ALL_WAREHOUSES = gql`
-  query GetWarehouses($organizationId: Int!) {
-    warehouses(organizationId: $organizationId) {
+  query GetWarehouses($parent: String, $parentId: Int!) {
+    warehouses(parent: $parent, parentId: $parentId) {
       id
       displayName
       description
@@ -98,6 +98,29 @@ export const GET_ALL_WAREHOUSES = gql`
     }
   }
 `;
+
+// export const GET_ALL_WAREHOUSES = gql`
+//   query GetWarehouses($organizationId: Int!) {
+//     warehouses(organizationId: $organizationId) {
+//       id
+//       displayName
+//       description
+//       addressId
+//       address {
+//         id
+//         mobile
+//         telephone
+//         email
+//       }
+//       organizationId
+//       organization {
+//         id
+//         displayName
+//         clientId
+//       }
+//     }
+//   }
+// `;
 
 export const GET_SELECTED_WAREHOUSE = gql`
   query GetSelectedWarehouse($id: Int!) {
