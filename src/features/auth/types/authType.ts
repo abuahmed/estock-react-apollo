@@ -3,7 +3,7 @@ import { Warehouse } from "../../setups/types/warehouseTypes";
 export type AuthUser = {
   id: number;
   uuid: string;
-  isEnabled: Boolean;
+  isEnabled: boolean;
   createdByUserId: number;
   modifiedByUserId: number;
   name: string;
@@ -18,19 +18,19 @@ export type AuthUser = {
   token: string;
   expiredAt: Date;
   roles: Role[];
-  warehouses?: Warehouse[];
+  warehouses: Warehouse[];
 };
 
 export type Role = {
-  id: number;
-  uuid: string;
-  isEnabled: Boolean;
-  createdByUserId: number;
-  modifiedByUserId: number;
-  displayName: string;
-  description: string;
-  descriptionShort: string;
-  isPrivileged: boolean;
+  id?: number;
+  uuid?: string;
+  isEnabled?: boolean;
+  createdByUserId?: number;
+  modifiedByUserId?: number;
+  displayName?: string;
+  description?: string;
+  descriptionShort?: string;
+  isPrivileged?: boolean;
 };
 
 enum UserStatus {
@@ -42,7 +42,6 @@ enum UserStatus {
 
 export type AuthState = {
   user: AuthUser | undefined;
-  //me: AuthProfile | undefined;
   loading: "idle" | "pending";
   currentRequestId: undefined | string;
   fileUploadUri: undefined | string;

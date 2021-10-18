@@ -8,6 +8,9 @@ export const isPrivilegedTransaction = (
 ) => {
   privileged = privileged + " " + type;
   return roles.some(
-    (r) => r.displayName.toLowerCase() === privileged.toLowerCase()
+    (r) =>
+      r &&
+      r.displayName &&
+      r.displayName.toLowerCase() === privileged.toLowerCase()
   );
 };
