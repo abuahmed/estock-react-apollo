@@ -86,7 +86,7 @@ export const Users = () => {
                         </IconButton>
                         <IconButton
                           color="secondary"
-                          onClick={() => DeleteUser(row.id)}
+                          onClick={() => DeleteUser(row.id as number)}
                         >
                           <Delete />
                         </IconButton>

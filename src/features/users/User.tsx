@@ -1,13 +1,16 @@
 import { useEffect } from "react";
 import Box from "@material-ui/core/Box";
 import { NavLink as RouterLink } from "react-router-dom";
-
+import Accordion from "@material-ui/core/Accordion";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import AccordionDetails from "@material-ui/core/AccordionDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchRoles, getUser, selectUsers } from "./usersSlice";
 import Grid from "@material-ui/core/Grid";
 import Toast from "../../components/Layout/Toast";
-import { Button, Divider, Typography } from "@material-ui/core";
+import { Button, Divider, TextField, Typography } from "@material-ui/core";
 import { Helmet } from "react-helmet";
 import { Backspace } from "@material-ui/icons";
 
@@ -41,7 +44,7 @@ export const User = () => {
   return (
     <>
       <Helmet>
-        <title> {`${selectedUser?.name.toUpperCase()} Roles`}</title>
+        <title> {`${selectedUser?.name?.toUpperCase()} Roles`}</title>
       </Helmet>
       <Box m={1} px={2}>
         <Button
@@ -60,38 +63,72 @@ export const User = () => {
         </Button>
         <Divider variant="middle" sx={{ my: 2 }} />
 
-        <Grid container spacing={3}>
-          <Grid item md={6} xs={12}>
-            <Typography
-              color="primary"
-              variant="h4"
-              component="div"
-              sx={{ textTransform: "uppercase" }}
-            >
-              Name: {selectedUser?.name}
+        <Accordion sx={{ my: 1 }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography variant="h5" component="div">
+              User Info
             </Typography>
-          </Grid>
-          <Grid item md={6} xs={12}>
-            <Typography color="primary" variant="h4" component="div">
-              Email: {selectedUser?.email}
+          </AccordionSummary>
+          <AccordionDetails>
+            <Grid container spacing={3}>
+              <Grid item md={6} xs={12}>
+                <TextField
+                  id="nameId"
+                  label="Name"
+                  value={selectedUser?.name as string}
+                  variant="outlined"
+                  fullWidth
+                  sx={{ mt: 1, textTransform: "uppercase" }}
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <TextField
+                  id="emailId"
+                  label="Email"
+                  value={selectedUser?.email as string}
+                  variant="outlined"
+                  fullWidth
+                  disabled
+                  sx={{ mt: 1, textTransform: "uppercase" }}
+                />
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+
+        <Accordion sx={{ my: 1 }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography variant="h5" component="div">
+              Assign Warehouses
             </Typography>
-          </Grid>
-        </Grid>
+          </AccordionSummary>
+          <AccordionDetails>
+            <UserWarehouses userId={parseInt(userId)} />
+          </AccordionDetails>
+        </Accordion>
 
-        <Divider variant="middle" sx={{ my: 2 }} />
-
-        <Divider sx={{ my: 2 }}>
-          <Typography color="primary" variant="h5" component="div">
-            Manage Warehouses
-          </Typography>
-        </Divider>
-        <UserWarehouses userId={parseInt(userId)} />
-        <Divider sx={{ my: 2 }}>
-          <Typography color="primary" variant="h5" component="div">
-            Manage Roles
-          </Typography>
-        </Divider>
-        <UserRoles userId={parseInt(userId)} />
+        <Accordion sx={{ my: 1 }}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography variant="h5" component="div">
+              Assign Roles
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <UserRoles userId={parseInt(userId)} />
+          </AccordionDetails>
+        </Accordion>
 
         {error && <Toast severity="error">{error.message}</Toast>}
       </Box>

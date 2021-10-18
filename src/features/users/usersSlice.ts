@@ -14,15 +14,6 @@ import { RootState } from "../../app/store";
 
 import { RejectWithValueType, AuthUser, Role } from "../auth/types/authType";
 
-export type UsersState = {
-  entities: AuthUser[];
-  roles: Role[];
-  selectedUser: AuthUser | null;
-  loading: "idle" | "pending";
-  currentRequestId: string | undefined;
-  error: any;
-};
-
 export const fetchUsers = createAsyncThunk<
   any,
   string,
@@ -139,10 +130,19 @@ export const fetchRoles = createAsyncThunk<
   }
 });
 
+export type UsersState = {
+  entities: AuthUser[];
+  roles: Role[];
+  selectedUser: AuthUser | null;
+  loading: "idle" | "pending";
+  currentRequestId: string | undefined;
+  error: any;
+};
+
 const initialState: UsersState = {
   entities: [],
   roles: [],
-  selectedUser: null,
+  selectedUser: { name: "", email: "" },
   loading: "idle",
   currentRequestId: undefined,
   error: null,

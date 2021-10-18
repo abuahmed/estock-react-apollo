@@ -19,6 +19,7 @@ import {
   PeopleOutline,
   CompareArrowsOutlined,
   CreditCardOutlined,
+  CorporateFareSharp,
 } from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -67,7 +68,7 @@ const SidebarContent = () => {
   };
   const voidFunction = () => {};
   useEffect(() => {
-    setRoles(user?.roles.map((r) => r.displayName) as string[]);
+    setRoles(user?.roles?.map((r) => r.displayName) as string[]);
   }, [user?.roles]);
 
   return (
@@ -320,21 +321,21 @@ const getNavBarItems = (userRoles: string[]) => {
       title: RoleTypes.ViewUsers,
       click: "",
     },
-    {
-      href: "/app/warehouses",
-      icon: <Warehouses />,
-      title: RoleTypes.ViewWarehouses,
-      click: "",
-    },
-    {
-      href: "/app/organizations",
-      icon: <Organizations />,
-      title: RoleTypes.ViewOrganizations,
-      click: "",
-    },
+    // {
+    //   href: "/app/warehouses",
+    //   icon: <UsersIcon />,
+    //   title: RoleTypes.ViewWarehouses,
+    //   click: "",
+    // },
+    // {
+    //   href: "/app/organizations",
+    //   icon: <UsersIcon />,
+    //   title: RoleTypes.ViewOrganizations,
+    //   click: "",
+    // },
     {
       href: "/app/clients",
-      icon: <Clients />,
+      icon: <CorporateFareSharp />,
       title: RoleTypes.ViewClients,
       click: "",
     },
