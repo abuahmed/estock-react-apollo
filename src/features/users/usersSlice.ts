@@ -1,7 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
-import { ADD_USER_ROLES } from "../../apollo/mutations/users";
+import {
+  ADD_USER_ROLES,
+  ADD_USER_WAREHOUSES,
+} from "../../apollo/mutations/users";
 import {
   GET_ALL_ROLES,
   GET_ALL_USERS,
@@ -45,10 +48,7 @@ export const fetchUsers = createAsyncThunk<
     }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -56,45 +56,19 @@ export const getUser = createAsyncThunk<
   any,
   number,
   { rejectValue: RejectWithValueType }
->("users/getUser", async (_id, thunkAPI) => {
+>("users/getUser", async (userId, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
     const response = await apolloClient.query({
       query: GET_SELECTED_USER,
-      variables: { id: _id },
+      variables: { id: userId },
     });
-
-    const rolesResponse = await apolloClient.query({
-      query: GET_ALL_ROLES,
-    });
-
-    const rlsRes = rolesResponse.data.GetRoles as Role[];
     if (response && response.data && response.data.GetUser) {
-      const userData = response.data.GetUser as AuthUser;
-      const rls = userData.roles as Role[];
-      const rolesRes: Role[] = [];
-      for (let index = 0; index < rlsRes.length; index++) {
-        const element = { ...rlsRes[index] };
-        if (rls.find((rl) => element.id === rl.id)) {
-          element.isPrivileged = true;
-        } else {
-          element.isPrivileged = false;
-        }
-        rolesRes.push(element);
-      }
-
-      const usData = { ...userData };
-      usData.roles = rolesRes;
-
-      //console.log(usData);
-      return usData;
+      return response.data.GetUser as AuthUser;
     }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -103,23 +77,43 @@ export const addUserRoles = createAsyncThunk<
   number[],
   { rejectValue: RejectWithValueType }
 >("users/addUserRoles", async (arg, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { rejectWithValue } = thunkAPI;
 
   try {
     const response = await apolloClient.mutate({
       mutation: ADD_USER_ROLES,
       variables: { ids: arg },
+      refetchQueries: [{ query: GET_SELECTED_USER, variables: { id: arg[0] } }],
     });
 
     if (response && response.data && response.data.addUserRoles) {
-      dispatch(getUser(arg[0]));
+      return response.data.addUserRoles as AuthUser;
     }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const addUserWarehouses = createAsyncThunk<
+  any,
+  number[],
+  { rejectValue: RejectWithValueType }
+>("users/addUserWarehouses", async (arg, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: ADD_USER_WAREHOUSES,
+      variables: { ids: arg },
+      refetchQueries: [{ query: GET_SELECTED_USER, variables: { id: arg[0] } }],
+    });
+
+    if (response && response.data && response.data.addUserWarehouses) {
+      return response.data.addUserWarehouses as AuthUser;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -140,10 +134,7 @@ export const fetchRoles = createAsyncThunk<
     }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -218,6 +209,20 @@ export const usersSlice = createSlice({
     });
     builder.addCase(
       addUserRoles.rejected,
+      (state, { payload, meta, error }) => {
+        state.loading = "idle";
+        state.error = error;
+      }
+    );
+    builder.addCase(addUserWarehouses.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(addUserWarehouses.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.selectedUser = payload;
+    });
+    builder.addCase(
+      addUserWarehouses.rejected,
       (state, { payload, meta, error }) => {
         state.loading = "idle";
         state.error = error;

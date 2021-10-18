@@ -55,6 +55,7 @@ export type Warehouse = {
   organization?: Organization;
   address?: Address;
   transactions?: [TransactionHeader];
+  isPrivileged?: boolean;
 };
 
 export type WarehousesState = {
@@ -69,3 +70,14 @@ export type WarehousesState = {
   success?: any;
   error?: any;
 };
+
+export type FetchWarehousesOptions = {
+  parent?: string;
+  parentId?: number;
+};
+
+export type FetchWarehousesForUser = {
+  warehouseIds?: Warehouse[];
+  userId?: number;
+};
+//
