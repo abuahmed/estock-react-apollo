@@ -7,6 +7,8 @@ import Paper from "@material-ui/core/Paper";
 import {
   Box,
   Button,
+  FormControlLabel,
+  FormGroup,
   Skeleton,
   Stack,
   Switch,
@@ -42,6 +44,15 @@ export const UserRoles = ({ userId }: Props) => {
         userRoles.sort((w1, w2) => (w1.id as number) - (w2.id as number))
       );
     };
+  const CheckUnCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+
+    let userRolesWithPriv = privilegedRoles.map((pr) => ({
+      ...pr,
+      isPrivileged: event.target.checked,
+    }));
+    setPrivilegedRoles(userRolesWithPriv);
+  };
 
   useEffect(() => {
     if (selectedUser) {
@@ -72,14 +83,34 @@ export const UserRoles = ({ userId }: Props) => {
   };
   return (
     <Stack sx={{ justifyContent: "center", alignItems: "center" }}>
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Switch
+              color="secondary"
+              name="isAllPrivileged"
+              onChange={CheckUnCheckAll}
+            />
+          }
+          label="Select All"
+        />
+      </FormGroup>
       <Grid
         container
         spacing={2}
-        sx={{ justifyContent: "center", alignItems: "center" }}
+        sx={{ justifyContent: "center", alignItems: "stretch" }}
       >
         {loading === "pending"
           ? new Array(20).fill("", 0, 20).map((p, i) => (
-              <Grid key={i * 56789} item xs={12} sm={6} md={3} lg={2} sx={{}}>
+              <Grid
+                sx={{ padding: 2, height: "100%" }}
+                key={i * 56789}
+                item
+                xs={12}
+                sm={6}
+                md={3}
+                lg={2}
+              >
                 <Paper elevation={3} sx={{ padding: 2, height: "100%" }}>
                   <Stack
                     spacing={2}
@@ -100,7 +131,7 @@ export const UserRoles = ({ userId }: Props) => {
           : privilegedRoles &&
             privilegedRoles.map((role) => {
               return (
-                <Grid key={role.id} item xs={12} sm={6} md={3} lg={2} sx={{}}>
+                <Grid key={role.id} item xs={12} sm={6} md={3} lg={2}>
                   <Paper elevation={3} sx={{ padding: 2, height: "100%" }}>
                     <Stack
                       spacing={2}

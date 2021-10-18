@@ -7,6 +7,8 @@ import Paper from "@material-ui/core/Paper";
 import {
   Box,
   Button,
+  FormControlLabel,
+  FormGroup,
   Skeleton,
   Stack,
   Switch,
@@ -49,7 +51,15 @@ export const UserWarehouses = ({ userId }: Props) => {
         userWares.sort((w1, w2) => (w1.id as number) - (w2.id as number))
       );
     };
+  const CheckUnCheckAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
 
+    let userWarehousesWithPriv = privilegedWarehouses.map((pr) => ({
+      ...pr,
+      isPrivileged: event.target.checked,
+    }));
+    setPrivilegedWarehouses(userWarehousesWithPriv);
+  };
   useEffect(() => {
     if (selectedUser) {
       const authUserOrAllWarehouses = warehouses as Warehouse[];
@@ -82,10 +92,22 @@ export const UserWarehouses = ({ userId }: Props) => {
   };
   return (
     <Stack sx={{ justifyContent: "center", alignItems: "center" }}>
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Switch
+              color="secondary"
+              name="isAllPrivileged"
+              onChange={CheckUnCheckAll}
+            />
+          }
+          label="Select All"
+        />
+      </FormGroup>
       <Grid
         container
         spacing={2}
-        sx={{ justifyContent: "center", alignItems: "center" }}
+        sx={{ justifyContent: "center", alignItems: "stretch" }}
       >
         {loading === "pending"
           ? new Array(5).fill("", 0, 5).map((p, i) => (
