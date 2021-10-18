@@ -68,7 +68,7 @@ export const uploadFileMulter = createAsyncThunk<
 
   try {
     const formData = new FormData();
-    formData.append("id", user!.id.toString());
+    formData.append("id", user?.id?.toString() as string);
     formData.append("image", image);
 
     const config = {
