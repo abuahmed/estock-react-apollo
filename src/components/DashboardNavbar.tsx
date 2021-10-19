@@ -41,7 +41,7 @@ const AppBarCustom = styled(MuiAppBar, {
 
 const DashboardNavbar = () => {
   const dispatch = useAppDispatch();
-  const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up("sm"));
+  const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up("md"));
 
   const { isDrawerOpen } = useAppSelector(selectSetting);
 

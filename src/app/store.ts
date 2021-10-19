@@ -7,7 +7,7 @@ const userInfoFromStorage = localStorage.getItem("userInfo")
 const miniMode = localStorage.getItem("miniMode")
   ? localStorage.getItem("miniMode")
   : false;
-// console.log('Mini-', miniMode)
+console.log("Mini-", miniMode);
 const mini = miniMode as boolean;
 const initialState = {
   auth: { user: userInfoFromStorage },
