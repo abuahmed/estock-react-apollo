@@ -17,6 +17,30 @@ export const SIGN_IN = gql`
         id
         displayName
       }
+      client {
+        id
+        displayName
+      }
+    }
+  }
+`;
+export const SIGN_UP_FEDERATED_USER = gql`
+  mutation RegisterFederatedUser($email: String, $clientId: Int) {
+    registerFederatedUser(input: { email: $email, clientId: $clientId }) {
+      id
+      name
+      email
+      avatar
+      isAdmin
+      token
+      roles {
+        id
+        displayName
+      }
+      warehouses {
+        id
+        displayName
+      }
     }
   }
 `;
@@ -38,6 +62,10 @@ export const SIGN_IN_GOOGLE = gql`
         id
         displayName
       }
+      client {
+        id
+        displayName
+      }
     }
   }
 `;
@@ -55,6 +83,10 @@ export const SIGN_IN_FACEBOOK = gql`
         displayName
       }
       warehouses {
+        id
+        displayName
+      }
+      client {
         id
         displayName
       }

@@ -23,6 +23,35 @@ import {
 } from "./types/authType";
 import { PROFILE } from "../../apollo/queries/users";
 
+export const signInApollo = createAsyncThunk<
+  any,
+  UserCredentials,
+  { rejectValue: RejectWithValueType }
+>("auth/signIn", async (authUser, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  const { email, password } = authUser;
+
+  try {
+    const response = await apolloClient.mutate({
+      mutation: SIGN_IN,
+      variables: { email: email, password: password },
+    });
+
+    if (response && response.data && response.data.authUser) {
+      localStorage.setItem("userInfo", JSON.stringify(response.data.authUser));
+      return response.data.authUser as AuthUser;
+    }
+    //return [];
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
 export const uploadFile = createAsyncThunk<
   any,
   string,
@@ -218,34 +247,7 @@ export const changePassword = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
-export const signInApollo = createAsyncThunk<
-  any,
-  UserCredentials,
-  { rejectValue: RejectWithValueType }
->("auth/signIn", async (authUser, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
-  const { email, password } = authUser;
 
-  try {
-    const response = await apolloClient.mutate({
-      mutation: SIGN_IN,
-      variables: { email: email, password: password },
-    });
-
-    if (response && response.data && response.data.authUser) {
-      localStorage.setItem("userInfo", JSON.stringify(response.data.authUser));
-      return response.data.authUser as AuthUser;
-    }
-    //return [];
-  } catch (error: any) {
-    const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
-  }
-});
 export const signIn = createAsyncThunk<
   any,
   UserCredentials,

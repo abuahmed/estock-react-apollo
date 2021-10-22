@@ -1,4 +1,4 @@
-import { Warehouse } from "../../setups/types/warehouseTypes";
+import { Client, Warehouse } from "../../setups/types/warehouseTypes";
 
 export type AuthUser = {
   id?: number;
@@ -19,6 +19,7 @@ export type AuthUser = {
   expiredAt?: Date;
   roles?: Role[];
   warehouses?: Warehouse[];
+  client?: Client;
 };
 
 export type Role = {
@@ -52,6 +53,10 @@ export type AuthState = {
 export type UserCredentials = {
   email: string;
   password: string;
+};
+export type CreateUser = {
+  email: string;
+  clientId: number;
 };
 
 export type User = {

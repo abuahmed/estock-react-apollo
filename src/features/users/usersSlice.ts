@@ -4,6 +4,7 @@ import { apolloClient } from "../../apollo/graphql";
 import {
   ADD_USER_ROLES,
   ADD_USER_WAREHOUSES,
+  SIGN_UP_FEDERATED_USER,
 } from "../../apollo/mutations/users";
 import {
   GET_ALL_ROLES,
@@ -12,7 +13,12 @@ import {
 } from "../../apollo/queries";
 import { RootState } from "../../app/store";
 
-import { RejectWithValueType, AuthUser, Role } from "../auth/types/authType";
+import {
+  RejectWithValueType,
+  AuthUser,
+  Role,
+  CreateUser,
+} from "../auth/types/authType";
 
 export const fetchUsers = createAsyncThunk<
   any,
@@ -57,6 +63,29 @@ export const getUser = createAsyncThunk<
     if (response && response.data && response.data.GetUser) {
       return response.data.GetUser as AuthUser;
     }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const signUpFederatedUser = createAsyncThunk<
+  any,
+  CreateUser,
+  { rejectValue: RejectWithValueType }
+>("users/signUpFederatedUser", async (federatedUser, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    const response = await apolloClient.mutate({
+      mutation: SIGN_UP_FEDERATED_USER,
+      variables: { ...federatedUser },
+    });
+
+    if (response && response.data && response.data.authUser) {
+      return response.data.registerFederatedUser as AuthUser;
+    }
+    //return [];
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
@@ -147,11 +176,20 @@ const initialState: UsersState = {
   currentRequestId: undefined,
   error: null,
 };
-
 export const usersSlice = createSlice({
   name: "users",
   initialState,
-  reducers: {},
+  reducers: {
+    setSelectedUser: (state, { payload }) => {
+      state.selectedUser = payload;
+    },
+    setUsers: (state, { payload }) => {
+      state.entities = payload;
+    },
+    resetSelectedUser: (state, { payload }) => {
+      state.selectedUser = payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.pending, (state, { meta }) => {
       if (state.loading === "idle") {
@@ -187,6 +225,24 @@ export const usersSlice = createSlice({
       state.loading = "idle";
       state.error = error;
     });
+
+    builder.addCase(signUpFederatedUser.pending, (state, { meta }) => {
+      state.loading = "pending";
+    });
+    builder.addCase(
+      signUpFederatedUser.fulfilled,
+      (state, { payload, meta }) => {
+        state.loading = "idle";
+        state.selectedUser = payload;
+      }
+    );
+    builder.addCase(
+      signUpFederatedUser.rejected,
+      (state, { payload, meta, error }) => {
+        state.loading = "idle";
+        state.error = error;
+      }
+    );
 
     builder.addCase(fetchRoles.pending, (state, { meta }) => {
       state.loading = "pending";
@@ -231,6 +287,8 @@ export const usersSlice = createSlice({
   },
 });
 
+export const { resetSelectedUser, setSelectedUser, setUsers } =
+  usersSlice.actions;
 // Selectors
 export const selectUsers = (state: RootState) => state.users as UsersState;
 

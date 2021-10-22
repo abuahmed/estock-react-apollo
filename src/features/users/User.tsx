@@ -1,19 +1,18 @@
 import { useEffect } from "react";
+import { Helmet } from "react-helmet";
+import { NavLink as RouterLink, useParams } from "react-router-dom";
 import Box from "@material-ui/core/Box";
-import { NavLink as RouterLink } from "react-router-dom";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchRoles, getUser, selectUsers } from "./usersSlice";
 import Grid from "@material-ui/core/Grid";
-import Toast from "../../components/Layout/Toast";
 import { Button, Divider, TextField, Typography } from "@material-ui/core";
-import { Helmet } from "react-helmet";
 import { Backspace } from "@material-ui/icons";
 
+import Toast from "../../components/Layout/Toast";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { fetchRoles, getUser, selectUsers } from "./usersSlice";
 import { changePageTitle } from "../settings/settingsSlice";
 import { fetchWarehouses, selectSetups } from "../setups/setupSlices";
 import { UserWarehouses } from "./components/UserWarehouses";

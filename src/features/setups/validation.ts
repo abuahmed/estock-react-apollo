@@ -6,6 +6,18 @@ const displayName = Yup.string()
   .trim()
   .required();
 
+const email = Yup.string()
+  .email()
+  .min(8)
+  .max(254)
+  .lowercase()
+  .trim()
+  .required();
+
 export const registerSchema = Yup.object({
   displayName,
+});
+
+export const createUserSchema = Yup.object({
+  email,
 });

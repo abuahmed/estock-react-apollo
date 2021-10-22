@@ -40,7 +40,7 @@ import {
 } from "../../apollo/queries";
 import { Inventory } from "./types/transactionTypes";
 import { addMonths, endOfDay, startOfDay } from "date-fns";
-import { sleep } from "../../utils/sleep";
+//import { sleep } from "../../utils/sleep";
 
 export const fetchInventories = createAsyncThunk<
   any,
@@ -282,7 +282,7 @@ export const postHeader = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/postHeader", async (id, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { rejectWithValue } = thunkAPI;
   try {
     //apolloClient.read.clearStore()
     console.log(id);
@@ -308,7 +308,7 @@ export const unPostHeader = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/unPostHeader", async (id, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { rejectWithValue } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: UN_POST_HEADER,
