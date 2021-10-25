@@ -46,16 +46,3 @@ export const GET_SELECTED_USER = gql`
     }
   }
 `;
-
-export const PROFILE = gql`
-  query GetUserProfile($id: Number!) {
-    getUserProfile(input: { id: $id }) {
-      name
-      email
-      avatar
-      roles {
-        id
-      }
-    }
-  }
-`;

@@ -5,7 +5,6 @@ import {
   signIn,
   uploadFile,
   deleteFile,
-  profile,
   updateProfile,
   reset,
   resend,
@@ -71,19 +70,6 @@ export const authSlice = createSlice({
       state.error = undefined;
     });
     builder.addCase(signIn.rejected, (state, { payload }) => {
-      state.loading = "idle";
-      state.error = payload;
-    });
-
-    builder.addCase(profile.pending, (state) => {
-      state.loading = "pending";
-    });
-    builder.addCase(profile.fulfilled, (state, { payload }) => {
-      state.loading = "idle";
-      state.user = payload;
-      state.error = undefined;
-    });
-    builder.addCase(profile.rejected, (state, { payload }) => {
       state.loading = "idle";
       state.error = payload;
     });

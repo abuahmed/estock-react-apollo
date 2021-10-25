@@ -21,7 +21,6 @@ import {
   VerifyAuth,
   VerifyResendAuth,
 } from "./types/authType";
-import { PROFILE } from "../../apollo/queries/users";
 
 export const signInApollo = createAsyncThunk<
   any,
@@ -268,63 +267,6 @@ export const signIn = createAsyncThunk<
       config
     );
     localStorage.setItem("userInfo", JSON.stringify(data));
-    return data;
-  } catch (error: any) {
-    const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
-  }
-});
-export const profileApollo = createAsyncThunk<
-  any,
-  number,
-  { rejectValue: RejectWithValueType }
->("auth/profile", async (id, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
-
-  try {
-    const response = await apolloClient.query({
-      query: PROFILE,
-      variables: { id: id },
-    });
-
-    if (response && response.data && response.data.getUserProfile) {
-      return response.data.getUserProfile as AuthUser;
-    }
-  } catch (error: any) {
-    const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
-  }
-});
-
-export const profile = createAsyncThunk<
-  any,
-  number,
-  { rejectValue: RejectWithValueType }
->("auth/profile", async (id, thunkAPI) => {
-  const { rejectWithValue, getState } = thunkAPI;
-
-  const {
-    auth: { user },
-  } = getState() as { auth: AuthState };
-
-  try {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user!.token}`,
-      },
-    };
-
-    const { data } = await axios.post("/api/users/profile", { id }, config);
-    //console.log(data)
     return data;
   } catch (error: any) {
     const { code, stack } = error;

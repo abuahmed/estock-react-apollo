@@ -18,7 +18,6 @@ export const Profile = () => {
   const dispatch = useAppDispatch();
   const title = "My Account";
   useEffect(() => {
-    //if (user) dispatch(profileApollo(user!.id));
     dispatch(changePageTitle(title));
   }, [dispatch]);
 

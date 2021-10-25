@@ -21,10 +21,6 @@ function NavbarContent() {
   const { pageTitle, searchText } = useAppSelector(selectSetting);
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    //if (user) dispatch(profileApollo(user!.id));
-  }, []);
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
