@@ -91,7 +91,6 @@ export const User = () => {
                   value={selectedUser?.email as string}
                   variant="outlined"
                   fullWidth
-                  disabled
                   sx={{ mt: 1, textTransform: "uppercase" }}
                 />
               </Grid>

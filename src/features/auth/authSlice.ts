@@ -10,6 +10,7 @@ import {
   SIGN_IN,
   SIGN_IN_FACEBOOK,
   SIGN_IN_GOOGLE,
+  SIGN_UP,
   VERIFY_EMAIL,
 } from "../../apollo/mutations";
 
@@ -45,7 +46,6 @@ export const signInApollo = createAsyncThunk<
       localStorage.setItem("userInfo", JSON.stringify(response.data.authUser));
       return response.data.authUser as AuthUser;
     }
-    //return [];
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
@@ -79,10 +79,7 @@ export const updateProfile = createAsyncThunk<
     return data;
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -97,12 +94,11 @@ export const changePassword = createAsyncThunk<
   const {
     auth: { user },
   } = getState() as { auth: AuthState };
-
   try {
     const response = await apolloClient.mutate({
       mutation: CHANGE_PASSWORD,
       variables: { userId: user?.id, oldPassword, password, confirmPassword },
-});
+    });
 
     if (response && response.data && response.data.changePassword) {
       return response.data.changePassword as AuthUser;
@@ -137,21 +133,9 @@ export const google = createAsyncThunk<
       );
       return response.data.googleLogin as AuthUser;
     }
-    // const config = {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // };
-
-    // const { data } = await axios.post("/api/users/google", { idToken }, config);
-    // localStorage.setItem("userInfo", JSON.stringify(data));
-    // return data;
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -178,25 +162,9 @@ export const facebook = createAsyncThunk<
       localStorage.setItem("userInfo", JSON.stringify(response.data.authUser));
       return response.data.authUser as AuthUser;
     }
-    // const config = {
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // };
-
-    // const { data } = await axios.post(
-    //   "/api/users/facebook",
-    //   { userID, accessToken },
-    //   config
-    // );
-    // localStorage.setItem("userInfo", JSON.stringify(data));
-    // return data;
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -292,81 +260,121 @@ export const resend = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
+
+export const signUp = createAsyncThunk<
+  any,
+  NewUser,
+  { rejectValue: RejectWithValueType }
+>("auth/signUp", async (newUser, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  const { email, name, password } = newUser;
+
   try {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    const { data } = await axios.post(
-      "/api/users/password/reset",
-      { password, id, token, confirmPassword },
-      config
-    );
-    return data;
+    const response = await apolloClient.mutate({
+      mutation: SIGN_UP,
+      variables: { email: email, name: name, password: password },
+    });
+
+    if (response && response.data && response.data.authUser) {
+      localStorage.setItem("userInfo", JSON.stringify(response.data.authUser));
+      return response.data.authUser as AuthUser;
+    }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
-export const verify = createAsyncThunk<
+export const uploadFile = createAsyncThunk<
   any,
-  VerifyAuth,
+  string,
   { rejectValue: RejectWithValueType }
->("auth/verify", async (authUser, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
-  const { expires, id, token, signature } = authUser;
+>("auth/uploadImage", async (image, thunkAPI) => {
+  const { rejectWithValue, getState } = thunkAPI;
+  const {
+    auth: { user },
+  } = getState() as { auth: AuthState };
+
   try {
     const config = {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${user!.token}`,
       },
     };
-    const { data } = await axios.post(
-      "/api/users/email/verify",
-      { expires, id, token, signature },
-      config
-    );
+
+    const { data } = await axios.post("/api/uploads", image, config);
+
+    //const pr = await profile(user!.id)
+    //console.log(data)
     return data;
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
-export const resend = createAsyncThunk<
+
+export const uploadFileMulter = createAsyncThunk<
   any,
-  VerifyResendAuth,
+  File,
   { rejectValue: RejectWithValueType }
->("auth/resend", async (authUser, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
-  const { id } = authUser;
+>("auth/uploadImage", async (image, thunkAPI) => {
+  const { rejectWithValue, getState } = thunkAPI;
+  const {
+    auth: { user },
+  } = getState() as { auth: AuthState };
+
+  try {
+    const formData = new FormData();
+    formData.append("id", user?.id?.toString() as string);
+    formData.append("image", image);
+
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${user!.token}`,
+      },
+    };
+
+    const { data } = await axios.post("/api/uploads", formData, config);
+
+    return data;
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const deleteFile = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: RejectWithValueType }
+>("auth/deleteFile", async (fileName, thunkAPI) => {
+  const { rejectWithValue, getState } = thunkAPI;
+
+  const {
+    auth: { user },
+  } = getState() as { auth: AuthState };
+
   try {
     const config = {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${user!.token}`,
       },
     };
-    const { data } = await axios.post(
-      "/api/users/email/resend",
-      { id },
+
+    const { data } = await axios.delete(
+      `/api/uploads?fileName=${fileName.substring(fileName.lastIndexOf("/"))}`,
       config
     );
+
     return data;
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });

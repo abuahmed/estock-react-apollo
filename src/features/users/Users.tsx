@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchUsers, selectUsers, signUpFederatedUser } from "./usersSlice";
+import { fetchUsers, selectUsers, createUser } from "./usersSlice";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -91,7 +91,7 @@ export const Users = () => {
           if (user && user.client) {
             values = { ...values, clientId: user.client.id as number };
           }
-          dispatch(signUpFederatedUser(values));
+          dispatch(createUser(values));
         }}
       >
         {(props: FormikProps<CreateUser>) => (

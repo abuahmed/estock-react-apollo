@@ -4,7 +4,7 @@ import { apolloClient } from "../../apollo/graphql";
 import {
   ADD_USER_ROLES,
   ADD_USER_WAREHOUSES,
-  SIGN_UP_FEDERATED_USER,
+  CREATE_USER,
 } from "../../apollo/mutations/users";
 import {
   GET_ALL_ROLES,
@@ -69,21 +69,21 @@ export const getUser = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
-export const signUpFederatedUser = createAsyncThunk<
+export const createUser = createAsyncThunk<
   any,
   CreateUser,
   { rejectValue: RejectWithValueType }
->("users/signUpFederatedUser", async (federatedUser, thunkAPI) => {
+>("users/createUser", async (user, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
 
   try {
     const response = await apolloClient.mutate({
-      mutation: SIGN_UP_FEDERATED_USER,
-      variables: { ...federatedUser },
+      mutation: CREATE_USER,
+      variables: { ...user },
     });
 
-    if (response && response.data && response.data.authUser) {
-      return response.data.registerFederatedUser as AuthUser;
+    if (response && response.data && response.data.createUser) {
+      return response.data.createUser as AuthUser;
     }
     //return [];
   } catch (error: any) {
@@ -226,23 +226,17 @@ export const usersSlice = createSlice({
       state.error = error;
     });
 
-    builder.addCase(signUpFederatedUser.pending, (state, { meta }) => {
+    builder.addCase(createUser.pending, (state, { meta }) => {
       state.loading = "pending";
     });
-    builder.addCase(
-      signUpFederatedUser.fulfilled,
-      (state, { payload, meta }) => {
-        state.loading = "idle";
-        state.selectedUser = payload;
-      }
-    );
-    builder.addCase(
-      signUpFederatedUser.rejected,
-      (state, { payload, meta, error }) => {
-        state.loading = "idle";
-        state.error = error;
-      }
-    );
+    builder.addCase(createUser.fulfilled, (state, { payload, meta }) => {
+      state.loading = "idle";
+      state.selectedUser = payload;
+    });
+    builder.addCase(createUser.rejected, (state, { payload, meta, error }) => {
+      state.loading = "idle";
+      state.error = error;
+    });
 
     builder.addCase(fetchRoles.pending, (state, { meta }) => {
       state.loading = "pending";

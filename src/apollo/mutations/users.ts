@@ -111,9 +111,30 @@ export const VERIFY_EMAIL = gql`
     }
   }
 `;
-export const SIGN_UP_FEDERATED_USER = gql`
-  mutation RegisterFederatedUser($email: String, $clientId: Int) {
-    registerFederatedUser(input: { email: $email, clientId: $clientId }) {
+export const SIGN_UP = gql`
+  mutation SignUpUser($email: String, $name: String, $password: String) {
+    signUpUser(input: { email: $email, name: $name, password: $password }) {
+      id
+      name
+      email
+      avatar
+      isAdmin
+      token
+      roles {
+        id
+        displayName
+      }
+      warehouses {
+        id
+        displayName
+      }
+    }
+  }
+`;
+
+export const CREATE_USER = gql`
+  mutation CreateUser($email: String, $clientId: Int) {
+    createUser(input: { email: $email, clientId: $clientId }) {
       id
       name
       email
