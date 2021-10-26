@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { changePassword } from "./authSlice";
+import { changePassword, signInApollo } from "./authSlice";
 import {
   signUp,
-  signIn,
   uploadFile,
   deleteFile,
   updateProfile,
@@ -48,6 +47,18 @@ export const authSlice = createSlice({
     // },
   },
   extraReducers: (builder) => {
+    builder.addCase(signInApollo.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(signInApollo.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.user = payload;
+      state.error = undefined;
+    });
+    builder.addCase(signInApollo.rejected, (state, { payload }) => {
+      state.loading = "idle";
+      state.error = payload;
+    });
     builder.addCase(signUp.pending, (state) => {
       state.loading = "pending";
     });
@@ -57,19 +68,6 @@ export const authSlice = createSlice({
       state.error = undefined;
     });
     builder.addCase(signUp.rejected, (state, { payload }) => {
-      state.loading = "idle";
-      state.error = payload;
-    });
-
-    builder.addCase(signIn.pending, (state) => {
-      state.loading = "pending";
-    });
-    builder.addCase(signIn.fulfilled, (state, { payload }) => {
-      state.loading = "idle";
-      state.user = payload;
-      state.error = undefined;
-    });
-    builder.addCase(signIn.rejected, (state, { payload }) => {
       state.loading = "idle";
       state.error = payload;
     });
