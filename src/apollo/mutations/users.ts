@@ -79,6 +79,16 @@ export const RESET_USER_PASSWORD = gql`
   }
 `;
 
+export const RESEND_VERIFICATION_EMAIL = gql`
+  mutation ResendVerificationEmail($id: Int!) {
+    resendVerificationEmail(input: { id: $id }) {
+      id
+      name
+      email
+      avatar
+    }
+  }
+`;
 export const SIGN_UP_FEDERATED_USER = gql`
   mutation RegisterFederatedUser($email: String, $clientId: Int) {
     registerFederatedUser(input: { email: $email, clientId: $clientId }) {

@@ -5,6 +5,7 @@ import { apolloClient } from "../../apollo/graphql";
 import {
   CHANGE_PASSWORD,
   FORGOT_PASSWORD,
+  RESEND_VERIFICATION_EMAIL,
   RESET_USER_PASSWORD,
   SIGN_IN,
   SIGN_IN_FACEBOOK,
@@ -369,6 +370,28 @@ export const reset = createAsyncThunk<
 
     if (response && response.data && response.data.resetUserPassword) {
       return response.data.resetUserPassword as AuthUser;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const resend = createAsyncThunk<
+  any,
+  VerifyResendAuth,
+  { rejectValue: RejectWithValueType }
+>("auth/resend", async (authUser, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  const { id } = authUser;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: RESEND_VERIFICATION_EMAIL,
+      variables: { id },
+    });
+
+    if (response && response.data && response.data.resendVerificationEmail) {
+      return response.data.resendVerificationEmail as AuthUser;
     }
   } catch (error: any) {
     const { code, stack } = error;
