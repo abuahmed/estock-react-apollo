@@ -89,6 +89,28 @@ export const RESEND_VERIFICATION_EMAIL = gql`
     }
   }
 `;
+export const VERIFY_EMAIL = gql`
+  mutation VerifyEmail(
+    $id: Int!
+    $token: String!
+    $expires: String!
+    $signature: String!
+  ) {
+    verifyEmail(
+      input: {
+        id: $id
+        token: $token
+        expires: $expires
+        signature: $signature
+      }
+    ) {
+      id
+      name
+      email
+      avatar
+    }
+  }
+`;
 export const SIGN_UP_FEDERATED_USER = gql`
   mutation RegisterFederatedUser($email: String, $clientId: Int) {
     registerFederatedUser(input: { email: $email, clientId: $clientId }) {

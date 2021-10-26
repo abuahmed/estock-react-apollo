@@ -10,6 +10,7 @@ import {
   SIGN_IN,
   SIGN_IN_FACEBOOK,
   SIGN_IN_GOOGLE,
+  VERIFY_EMAIL,
 } from "../../apollo/mutations";
 
 import { RootState } from "../../app/store";
@@ -370,6 +371,29 @@ export const reset = createAsyncThunk<
 
     if (response && response.data && response.data.resetUserPassword) {
       return response.data.resetUserPassword as AuthUser;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
+export const verify = createAsyncThunk<
+  any,
+  VerifyAuth,
+  { rejectValue: RejectWithValueType }
+>("auth/verify", async (authUser, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  const { expires, id, token, signature } = authUser;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: VERIFY_EMAIL,
+      variables: { id, token, expires, signature },
+    });
+
+    if (response && response.data && response.data.verifyEmail) {
+      return response.data.verifyEmail as AuthUser;
     }
   } catch (error: any) {
     const { code, stack } = error;
