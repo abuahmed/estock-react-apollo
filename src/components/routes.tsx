@@ -171,7 +171,7 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         { path: "login", element: <SignIn /> },
         { path: "register", element: <SignUp /> },
         {
-          path: "email/verify/:id/:token/:expires/:signature",
+          path: "verify/:id/:token/:expires/:signature",
           element: <Verify />,
         },
         { path: "forgotPassword", element: <Forgot /> },
