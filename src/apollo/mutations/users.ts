@@ -34,6 +34,28 @@ export const FORGOT_PASSWORD = gql`
     }
   }
 `;
+export const CHANGE_PASSWORD = gql`
+  mutation ChangePassword(
+    $userId: Int!
+    $oldPassword: String!
+    $password: String!
+    $confirmPassword: String!
+  ) {
+    changePassword(
+      input: {
+        userId: $userId
+        oldPassword: $oldPassword
+        password: $password
+        confirmPassword: $confirmPassword
+      }
+    ) {
+      id
+      name
+      email
+      avatar
+    }
+  }
+`;
 export const SIGN_UP_FEDERATED_USER = gql`
   mutation RegisterFederatedUser($email: String, $clientId: Int) {
     registerFederatedUser(input: { email: $email, clientId: $clientId }) {

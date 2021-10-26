@@ -3,6 +3,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
 import {
+  CHANGE_PASSWORD,
   FORGOT_PASSWORD,
   SIGN_IN,
   SIGN_IN_FACEBOOK,
@@ -218,63 +219,25 @@ export const changePassword = createAsyncThunk<
   any,
   UpdatePassword,
   { rejectValue: RejectWithValueType }
->("auth/changePassword", async (editProfile, thunkAPI) => {
+>("auth/changePassword", async (changePass, thunkAPI) => {
   const { rejectWithValue, getState } = thunkAPI;
+  const { oldPassword, password, confirmPassword } = changePass;
   const {
     auth: { user },
   } = getState() as { auth: AuthState };
 
   try {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user!.token}`,
-      },
-    };
-
-    const { data } = await axios.post(
-      "/api/users/profile/edit/password",
-      { ...editProfile, userId: user?.id },
-      config
-    );
-    return data;
-  } catch (error: any) {
-    const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
-  }
+    const response = await apolloClient.mutate({
+      mutation: CHANGE_PASSWORD,
+      variables: { userId: user?.id, oldPassword, password, confirmPassword },
 });
 
-export const signIn = createAsyncThunk<
-  any,
-  UserCredentials,
-  { rejectValue: RejectWithValueType }
->("auth/signIn", async (authUser, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
-  const { email, password } = authUser;
-  try {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    const { data } = await axios.post(
-      "/api/users/login",
-      { email, password },
-      config
-    );
-    localStorage.setItem("userInfo", JSON.stringify(data));
-    return data;
+    if (response && response.data && response.data.changePassword) {
+      return response.data.changePassword as AuthUser;
+    }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
