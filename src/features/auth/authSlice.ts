@@ -5,6 +5,7 @@ import { apolloClient } from "../../apollo/graphql";
 import {
   CHANGE_PASSWORD,
   FORGOT_PASSWORD,
+  RESET_USER_PASSWORD,
   SIGN_IN,
   SIGN_IN_FACEBOOK,
   SIGN_IN_GOOGLE,
@@ -359,6 +360,22 @@ export const reset = createAsyncThunk<
 >("auth/reset", async (authUser, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   const { password, confirmPassword, id, token } = authUser;
+
+  try {
+    const response = await apolloClient.mutate({
+      mutation: RESET_USER_PASSWORD,
+      variables: { id, token, password, confirmPassword },
+    });
+
+    if (response && response.data && response.data.resetUserPassword) {
+      return response.data.resetUserPassword as AuthUser;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
   try {
     const config = {
       headers: {
