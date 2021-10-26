@@ -180,7 +180,7 @@ export const addCategory = createAsyncThunk<
   Category,
   { rejectValue: RejectWithValueType }
 >("setups/addCategory", async (category, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_ITEM_CATEGORY,
@@ -219,7 +219,7 @@ export const removeItem = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("setups/removeItem", async (id, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_ITEM,
@@ -247,7 +247,7 @@ export const removeCategory = createAsyncThunk<
   RemoveCategory,
   { rejectValue: RejectWithValueType }
 >("setups/removeCategory", async (category, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_CATEGORY,
@@ -381,7 +381,7 @@ export const removeBusinessPartner = createAsyncThunk<
   RemoveBusinessPartner,
   { rejectValue: RejectWithValueType }
 >("setups/removeBusinessPartner", async ({ id, type }, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_BUSINESS_PARTNER,
@@ -501,7 +501,7 @@ export const removeClient = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("setups/removeClient", async (id, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_CLIENT,
@@ -627,7 +627,7 @@ export const removeOrganization = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("setups/removeOrganization", async (id, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_ORGANIZATION,
@@ -753,7 +753,7 @@ export const removeWarehouse = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("setups/removeWarehouse", async (id, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_WAREHOUSE,

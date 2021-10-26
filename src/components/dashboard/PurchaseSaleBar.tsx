@@ -28,7 +28,7 @@ export const PurchaseSaleBar = () => {
   useEffect(() => {
     dispatch(GetDailyTransactions(TransactionType.Sale));
     dispatch(GetDailyTransactions(TransactionType.Purchase));
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (dailySalesSummary.length > 0) {

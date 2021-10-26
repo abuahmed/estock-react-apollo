@@ -25,7 +25,7 @@ export const TopSales = ({ type }: PropTypes) => {
   const [labels, setLabels] = useState<string[]>([]);
   useEffect(() => {
     dispatch(getTopItems(type));
-  }, []);
+  }, [dispatch, type]);
   useEffect(() => {
     if (type === "sale" && topSalesItems.length > 0) {
       setValues(topSalesItems.map((t) => t.totalAmount as number));

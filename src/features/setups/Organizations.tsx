@@ -67,7 +67,7 @@ export const Organizations = () => {
   useEffect(() => {
     dispatch(changePageTitle(`Organization List`));
     dispatch(fetchOrganizations(parseInt(clientId)));
-  }, [dispatch]);
+  }, [clientId, dispatch]);
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);

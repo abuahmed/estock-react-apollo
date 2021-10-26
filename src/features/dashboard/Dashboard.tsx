@@ -29,7 +29,7 @@ const Dashboard = () => {
   useEffect(() => {
     dispatch(getSummary("all"));
     dispatch(changePageTitle("Dashboard"));
-  }, []);
+  }, [dispatch]);
   useEffect(() => {
     if (inventorySummary.totalItems > 0)
       setSummary({

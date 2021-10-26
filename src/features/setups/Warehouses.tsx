@@ -79,7 +79,7 @@ export const Warehouses = () => {
       })
     );
     dispatch(getOrganization(parseInt(organizationId)));
-  }, [dispatch]);
+  }, [dispatch, organizationId]);
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);

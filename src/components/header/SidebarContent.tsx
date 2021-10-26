@@ -36,9 +36,6 @@ import ChangePassword from "../account/ChangePassword";
 import { logout } from "../../features/auth/authReducers";
 
 import { RoleTypes } from "../../features/auth/types/roleTypes";
-import { Warehouses } from "../../features/setups/Warehouses";
-import { Organizations } from "../../features/setups/Organizations";
-import { Clients } from "../../features/setups/Clients";
 
 const SidebarContent = () => {
   const dispatch = useAppDispatch();
