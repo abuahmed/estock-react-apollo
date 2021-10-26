@@ -3,15 +3,15 @@ import { Helmet } from "react-helmet";
 
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
-import AuthSkeleton from "../AuthSkeleton";
+import AuthSkeleton from "./AuthSkeleton";
 
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { selectAuth } from "../authSlice";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { selectAuth } from "./authSlice";
 
-import { changePageTitle } from "../../settings/settingsSlice";
-import AccountHeader from "../../../components/account/AccountHeader";
-import { AccountDetail } from "../../../components/account/AccountDetail";
-import ChangePassword from "../../../components/account/ChangePassword";
+import { changePageTitle } from "../settings/settingsSlice";
+import AccountHeader from "../../components/account/AccountHeader";
+import { AccountDetail } from "../../components/account/AccountDetail";
+import ChangePassword from "../../components/account/ChangePassword";
 
 export const Profile = () => {
   const { loading } = useAppSelector(selectAuth);

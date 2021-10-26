@@ -13,23 +13,17 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import LockRounded from "@material-ui/icons/LockRounded";
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { reset, selectAuth } from "../authSlice";
-import { FormikTextField } from "../../../components/Layout/FormikTextField";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { reset, selectAuth } from "./authSlice";
+import { FormikTextField } from "../../components/Layout/FormikTextField";
 
-import AuthSkeleton from "../AuthSkeleton";
-import { resetSchema } from "../validation";
-import Toast from "../../../components/Layout/Toast";
-import commonStyles from "../../commonStyles";
-
-import useStyles from "./styles";
+import AuthSkeleton from "./AuthSkeleton";
+import { resetSchema } from "./validation";
+import Toast from "../../components/Layout/Toast";
 import Typography from "@material-ui/core/Typography";
-import { ResetAuth } from "../types/authType";
+import { ResetAuth } from "./types/authType";
 
 export const Reset = () => {
-  const cclasses = commonStyles();
-
-  const classes = useStyles();
   const { loading, error, user, success } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -51,11 +45,9 @@ export const Reset = () => {
       <Helmet>
         <title>Reset Password | Pinna Stock</title>
       </Helmet>
-      <Card className={classes.card}>
+      <Card>
         <CardContent>
-          <Typography variant="h2" className={cclasses.subGreeting}>
-            Reset Password
-          </Typography>
+          <Typography variant="h2">Reset Password</Typography>
 
           {loading === "pending" ? (
             <AuthSkeleton />
@@ -76,9 +68,7 @@ export const Reset = () => {
             >
               {(props: FormikProps<ResetAuth>) => (
                 <Form>
-                  <Typography variant="h6" className={cclasses.subGreeting}>
-                    Type your new password
-                  </Typography>
+                  <Typography variant="h6">Type your new password</Typography>
                   <FormikTextField
                     formikKey="password"
                     label="Password"
@@ -122,7 +112,6 @@ export const Reset = () => {
                       type="submit"
                       color="secondary"
                       variant="contained"
-                      className={classes.submit}
                       disabled={!props.isValid}
                     >
                       Reset Password

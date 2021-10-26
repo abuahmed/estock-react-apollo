@@ -1,40 +1,43 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Grid, Paper, Typography, Button } from "@material-ui/core";
+import { Typography, Button, useTheme } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import classnames from "classnames";
 
-// styles
-import useStyles from "./styles";
-
-// logo
-//import logo from './logo.svg'
 import Logo from "../../components/Logo";
+import { LogoType, PaperRoot, GridContainer } from "../../styles/errorStyled";
 
 export default function Home() {
-  const classes = useStyles();
-
+  const theme = useTheme();
   return (
     <>
       <Helmet>
         <title>Home | Pinna Stock</title>
       </Helmet>
-      <Grid container className={classes.container}>
-        <div className={classes.logotype}>
+      <GridContainer container>
+        <LogoType>
           <Logo />
           <Typography
             variant="h3"
             color="primary"
-            className={classes.logotypeText}
+            sx={{
+              fontWeight: 500,
+              color: "white",
+              marginLeft: theme.spacing(2),
+            }}
           >
             Pinna Stock
           </Typography>
-        </div>
-        <Paper classes={{ root: classes.paperRoot }}>
+        </LogoType>
+        <PaperRoot>
           <Typography
             variant="h1"
             color="primary"
-            className={classnames(classes.textRow, classes.errorCode)}
+            sx={{
+              marginBottom: theme.spacing(10),
+              textAlign: "center",
+              fontSize: 148,
+              fontWeight: 600,
+            }}
           >
             Home
           </Typography>
@@ -45,12 +48,12 @@ export default function Home() {
             component={Link}
             to="/app"
             size="large"
-            className={classes.backButton}
+            sx={{ textTransform: "none", fontSize: 22 }}
           >
             Go to Dashboard
           </Button>
-        </Paper>
-      </Grid>
+        </PaperRoot>
+      </GridContainer>
     </>
   );
 }

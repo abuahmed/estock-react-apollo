@@ -10,18 +10,14 @@ import Button from "@material-ui/core/Button";
 //import { CardHeader } from '@material-ui/core'
 import Box from "@material-ui/core/Box";
 
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { verify, resend, selectAuth } from "../authSlice";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { verify, resend, selectAuth } from "./authSlice";
 
-import AuthSkeleton from "../AuthSkeleton";
-import Toast from "../../../components/Layout/Toast";
-import commonStyles from "../../commonStyles";
-import useStyles from "./styles";
+import AuthSkeleton from "./AuthSkeleton";
+import Toast from "../../components/Layout/Toast";
 import Typography from "@material-ui/core/Typography";
 
 export const Verify = () => {
-  const cclasses = commonStyles();
-  const classes = useStyles();
   const { loading, error, user, success } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
 
@@ -53,11 +49,9 @@ export const Verify = () => {
       <Helmet>
         <title>Verify Your Account | Pinna Stock</title>
       </Helmet>
-      <Card className={classes.card}>
+      <Card>
         <CardContent>
-          <Typography variant="h2" className={cclasses.subGreeting}>
-            Account Activation
-          </Typography>
+          <Typography variant="h2">Account Activation</Typography>
           {loading === "pending" ? (
             <AuthSkeleton />
           ) : (
@@ -78,7 +72,6 @@ export const Verify = () => {
                     type="submit"
                     color="secondary"
                     variant="contained"
-                    className={classes.submit}
                     onClick={resendVerificationEmail}
                   >
                     Resend Verification Email

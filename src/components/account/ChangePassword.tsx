@@ -8,6 +8,7 @@ import {
   CardContent,
   CardHeader,
   Divider,
+  useTheme,
 } from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
 import { changePasswordSchema } from "../../features/auth/validation";
@@ -18,17 +19,11 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { changePassword, selectAuth } from "../../features/auth/authSlice";
 
 import Toast from "../Layout/Toast";
-import useStyles from "./styles";
 import { UpdatePassword } from "../../features/auth/types/authType";
 
-// interface Values {
-//   oldPassword: string
-//   password: string
-//   confirmPassword: string
-// }
-
 const ChangePassword = () => {
-  const classes = useStyles();
+  const theme = useTheme();
+
   const { error } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
 
@@ -86,7 +81,11 @@ const ChangePassword = () => {
                 type="submit"
                 color="secondary"
                 variant="contained"
-                className={classes.submit}
+                sx={{
+                  margin: "auto",
+                  marginBottom: theme.spacing(2),
+                  width: "100%",
+                }}
                 disabled={!props.isValid}
               >
                 <SaveIcon /> Change Password

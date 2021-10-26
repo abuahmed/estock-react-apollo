@@ -3,7 +3,6 @@ import { Outlet } from "react-router-dom";
 import { experimentalStyled } from "@material-ui/core";
 import DashboardNavbar from "./DashboardNavbar";
 import DashboardSidebar from "./DashboardSidebar";
-import { makeStyles } from "@material-ui/core/styles";
 import Footer from "./footer/Footer";
 // import { ToastContainer, toast } from 'react-toastify'
 // import 'react-toastify/dist/ReactToastify.css'
@@ -36,6 +35,7 @@ const DashboardLayoutContainer = experimentalStyled("div")({
   flexDirection: "column",
   flex: "1 1 auto",
   overflow: "auto",
+  paddingTop: 64,
 });
 
 const DashboardLayoutContent = experimentalStyled("div")(({ theme }) => ({
@@ -44,39 +44,19 @@ const DashboardLayoutContent = experimentalStyled("div")(({ theme }) => ({
   padding: theme.spacing(4),
 }));
 
-const useStyles = makeStyles((theme) => ({
-  toolBar: {
-    ...theme.mixins.toolbar,
-  },
-}));
-
 const DashboardLayout = () => {
-  const classes = useStyles();
   const { success } = useAppSelector(selectAuth);
   return (
     <DashboardLayoutRoot>
       <DashboardNavbar />
       <DashboardSidebar />
 
+      <Box>
+        {success && <Toast severity="success">{success!.message}</Toast>}
+      </Box>
+
       <DashboardLayoutWrapper>
         <DashboardLayoutContainer>
-          <div className={classes.toolBar}>
-            {success && (
-              <>
-                {/* {toast.success(`${success!.message}`, {
-                  position: 'top-center',
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                  progress: undefined,
-                })}
-                <ToastContainer /> */}
-                <Toast severity="success">{success!.message}</Toast>{" "}
-              </>
-            )}
-          </div>
           <DashboardLayoutContent sx={{ flexGrow: 1, p: 3 }}>
             <Outlet />
           </DashboardLayoutContent>

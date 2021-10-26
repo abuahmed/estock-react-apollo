@@ -9,23 +9,19 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import { useTheme } from "@material-ui/core/styles";
 
-import useStyles from "./styles";
-import { FormikTextField } from "../../../components/Layout/FormikTextField";
-import AuthSkeleton from "../AuthSkeleton";
+import { FormikTextField } from "../../components/Layout/FormikTextField";
+import AuthSkeleton from "./AuthSkeleton";
 
-import { registerSchema } from "../validation";
+import { registerSchema } from "./validation";
 
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { signUp, selectAuth } from "../authSlice";
-import { resetSuccess } from "../authReducers";
-import Toast from "../../../components/Layout/Toast";
-import Google from "../Google";
-import Facebook from "../Facebook";
-import commonStyles from "../../commonStyles";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { signUp, selectAuth } from "./authSlice";
+import { resetSuccess } from "./authReducers";
+import Toast from "../../components/Layout/Toast";
+import Google from "./Google";
+import Facebook from "./Facebook";
 
 export const SignUp = () => {
-  const cclasses = commonStyles();
-  const classes = useStyles();
   const theme = useTheme();
 
   const { loading, error, success, user } = useAppSelector(selectAuth);
@@ -71,12 +67,8 @@ export const SignUp = () => {
       >
         <Container maxWidth="sm">
           <Box sx={{ mb: 3 }}>
-            <Typography variant="h1" className={cclasses.greeting}>
-              Welcome!
-            </Typography>
-            <Typography variant="h2" className={cclasses.subGreeting}>
-              Create your account
-            </Typography>
+            <Typography variant="h1">Welcome!</Typography>
+            <Typography variant="h2">Create your account</Typography>
             {/* {success && redirectToLogin} */}
             {loading === "pending" ? (
               <AuthSkeleton />
@@ -116,7 +108,6 @@ export const SignUp = () => {
                           type="submit"
                           color="secondary"
                           variant="contained"
-                          className={classes.submit}
                           disabled={!props.isValid}
                         >
                           Create your account
@@ -127,17 +118,15 @@ export const SignUp = () => {
                 </Formik>
                 <span>
                   Have an account?
-                  <Link to="/login" className={classes.signup}>
+                  <Link to="/login">
                     <>Sign In here</>
                   </Link>
                 </span>
                 {/* <Divider className={classes.divider} /> */}
-                <div className={cclasses.formDividerContainer}>
-                  <div className={cclasses.formDivider} />
-                  <Typography className={cclasses.formDividerWord}>
-                    or
-                  </Typography>
-                  <div className={cclasses.formDivider} />
+                <div>
+                  <div>
+                    <Typography>or</Typography>
+                  </div>
                 </div>
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>

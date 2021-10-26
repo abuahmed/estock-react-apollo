@@ -1,9 +1,6 @@
 import Box from "@material-ui/core/Box";
-import Link from "@material-ui/core/Link";
-import useStyles from "./styles";
-
+import { StyledLink } from "../../styles/componentStyled";
 const Footer = () => {
-  var classes = useStyles();
   return (
     <footer>
       <Box
@@ -16,27 +13,18 @@ const Footer = () => {
         justifyContent="center"
       >
         <div>
-          <Link
+          <StyledLink
             href={"https://www.facebook.com/pinnasofts"}
             target={"_blank"}
-            className={classes.link}
           >
             <i className="fa fa-facebook"></i>
-          </Link>
-          <Link
-            href={"https://twitter.com/pinnasofts"}
-            target={"_blank"}
-            className={classes.link}
-          >
+          </StyledLink>
+          <StyledLink href={"https://twitter.com/pinnasofts"} target={"_blank"}>
             <i className="fa fa-twitter"></i>
-          </Link>
-          <Link
-            href={"https://github.com/pinnasofts"}
-            target={"_blank"}
-            className={classes.link}
-          >
+          </StyledLink>
+          <StyledLink href={"https://github.com/pinnasofts"} target={"_blank"}>
             <i className="fa fa-github"></i>
-          </Link>
+          </StyledLink>
         </div>
       </Box>
     </footer>

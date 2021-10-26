@@ -12,19 +12,15 @@ import Typography from "@material-ui/core/Typography";
 
 import InputAdornment from "@material-ui/core/InputAdornment";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { forgot, selectAuth } from "../authSlice";
-import { FormikTextField } from "../../../components/Layout/FormikTextField";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { forgot, selectAuth } from "./authSlice";
+import { FormikTextField } from "../../components/Layout/FormikTextField";
 
-import AuthSkeleton from "../AuthSkeleton";
-import { forgotSchema } from "../validation";
-import Toast from "../../../components/Layout/Toast";
-import commonStyles from "../../commonStyles";
-import useStyles from "./styles";
+import AuthSkeleton from "./AuthSkeleton";
+import { forgotSchema } from "./validation";
+import Toast from "../../components/Layout/Toast";
 
 export const Forgot = () => {
-  const cclasses = commonStyles();
-  const classes = useStyles();
   const { loading, error, user, success } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -44,11 +40,9 @@ export const Forgot = () => {
       <Helmet>
         <title>Forgot Password | Pinna Stock</title>
       </Helmet>
-      <Card className={classes.card}>
+      <Card>
         <CardContent>
-          <Typography variant="h2" className={cclasses.subGreeting}>
-            Forgot Password
-          </Typography>
+          <Typography variant="h2">Forgot Password</Typography>
 
           {loading === "pending" ? (
             <AuthSkeleton />
@@ -66,9 +60,7 @@ export const Forgot = () => {
               >
                 {(props: FormikProps<Values>) => (
                   <Form>
-                    <Typography variant="h6" className={cclasses.subGreeting}>
-                      Type your Email
-                    </Typography>
+                    <Typography variant="h6">Type your Email</Typography>
                     <FormikTextField
                       formikKey="email"
                       label="Email"
@@ -87,7 +79,6 @@ export const Forgot = () => {
                         type="submit"
                         color="secondary"
                         variant="contained"
-                        className={classes.submit}
                         disabled={!props.isValid}
                       >
                         Request password reset link
@@ -98,7 +89,7 @@ export const Forgot = () => {
               </Formik>
               <span>
                 Have an account?
-                <Link to="/login" className={classes.signUp}>
+                <Link to="/login">
                   <>Sign In here</>
                 </Link>
               </span>

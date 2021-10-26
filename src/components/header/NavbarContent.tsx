@@ -12,11 +12,10 @@ import { logout } from "../../features/auth/authReducers";
 import { selectSetting } from "../../features/settings/settingsSlice";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
-import useStyles from "./styles";
 import Search from "../search/Search";
+import { Box } from "@material-ui/core";
 
 function NavbarContent() {
-  const classes = useStyles();
   const { user } = useAppSelector(selectAuth);
   const { pageTitle, searchText } = useAppSelector(selectSetting);
   const dispatch = useAppDispatch();
@@ -64,10 +63,10 @@ function NavbarContent() {
 
   return (
     <>
-      <Typography className={classes.title} variant="h4" noWrap>
+      <Typography sx={{ fontWeight: 500 }} variant="h4" noWrap>
         {pageTitle}
       </Typography>
-      <div className={classes.grow} />
+      <Box sx={{ flex: "1 1 auto" }} />
       <Toolbar disableGutters>
         <Search initialValue={searchText} />
       </Toolbar>

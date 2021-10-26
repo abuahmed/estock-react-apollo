@@ -10,7 +10,6 @@ import Delete from "@material-ui/icons/Delete";
 import AddAPhoto from "@material-ui/icons/AddAPhoto";
 
 import Typography from "@material-ui/core/Typography";
-import useStyles from "./styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import Fab from "@material-ui/core/Fab";
@@ -20,11 +19,11 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { AuthUser } from "../../features/auth/types/authType";
+import { useTheme } from "@material-ui/core";
 
 function AccountHeader() {
-  const classes = useStyles();
   const [image, setImage] = useState("");
-
+  const theme = useTheme();
   const { user } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
 
@@ -75,7 +74,7 @@ function AccountHeader() {
           name="image"
           accept="image/*"
           onChange={onChange}
-          className={classes.input}
+          style={{ display: "none" }}
           id="icon-button-file"
           type="file"
         />
@@ -89,7 +88,7 @@ function AccountHeader() {
               }}
               badgeContent={
                 <Tooltip title="Change Image" aria-label="icon-button-file">
-                  <Fab component="span" color="primary" className={classes.fab}>
+                  <Fab component="span" color="primary">
                     <IconButton aria-label="icon-button-file" component="span">
                       <AddAPhoto />
                     </IconButton>
@@ -142,7 +141,11 @@ function AccountHeader() {
                   color="secondary"
                   variant="contained"
                   onClick={removeImage}
-                  className={classes.submit}
+                  sx={{
+                    margin: "auto",
+                    marginBottom: theme.spacing(2),
+                    width: "100%",
+                  }}
                 >
                   <Delete /> Delete Image
                 </Button>

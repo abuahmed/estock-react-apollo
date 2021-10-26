@@ -1,41 +1,52 @@
-import React from 'react'
-import { Grid, Paper, Typography, Button } from '@material-ui/core'
-import { Link } from 'react-router-dom'
-import classnames from 'classnames'
-
-// styles
-import useStyles from './styles'
-
-// logo
-//import logo from './logo.svg'
-import Logo from '../../components/Logo'
+import React from "react";
+import { Typography, Button, useTheme } from "@material-ui/core";
+import { Link } from "react-router-dom";
+import Logo from "../../components/Logo";
+import { LogoType, PaperRoot, GridContainer } from "../../styles/errorStyled";
 
 export default function Error() {
-  const classes = useStyles()
-
+  const theme = useTheme();
   return (
-    <Grid container className={classes.container}>
-      <div className={classes.logotype}>
+    <GridContainer container>
+      <LogoType>
         <Logo />
-        <Typography variant="h3" color="primary" className={classes.logotypeText}>
-          Material Admin
+        <Typography
+          variant="h3"
+          color="primary"
+          sx={{ fontWeight: 500, color: "white", marginLeft: theme.spacing(2) }}
+        >
+          PS Admin
         </Typography>
-      </div>
-      <Paper classes={{ root: classes.paperRoot }}>
+      </LogoType>
+      <PaperRoot>
         <Typography
           variant="h1"
           color="primary"
-          className={classnames(classes.textRow, classes.errorCode)}
+          sx={{
+            marginBottom: theme.spacing(10),
+            textAlign: "center",
+            fontSize: 148,
+            fontWeight: 600,
+          }}
         >
           404
         </Typography>
-        <Typography variant="h5" color="primary" className={classes.textRow}>
+        <Typography
+          variant="h5"
+          color="primary"
+          sx={{ marginBottom: theme.spacing(10), textAlign: "center" }}
+        >
           Oops. Looks like the page you're looking for no longer exists
         </Typography>
         <Typography
           variant="h6"
           color="primary"
-          className={classnames(classes.textRow, classes.safetyText)}
+          sx={{
+            marginBottom: theme.spacing(10),
+            textAlign: "center",
+            fontWeight: 300,
+            color: theme.palette.text.primary,
+          }}
         >
           But we're here to bring you back to safety
         </Typography>
@@ -45,11 +56,11 @@ export default function Error() {
           component={Link}
           to="/"
           size="large"
-          className={classes.backButton}
+          sx={{ textTransform: "none", fontSize: 22 }}
         >
           Back to Home
         </Button>
-      </Paper>
-    </Grid>
-  )
+      </PaperRoot>
+    </GridContainer>
+  );
 }

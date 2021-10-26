@@ -1,9 +1,6 @@
-export { SignIn } from './SignIn/SignIn'
-export { Profile } from './Profile/Profile'
-export { SignUp } from './SignUp/SignUp'
-export { Forgot } from './Forgot/Forgot'
-export { Reset } from './Reset/Reset'
-export { Verify } from './Verify/Verify'
-
-
-
+export { SignIn } from "./SignIn";
+export { Profile } from "./Profile";
+export { SignUp } from "./SignUp";
+export { Forgot } from "./Forgot";
+export { Reset } from "./Reset";
+export { Verify } from "./Verify";

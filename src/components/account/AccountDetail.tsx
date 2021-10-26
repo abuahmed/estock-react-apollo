@@ -15,12 +15,11 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { updateProfile, selectAuth } from "../../features/auth/authSlice";
 
 import Toast from "../Layout/Toast";
-import useStyles from "./styles";
 import { AuthUser } from "../../features/auth/types/authType";
+import { useTheme } from "@material-ui/core";
 
 export const AccountDetail = () => {
-  const classes = useStyles();
-
+  const theme = useTheme();
   const { error, fileUploadUri, user } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
 
@@ -61,7 +60,11 @@ export const AccountDetail = () => {
                   type="submit"
                   color="secondary"
                   variant="contained"
-                  className={classes.submit}
+                  sx={{
+                    margin: "auto",
+                    marginBottom: theme.spacing(2),
+                    width: "100%",
+                  }}
                   disabled={!props.isValid}
                 >
                   <SaveIcon /> Save Changes
