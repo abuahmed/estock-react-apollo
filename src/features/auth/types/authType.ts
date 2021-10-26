@@ -50,13 +50,15 @@ export type AuthState = {
   success: AuthSuccess | undefined;
 };
 
+export type CreateUser = {
+  email: string;
+  name?: string;
+  clientId: number;
+};
+
 export type UserCredentials = {
   email: string;
   password: string;
-};
-export type CreateUser = {
-  email: string;
-  clientId: number;
 };
 
 export type User = {
@@ -84,6 +86,7 @@ export type UpdatePassword = {
   password: string;
   confirmPassword: string;
 };
+
 export type ForgotAuth = {
   email: string;
 };
@@ -91,17 +94,20 @@ export type ForgotAuth = {
 export type ResetAuth = {
   password: string;
   confirmPassword: string;
-  id: string;
+  id: number;
   token: string;
+  showPassword?: boolean;
 };
+
 export type VerifyAuth = {
   expires: string;
-  id: string;
+  id: number;
   token: string;
   signature: string;
 };
+
 export type VerifyResendAuth = {
-  id: string;
+  id: number;
 };
 
 export type Upload = {
