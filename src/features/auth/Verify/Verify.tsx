@@ -33,11 +33,12 @@ export const Verify = () => {
   };
 
   useEffect(() => {
-    dispatch(verify({ id, token, expires, signature }));
+    if (id && token && expires && signature)
+      dispatch(verify({ id: parseInt(id), token, expires, signature }));
   }, [dispatch, id, token, expires, signature]);
 
   function resendVerificationEmail() {
-    dispatch(resend({ id }));
+    dispatch(resend({ id: parseInt(id) }));
   }
   const navigate = useNavigate();
   if (success) {

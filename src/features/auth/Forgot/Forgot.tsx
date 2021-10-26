@@ -49,9 +49,7 @@ export const Forgot = () => {
           <Typography variant="h2" className={cclasses.subGreeting}>
             Forgot Password
           </Typography>
-          <Typography variant="h6" className={cclasses.subGreeting}>
-            Type your Email
-          </Typography>
+
           {loading === "pending" ? (
             <AuthSkeleton />
           ) : (
@@ -68,6 +66,9 @@ export const Forgot = () => {
               >
                 {(props: FormikProps<Values>) => (
                   <Form>
+                    <Typography variant="h6" className={cclasses.subGreeting}>
+                      Type your Email
+                    </Typography>
                     <FormikTextField
                       formikKey="email"
                       label="Email"

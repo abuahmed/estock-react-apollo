@@ -24,6 +24,7 @@ import commonStyles from "../../commonStyles";
 
 import useStyles from "./styles";
 import Typography from "@material-ui/core/Typography";
+import { ResetAuth } from "../types/authType";
 
 export const Reset = () => {
   const cclasses = commonStyles();
@@ -44,13 +45,6 @@ export const Reset = () => {
   if (success) {
     navigate("/login");
   }
-  interface Values {
-    password: string;
-    confirmPassword: string;
-    showPassword: boolean;
-    id: string;
-    token: string;
-  }
 
   return (
     <>
@@ -62,9 +56,7 @@ export const Reset = () => {
           <Typography variant="h2" className={cclasses.subGreeting}>
             Reset Password
           </Typography>
-          <Typography variant="h6" className={cclasses.subGreeting}>
-            Type your new password
-          </Typography>
+
           {loading === "pending" ? (
             <AuthSkeleton />
           ) : (
@@ -73,7 +65,7 @@ export const Reset = () => {
                 password: "",
                 confirmPassword: "",
                 showPassword: false,
-                id: id as string,
+                id: parseInt(id),
                 token: token as string,
               }}
               validationSchema={resetSchema}
@@ -82,8 +74,11 @@ export const Reset = () => {
                 dispatch(reset(values));
               }}
             >
-              {(props: FormikProps<Values>) => (
+              {(props: FormikProps<ResetAuth>) => (
                 <Form>
+                  <Typography variant="h6" className={cclasses.subGreeting}>
+                    Type your new password
+                  </Typography>
                   <FormikTextField
                     formikKey="password"
                     label="Password"
