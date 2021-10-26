@@ -24,6 +24,16 @@ export const SIGN_IN = gql`
     }
   }
 `;
+export const FORGOT_PASSWORD = gql`
+  mutation forgotPassword($email: String!) {
+    forgotPassword(input: { email: $email }) {
+      id
+      name
+      email
+      avatar
+    }
+  }
+`;
 export const SIGN_UP_FEDERATED_USER = gql`
   mutation RegisterFederatedUser($email: String, $clientId: Int) {
     registerFederatedUser(input: { email: $email, clientId: $clientId }) {

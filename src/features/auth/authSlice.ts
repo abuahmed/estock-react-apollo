@@ -3,6 +3,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
 import {
+  FORGOT_PASSWORD,
   SIGN_IN,
   SIGN_IN_FACEBOOK,
   SIGN_IN_GOOGLE,
@@ -373,24 +374,17 @@ export const forgot = createAsyncThunk<
   const { rejectWithValue } = thunkAPI;
   const { email } = authUser;
   try {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
+    const response = await apolloClient.mutate({
+      mutation: FORGOT_PASSWORD,
+      variables: { email: email },
+    });
 
-    const { data } = await axios.post(
-      "/api/users/password/email",
-      { email },
-      config
-    );
-    return data;
+    if (response && response.data && response.data.forgotPassword) {
+      return response.data.forgotPassword as AuthUser;
+    }
   } catch (error: any) {
     const { code, stack } = error;
-    const message =
-      error.response && error.response.data.message
-        ? error.response.data.message
-        : error.message;
+    const message = error.message;
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
