@@ -1,11 +1,11 @@
 import React from "react";
-import Skeleton from "@material-ui/core/Skeleton";
-import Box from "@material-ui/core/Box";
+import Skeleton from "@mui/material/Skeleton";
+import Box from "@mui/material/Box";
 import {
   StyledTableCell,
   StyledTableRow,
 } from "../../features/styles/tableStyles";
-import { Stack } from "@material-ui/core";
+import { Stack } from "@mui/material";
 
 interface TableSkeletonProps {
   numRows: number;

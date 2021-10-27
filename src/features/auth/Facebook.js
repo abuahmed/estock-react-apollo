@@ -1,7 +1,7 @@
 import React from "react";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
 import { useAppDispatch } from "../../app/hooks";
 import { facebook } from "./authSlice";

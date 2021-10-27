@@ -3,7 +3,7 @@ import {
   DesktopDatePickerProps,
   DatePicker,
   DatePickerProps,
-} from "@material-ui/lab";
+} from "@mui/lab";
 import { useField, useFormikContext } from "formik";
 
 type FormikDesktopDatePickerProps = {

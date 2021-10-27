@@ -1,8 +1,8 @@
 import React, { ReactNode, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { Avatar, Box, Divider, List, Typography } from "@material-ui/core";
-import { useTheme } from "@material-ui/core/styles";
-import Link from "@material-ui/core/Link";
+import { Avatar, Box, Divider, List, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import Link from "@mui/material/Link";
 
 import NavItem from "../NavItem";
 import {
@@ -20,10 +20,10 @@ import {
   CompareArrowsOutlined,
   CreditCardOutlined,
   CorporateFareSharp,
-} from "@material-ui/icons";
-import IconButton from "@material-ui/core/IconButton";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+} from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAuth } from "../../features/auth/authSlice";
 import {
@@ -105,10 +105,7 @@ const SidebarContent = () => {
               />
               <Box sx={{ flexGrow: 1 }} />
 
-              <IconButton
-                style={{ color: "white" }}
-                onClick={handleDrawerClose}
-              >
+              <IconButton style={{ color: "white" }} onClick={handleDrawerClose} size="large">
                 {theme.direction === "rtl" ? (
                   <ChevronRightIcon />
                 ) : (

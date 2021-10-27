@@ -5,10 +5,10 @@ import {
   Grid,
   Skeleton,
   Typography,
-} from "@material-ui/core";
-import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
+} from "@mui/material";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 
-import { red } from "@material-ui/core/colors";
+import { red } from "@mui/material/colors";
 import { SummaryProps } from "./dashboardTypes";
 
 export const TotalPurchase = ({ value, loading }: SummaryProps) => (

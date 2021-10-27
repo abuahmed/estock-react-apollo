@@ -1,4 +1,6 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import { AuthState, AuthUser } from "../features/auth/types/authType";
+import { SettingsState } from "../features/settings/settingsSlice";
 import rootReducer from "./rootReducer";
 
 const userInfoFromStorage = localStorage.getItem("userInfo")
@@ -7,16 +9,19 @@ const userInfoFromStorage = localStorage.getItem("userInfo")
 const miniMode = localStorage.getItem("miniMode")
   ? localStorage.getItem("miniMode")
   : false;
-console.log("Mini-", miniMode);
+//console.log("Mini-", miniMode);
 const mini = miniMode as boolean;
-const initialState = {
-  auth: { user: userInfoFromStorage },
-  settings: { isMiniMode: mini },
+// const userInfoFromStorage = JSON.parse(
+//   localStorage.getItem("userInfo") as string
+// ) as AuthUser;
+const preloadedState = {
+  auth: { user: { ...userInfoFromStorage } } as AuthState,
+  settings: { isMiniMode: mini } as SettingsState,
 };
 
 export const store = configureStore({
   reducer: rootReducer,
-  preloadedState: initialState,
+  preloadedState,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,

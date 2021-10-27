@@ -2,9 +2,9 @@ import React from 'react'
 
 // Components
 //import { Box, Skeleton } from '@chakra-ui/core/dist'
-import Skeleton from '@material-ui/core/Skeleton'
-import Box from '@material-ui/core/Box'
-import Typography from '@material-ui/core/Typography'
+import Skeleton from '@mui/material/Skeleton'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
 
 export const UserSkeleton = () => {
   return (

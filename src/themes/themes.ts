@@ -1,11 +1,16 @@
-// import { createMuiTheme } from '@material-ui/core/styles'
-// import { blueGrey, lightGreen } from '@material-ui/core/colors'
-// import { Palette } from '@material-ui/core/styles/createPalette'
+// import { createMuiTheme } from '@mui/material/styles'
+// import { blueGrey, lightGreen } from '@mui/material/colors'
+// import { Palette } from '@mui/material/styles/createPalette'
 // export default theme
-import { createTheme } from "@material-ui/core/styles";
+import { createTheme, Theme } from "@mui/material/styles";
+
 import customTheme from "./custom";
 import defaultTheme from "./default";
-//fontFamily: "cursive",
+
+// declare module "@mui/styles" {
+//   interface DefaultTheme extends Theme {}
+// }
+
 const overrides = {
   typography: {
     h1: {
@@ -30,8 +35,8 @@ const overrides = {
 };
 
 const themes = {
-  default: createTheme({ ...defaultTheme, ...overrides }),
-  custom: createTheme({ ...customTheme, ...overrides }),
+  default: createTheme({ ...defaultTheme, ...overrides }) as Theme,
+  custom: createTheme({ ...customTheme, ...overrides }) as Theme,
   // { ...customTheme, ...overrides }),
 };
 

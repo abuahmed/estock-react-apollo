@@ -1,17 +1,17 @@
 import { Link, Navigate } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
 
-import Container from "@material-ui/core/Container";
-import Button from "@material-ui/core/Button";
+import Container from "@mui/material/Container";
+import Button from "@mui/material/Button";
 import Google from "./Google";
 import Facebook from "./Facebook";
-import Box from "@material-ui/core/Box";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import FormGroup from "@material-ui/core/FormGroup";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import LockRounded from "@material-ui/icons/LockRounded";
+import Box from "@mui/material/Box";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import FormGroup from "@mui/material/FormGroup";
+import InputAdornment from "@mui/material/InputAdornment";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import LockRounded from "@mui/icons-material/LockRounded";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { selectAuth, signInApollo } from "./authSlice";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
@@ -19,9 +19,9 @@ import { FormikTextField } from "../../components/Layout/FormikTextField";
 import AuthSkeleton from "./AuthSkeleton";
 import { loginSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import { useTheme } from "@material-ui/core/styles";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import { useTheme } from "@mui/material/styles";
 import { Helmet } from "react-helmet";
 
 // interface LocationState {

@@ -2,20 +2,20 @@ import React, { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
 // import { ToastContainer, toast } from 'react-toastify'
 // import 'react-toastify/dist/ReactToastify.css'
-//import { CardHeader } from '@material-ui/core'
-import Box from "@material-ui/core/Box";
+//import { CardHeader } from '@mui/material'
+import Box from "@mui/material/Box";
 
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { verify, resend, selectAuth } from "./authSlice";
 
 import AuthSkeleton from "./AuthSkeleton";
 import Toast from "../../components/Layout/Toast";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 
 export const Verify = () => {
   const { loading, error, user, success } = useAppSelector(selectAuth);

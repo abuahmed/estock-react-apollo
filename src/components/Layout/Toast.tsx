@@ -1,8 +1,8 @@
 import React from "react";
-import Snackbar, { SnackbarOrigin } from "@material-ui/core/Snackbar";
-import MuiAlert, { AlertProps } from "@material-ui/core/Alert";
-import { useTheme } from "@material-ui/core";
-import { Box } from "@material-ui/core";
+import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
+import MuiAlert, { AlertProps } from "@mui/material/Alert";
+import { useTheme } from "@mui/material";
+import { Box } from "@mui/material";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,

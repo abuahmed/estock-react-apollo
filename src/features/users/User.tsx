@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { NavLink as RouterLink, useParams } from "react-router-dom";
-import Box from "@material-ui/core/Box";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import Grid from "@material-ui/core/Grid";
-import { Button, Divider, TextField, Typography } from "@material-ui/core";
-import { Backspace } from "@material-ui/icons";
+import Box from "@mui/material/Box";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Grid from "@mui/material/Grid";
+import { Button, Divider, TextField, Typography } from "@mui/material";
+import { Backspace } from "@mui/icons-material";
 
 import Toast from "../../components/Layout/Toast";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";

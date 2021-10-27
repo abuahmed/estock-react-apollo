@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import _ from 'lodash'
-import { experimentalStyled as styled, alpha } from '@material-ui/core/styles'
-import SearchIcon from '@material-ui/icons/Search'
+import { experimentalStyled as styled, alpha } from '@mui/material/styles'
+import SearchIcon from '@mui/icons-material/Search'
 import { setSearchText } from '../../features/settings/settingsSlice'
 import { useAppDispatch } from '../../app/hooks'
-import InputBase, { InputBaseProps as MuiInputBaseProps } from '@material-ui/core/InputBase'
+import InputBase, { InputBaseProps as MuiInputBaseProps } from '@mui/material/InputBase'
 
 const SearchCustom = styled('div')(({ theme }) => ({
   position: 'relative',

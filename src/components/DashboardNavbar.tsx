@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { IconButton, Toolbar, useMediaQuery } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
-import { experimentalStyled as styled, Theme } from "@material-ui/core/styles";
+import { IconButton, Toolbar, useMediaQuery } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+//import { styled } from "@mui/material/styles";
+import { styled, Theme } from "@mui/material/styles";
 
-import MuiAppBar, {
-  AppBarProps as MuiAppBarProps,
-} from "@material-ui/core/AppBar";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 
 import Logo from "./Logo";
 import { selectSetting, toggleThis } from "../features/settings/settingsSlice";
@@ -73,6 +72,7 @@ const DashboardNavbar = () => {
               marginRight: "0px",
               ...(isDrawerOpen && { display: "none" }),
             }}
+            size="large"
           >
             <MenuIcon />
           </IconButton>

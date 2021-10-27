@@ -2,12 +2,12 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import { Navigate, useNavigate, Link } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import { useTheme } from "@material-ui/core/styles";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import { useTheme } from "@mui/material/styles";
 
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import AuthSkeleton from "./AuthSkeleton";

@@ -1,6 +1,6 @@
-import { experimentalStyled } from "@material-ui/core";
+import { styled } from "@mui/material/styles";
 
-const MainLayoutRoot = experimentalStyled("div")(({ theme }) => ({
+const MainLayoutRoot = styled("div")(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   display: "flex",
   flexDirection: "column",
@@ -10,7 +10,7 @@ const MainLayoutRoot = experimentalStyled("div")(({ theme }) => ({
   width: "100%",
 }));
 
-const MainLayoutWrapper = experimentalStyled("div")({
+const MainLayoutWrapper = styled("div")({
   display: "flex",
   flexDirection: "column",
   flex: "1 1 auto",
@@ -18,15 +18,15 @@ const MainLayoutWrapper = experimentalStyled("div")({
   paddingTop: 64,
 });
 
-const GradientBackground = experimentalStyled("div")(({ theme }) => ({
+const GradientBackground = styled("div")(({ theme }) => ({
   background: theme.palette.background.default,
 }));
 
-const NormalBackground = experimentalStyled("div")(({ theme }) => ({
+const NormalBackground = styled("div")(({ theme }) => ({
   background: theme.palette.background.paper,
 }));
 
-const ShadowStyled = experimentalStyled("div")(({ theme }) => ({
+const ShadowStyled = styled("div")(({ theme }) => ({
   boxShadow: "0 0.5rem 1rem rgba(0, 0, 0, 0.15)",
   [theme.breakpoints.up("sm")]: {
     boxShadow: "0 .125rem .25rem rgba($black, .075)",

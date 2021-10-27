@@ -3,15 +3,15 @@ import { Helmet } from "react-helmet";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
 
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
 
-import Box from "@material-ui/core/Box";
-import Typography from "@material-ui/core/Typography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
-import InputAdornment from "@material-ui/core/InputAdornment";
-import AccountCircle from "@material-ui/icons/AccountCircle";
+import InputAdornment from "@mui/material/InputAdornment";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { forgot, selectAuth } from "./authSlice";
 import { FormikTextField } from "../../components/Layout/FormikTextField";

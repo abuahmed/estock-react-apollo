@@ -152,13 +152,13 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         { path: "profile", element: <Profile /> },
         { path: "users", element: <Users /> },
         { path: "user/:id", element: <User /> },
-        { path: "/", element: <Navigate to="/app/dashboard" /> },
+        { path: "", element: <Navigate to="/app/dashboard" /> },
         {
           path: "member",
           element: <Outlet />,
           children: [
-            { path: "/", element: <Profile /> },
-            { path: "/add", element: <Profile /> },
+            { path: "", element: <Profile /> },
+            { path: "add", element: <Profile /> },
           ],
         },
       ],

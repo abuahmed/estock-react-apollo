@@ -1,6 +1,6 @@
-import { experimentalStyled as styled } from "@material-ui/core";
-import TableCell, { tableCellClasses } from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
+import { experimentalStyled as styled } from "@mui/material";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
 
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {

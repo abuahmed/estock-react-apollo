@@ -1,11 +1,11 @@
 import React from "react";
 import { Form, FormikProps, Formik } from "formik";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
 
-import Box from "@material-ui/core/Box";
-import SaveIcon from "@material-ui/icons/Save";
+import Box from "@mui/material/Box";
+import SaveIcon from "@mui/icons-material/Save";
 
 import { FormikTextField } from "../Layout/FormikTextField";
 
@@ -16,7 +16,7 @@ import { updateProfile, selectAuth } from "../../features/auth/authSlice";
 
 import Toast from "../Layout/Toast";
 import { AuthUser } from "../../features/auth/types/authType";
-import { useTheme } from "@material-ui/core";
+import { useTheme } from "@mui/material";
 
 export const AccountDetail = () => {
   const theme = useTheme();

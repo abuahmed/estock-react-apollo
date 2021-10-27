@@ -5,9 +5,9 @@ import {
   Grid,
   Skeleton,
   Typography,
-} from "@material-ui/core";
-import { indigo } from "@material-ui/core/colors";
-import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
+} from "@mui/material";
+import { indigo } from "@mui/material/colors";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { SummaryProps } from "./dashboardTypes";
 
 export const TotalProfit = ({ value, loading }: SummaryProps) => (

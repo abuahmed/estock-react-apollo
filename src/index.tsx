@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
-import { CssBaseline } from "@material-ui/core";
+import { CssBaseline } from "@mui/material";
 import "./index.css";
 import "font-awesome/css/font-awesome.min.css";
 

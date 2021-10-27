@@ -1,12 +1,12 @@
 import React, { ReactNode, useEffect } from 'react'
-import Dialog from '@material-ui/core/Dialog'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import IconButton from '@mui/material/IconButton'
+import CloseIcon from '@mui/icons-material/Close'
 import { useAppSelector } from '../../app/hooks'
 import { selectAuth } from '../../features/auth/authSlice'
-import { useTheme } from '@material-ui/core/styles'
-import useMediaQuery from '@material-ui/core/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 interface Props {
   children: ReactNode
@@ -17,7 +17,7 @@ function CustomDialog({ children, isOpen, handleDialogClose }: Props) {
   const [open, setOpen] = React.useState(isOpen)
   const { success } = useAppSelector(selectAuth)
   const theme = useTheme()
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'))
   useEffect(() => {
     setOpen(isOpen)
   }, [isOpen])
@@ -32,7 +32,7 @@ function CustomDialog({ children, isOpen, handleDialogClose }: Props) {
 
   return (
     <Dialog fullScreen={fullScreen} open={open} onClose={handleClose}>
-      <DialogTitle disableTypography sx={{ m: 0, p: 2 }}>
+      <DialogTitle sx={{ m: 0, p: 2 }}>
         {handleClose ? (
           <IconButton
             aria-label="close"
@@ -43,14 +43,14 @@ function CustomDialog({ children, isOpen, handleDialogClose }: Props) {
               top: 8,
               color: (theme) => theme.palette.grey[500],
             }}
-          >
+            size="large">
             <CloseIcon />
           </IconButton>
         ) : null}
       </DialogTitle>
       {children}
     </Dialog>
-  )
+  );
 }
 
 export default CustomDialog

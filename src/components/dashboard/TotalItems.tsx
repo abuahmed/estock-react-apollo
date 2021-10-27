@@ -5,9 +5,9 @@ import {
   Grid,
   Skeleton,
   Typography,
-} from "@material-ui/core";
-import { orange } from "@material-ui/core/colors";
-import { FormatListNumbered } from "@material-ui/icons";
+} from "@mui/material";
+import { orange } from "@mui/material/colors";
+import { FormatListNumbered } from "@mui/icons-material";
 import { SummaryProps } from "./dashboardTypes";
 
 export const TotalItems = ({ value, loading }: SummaryProps) => (

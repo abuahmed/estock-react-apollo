@@ -7,7 +7,7 @@ import {
   useTheme,
   Grid,
   colors,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   GetDailyTransactions,

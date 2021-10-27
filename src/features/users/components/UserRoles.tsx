@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { addUserRoles, selectUsers } from "../usersSlice";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 import {
   Box,
   Button,
@@ -13,10 +13,10 @@ import {
   Stack,
   Switch,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import { Role } from "../../auth/types/authType";
-import { Save } from "@material-ui/icons";
+import { Save } from "@mui/icons-material";
 
 interface Props {
   userId: number;

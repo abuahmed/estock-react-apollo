@@ -6,7 +6,7 @@ import {
   CardHeader,
   Divider,
   colors,
-} from "@material-ui/core";
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {

@@ -1,10 +1,8 @@
 /// <reference types="react-scripts" />
+
 declare namespace NodeJS {
-    interface Process {
-        browser: boolean;
-    }
+  interface Process {
+    browser: boolean;
+  }
 }
-declare module 'react-facebook-login/dist/facebook-login-render-props'
-
-
-
+declare module "react-facebook-login/dist/facebook-login-render-props";

@@ -9,8 +9,8 @@ import {
   CardHeader,
   Divider,
   useTheme,
-} from "@material-ui/core";
-import SaveIcon from "@material-ui/icons/Save";
+} from "@mui/material";
+import SaveIcon from "@mui/icons-material/Save";
 import { changePasswordSchema } from "../../features/auth/validation";
 
 import { FormikTextField } from "../Layout/FormikTextField";

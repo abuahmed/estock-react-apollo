@@ -1,13 +1,13 @@
 import React, { ReactNode } from "react";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 import {
   NavLink as RouterLink,
   matchPath,
   useLocation,
 } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Button, ListItem } from "@material-ui/core";
+import { Button, ListItem } from "@mui/material";
 
 interface Props {
   href: string;

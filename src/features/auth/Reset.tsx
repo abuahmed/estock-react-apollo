@@ -3,16 +3,16 @@ import { Helmet } from "react-helmet";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
 
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Button from "@material-ui/core/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
 
 import { Navigate } from "react-router-dom";
-import Box from "@material-ui/core/Box";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import LockRounded from "@material-ui/icons/LockRounded";
+import Box from "@mui/material/Box";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
+import InputAdornment from "@mui/material/InputAdornment";
+import LockRounded from "@mui/icons-material/LockRounded";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { reset, selectAuth } from "./authSlice";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
@@ -20,7 +20,7 @@ import { FormikTextField } from "../../components/Layout/FormikTextField";
 import AuthSkeleton from "./AuthSkeleton";
 import { resetSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 import { ResetAuth } from "./types/authType";
 
 export const Reset = () => {

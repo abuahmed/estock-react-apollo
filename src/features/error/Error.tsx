@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Button, useTheme } from "@material-ui/core";
+import { Typography, Button, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import Logo from "../../components/Logo";
 import { LogoType, PaperRoot, GridContainer } from "../../styles/errorStyled";
