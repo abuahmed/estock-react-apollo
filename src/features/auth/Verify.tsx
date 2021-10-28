@@ -40,7 +40,7 @@ export const Verify = () => {
   if (success) {
     navigate("/login");
   }
-  if (user) {
+  if (user && user.email) {
     return <Navigate to="/" />;
   }
 

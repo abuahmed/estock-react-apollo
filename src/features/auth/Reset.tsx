@@ -33,7 +33,7 @@ export const Reset = () => {
     id: string;
   };
 
-  if (user) {
+  if (user && user.email) {
     return <Navigate to="/" />;
   }
   if (success) {

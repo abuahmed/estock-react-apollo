@@ -24,8 +24,7 @@ export const Forgot = () => {
   const { loading, error, user, success } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  if (user) {
+  if (user && user.email) {
     return <Navigate to="/" />;
   }
   if (success) {

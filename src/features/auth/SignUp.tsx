@@ -29,7 +29,7 @@ export const SignUp = () => {
 
   const navigate = useNavigate();
 
-  if (user) {
+  if (user && user.email) {
     return <Navigate to="/app" />;
   }
   if (success) {

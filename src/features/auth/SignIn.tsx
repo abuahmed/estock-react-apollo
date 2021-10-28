@@ -35,8 +35,7 @@ export const SignIn = () => {
   const dispatch = useAppDispatch();
   // const navigate = useNavigate()
   // const location = useLocation()
-  const theme = useTheme();
-  if (user) {
+  if (user && user.email) {
     return <Navigate to="/app" />;
 
     // let { from } = location.search || { from: { pathname: '/app/dashboard' } }
