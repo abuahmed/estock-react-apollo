@@ -34,7 +34,7 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
   PrivilegedRoles = roles;
   return [
     {
-      path: "app/*",
+      path: "/app",
       element: isLoggedIn ? <DashboardLayout /> : <Navigate to="/login" />,
       children: [
         {
@@ -152,13 +152,13 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         { path: "profile", element: <Profile /> },
         { path: "users", element: <Users /> },
         { path: "user/:id", element: <User /> },
-        { path: "", element: <Navigate to="/app/dashboard" /> },
+        { path: "/app", element: <Navigate to="/app/dashboard" /> },
         {
           path: "member",
           element: <Outlet />,
           children: [
-            { path: "", element: <Profile /> },
-            { path: "add", element: <Profile /> },
+            { path: "/app/member", element: <Profile /> },
+            { path: "/app/member/add", element: <Profile /> },
           ],
         },
       ],
