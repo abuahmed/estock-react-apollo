@@ -5,25 +5,27 @@ import { Form, FormikProps, Formik } from "formik";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material/styles";
 
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import AuthSkeleton from "./AuthSkeleton";
 
 import { registerSchema } from "./validation";
-
+import InputAdornment from "@mui/material/InputAdornment";
+import LockRounded from "@mui/icons-material/LockRounded";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { signUp, selectAuth } from "./authSlice";
 import { resetSuccess } from "./authReducers";
 import Toast from "../../components/Layout/Toast";
 import Google from "./Google";
 import Facebook from "./Facebook";
+import { AuthenticationWrapper } from "../../styles/layoutStyled";
+import { FormControlLabel, Switch } from "@mui/material";
 
 export const SignUp = () => {
-  const theme = useTheme();
-
   const { loading, error, success, user } = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
 
@@ -44,6 +46,7 @@ export const SignUp = () => {
   interface Values {
     name: string;
     email: string;
+    showPassword: boolean;
     password: string;
     confirmPassword: string;
   }
@@ -53,22 +56,14 @@ export const SignUp = () => {
       <Helmet>
         <title>Sign Up | Pinna Stock</title>
       </Helmet>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-          justifyContent: "center",
-          textAlign: "center",
-          paddingTop: theme.spacing(1),
-          paddingBottom: theme.spacing(1),
-          backgroundColor: theme.palette.background.paper,
-        }}
-      >
-        <Container maxWidth="sm">
-          <Box sx={{ mb: 3 }}>
-            <Typography variant="h1">Welcome!</Typography>
-            <Typography variant="h2">Create your account</Typography>
+      <AuthenticationWrapper>
+        <Card sx={{ width: 600 }}>
+          <CardContent>
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h1">Welcome!</Typography>
+              <Typography variant="h2">Create your account</Typography>
+            </Box>
+
             {/* {success && redirectToLogin} */}
             {loading === "pending" ? (
               <AuthSkeleton />
@@ -78,6 +73,7 @@ export const SignUp = () => {
                   initialValues={{
                     name: "",
                     email: "",
+                    showPassword: false,
                     password: "",
                     confirmPassword: "",
                   }}
@@ -91,20 +87,55 @@ export const SignUp = () => {
                     <Form>
                       <FormikTextField formikKey="name" label="Name" />
                       <FormikTextField formikKey="email" label="Email" />
-                      <FormikTextField
-                        formikKey="password"
-                        label="Password"
-                        type="password"
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} md={6}>
+                          <FormikTextField
+                            formikKey="password"
+                            label="Password"
+                            type={
+                              props.values.showPassword ? "text" : "password"
+                            }
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <LockRounded />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <FormikTextField
+                            formikKey="confirmPassword"
+                            label="Confirm Password"
+                            type={
+                              props.values.showPassword ? "text" : "password"
+                            }
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <LockRounded />
+                                </InputAdornment>
+                              ),
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                      <FormControlLabel
+                        style={{ marginBottom: "0" }}
+                        control={
+                          <Switch
+                            checked={props.values.showPassword}
+                            onChange={props.handleChange("showPassword")}
+                            name="showPassword"
+                          />
+                        }
+                        label="Show Password"
                       />
-                      <FormikTextField
-                        formikKey="confirmPassword"
-                        label="Confirm Password"
-                        type="password"
-                      />
-                      <br />
                       {error && <Toast severity="error">{error.message}</Toast>}
-                      <Box component="div" mt={1}>
+                      <Box component="div">
                         <Button
+                          sx={{ width: "100%", marginY: "8px" }}
                           type="submit"
                           color="secondary"
                           variant="contained"
@@ -116,18 +147,15 @@ export const SignUp = () => {
                     </Form>
                   )}
                 </Formik>
-                <span>
+                <Box sx={{ my: 2 }}>
                   Have an account?
-                  <Link to="/login">
+                  <Link to="/login" style={{ marginLeft: "10px" }}>
                     <>Sign In here</>
                   </Link>
-                </span>
-                {/* <Divider className={classes.divider} /> */}
-                <div>
-                  <div>
-                    <Typography>or</Typography>
-                  </div>
-                </div>
+                </Box>
+                <Divider variant="middle" sx={{ my: 2 }}>
+                  or
+                </Divider>
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={6}>
                     <Google />
@@ -138,9 +166,9 @@ export const SignUp = () => {
                 </Grid>
               </>
             )}
-          </Box>
-        </Container>
-      </Box>
+          </CardContent>
+        </Card>
+      </AuthenticationWrapper>
     </>
   );
 };

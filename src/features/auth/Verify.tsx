@@ -5,9 +5,6 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
-// import { ToastContainer, toast } from 'react-toastify'
-// import 'react-toastify/dist/ReactToastify.css'
-//import { CardHeader } from '@mui/material'
 import Box from "@mui/material/Box";
 
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
@@ -16,6 +13,7 @@ import { verify, resend, selectAuth } from "./authSlice";
 import AuthSkeleton from "./AuthSkeleton";
 import Toast from "../../components/Layout/Toast";
 import Typography from "@mui/material/Typography";
+import { AuthenticationWrapper } from "../../styles/layoutStyled";
 
 export const Verify = () => {
   const { loading, error, user, success } = useAppSelector(selectAuth);
@@ -49,39 +47,33 @@ export const Verify = () => {
       <Helmet>
         <title>Verify Your Account | Pinna Stock</title>
       </Helmet>
-      <Card>
-        <CardContent>
-          <Typography variant="h2">Account Activation</Typography>
-          {loading === "pending" ? (
-            <AuthSkeleton />
-          ) : (
-            error && (
-              <>
-                {/* {toast.error(`${error!.message}`, {
-                position: 'top-center',
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-              })}
-              <ToastContainer /> */}
-                <Toast severity="error">{error!.message}</Toast>{" "}
-                <Box component="div" pt={2}>
-                  <Button
-                    type="submit"
-                    color="secondary"
-                    variant="contained"
-                    onClick={resendVerificationEmail}
-                  >
-                    Resend Verification Email
-                  </Button>
-                </Box>
-              </>
-            )
-          )}
-        </CardContent>
-      </Card>
+      <AuthenticationWrapper>
+        <Card sx={{ width: 600 }}>
+          <CardContent>
+            <Typography variant="h2">Account Activation</Typography>
+            {loading === "pending" ? (
+              <AuthSkeleton />
+            ) : (
+              error && (
+                <>
+                  <Toast severity="error">{error!.message}</Toast>{" "}
+                  <Box component="div" pt={2}>
+                    <Button
+                      sx={{ width: "100%", marginY: "8px" }}
+                      type="submit"
+                      color="secondary"
+                      variant="contained"
+                      onClick={resendVerificationEmail}
+                    >
+                      Resend Verification Email
+                    </Button>
+                  </Box>
+                </>
+              )
+            )}
+          </CardContent>
+        </Card>
+      </AuthenticationWrapper>
     </>
   );
 };

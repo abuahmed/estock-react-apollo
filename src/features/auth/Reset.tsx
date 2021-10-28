@@ -22,6 +22,7 @@ import { resetSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
 import Typography from "@mui/material/Typography";
 import { ResetAuth } from "./types/authType";
+import { AuthenticationWrapper } from "../../styles/layoutStyled";
 
 export const Reset = () => {
   const { loading, error, user, success } = useAppSelector(selectAuth);
@@ -45,84 +46,87 @@ export const Reset = () => {
       <Helmet>
         <title>Reset Password | Pinna Stock</title>
       </Helmet>
-      <Card>
-        <CardContent>
-          <Typography variant="h2">Reset Password</Typography>
+      <AuthenticationWrapper>
+        <Card sx={{ width: 600 }}>
+          <CardContent>
+            <Typography variant="h2">Reset Password</Typography>
 
-          {loading === "pending" ? (
-            <AuthSkeleton />
-          ) : (
-            <Formik
-              initialValues={{
-                password: "",
-                confirmPassword: "",
-                showPassword: false,
-                id: parseInt(id),
-                token: token as string,
-              }}
-              validationSchema={resetSchema}
-              onSubmit={(values, actions) => {
-                actions.setSubmitting(false);
-                dispatch(reset(values));
-              }}
-            >
-              {(props: FormikProps<ResetAuth>) => (
-                <Form>
-                  <Typography variant="h6">Type your new password</Typography>
-                  <FormikTextField
-                    formikKey="password"
-                    label="Password"
-                    type={props.values.showPassword ? "text" : "password"}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <LockRounded />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <FormikTextField
-                    formikKey="confirmPassword"
-                    label="Confirm Password"
-                    type={props.values.showPassword ? "text" : "password"}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <LockRounded />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
+            {loading === "pending" ? (
+              <AuthSkeleton />
+            ) : (
+              <Formik
+                initialValues={{
+                  password: "",
+                  confirmPassword: "",
+                  showPassword: false,
+                  id: parseInt(id),
+                  token: token as string,
+                }}
+                validationSchema={resetSchema}
+                onSubmit={(values, actions) => {
+                  actions.setSubmitting(false);
+                  dispatch(reset(values));
+                }}
+              >
+                {(props: FormikProps<ResetAuth>) => (
+                  <Form>
+                    <Typography variant="h6">Type your new password</Typography>
+                    <FormikTextField
+                      formikKey="password"
+                      label="Password"
+                      type={props.values.showPassword ? "text" : "password"}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LockRounded />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <FormikTextField
+                      formikKey="confirmPassword"
+                      label="Confirm Password"
+                      type={props.values.showPassword ? "text" : "password"}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <LockRounded />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
 
-                  <FormControlLabel
-                    style={{ marginBottom: "0" }}
-                    control={
-                      <Switch
-                        checked={props.values.showPassword}
-                        onChange={props.handleChange("showPassword")}
-                        name="showPassword"
-                      />
-                    }
-                    label="Show Password"
-                  />
+                    <FormControlLabel
+                      style={{ marginBottom: "0" }}
+                      control={
+                        <Switch
+                          checked={props.values.showPassword}
+                          onChange={props.handleChange("showPassword")}
+                          name="showPassword"
+                        />
+                      }
+                      label="Show Password"
+                    />
 
-                  {error && <Toast severity="error">{error.message}</Toast>}
-                  <Box component="div" pt={2}>
-                    <Button
-                      type="submit"
-                      color="secondary"
-                      variant="contained"
-                      disabled={!props.isValid}
-                    >
-                      Reset Password
-                    </Button>
-                  </Box>
-                </Form>
-              )}
-            </Formik>
-          )}
-        </CardContent>
-      </Card>
+                    {error && <Toast severity="error">{error.message}</Toast>}
+                    <Box component="div" pt={2}>
+                      <Button
+                        sx={{ width: "100%", marginY: "8px" }}
+                        type="submit"
+                        color="secondary"
+                        variant="contained"
+                        disabled={!props.isValid}
+                      >
+                        Reset Password
+                      </Button>
+                    </Box>
+                  </Form>
+                )}
+              </Formik>
+            )}
+          </CardContent>
+        </Card>
+      </AuthenticationWrapper>
     </>
   );
 };
