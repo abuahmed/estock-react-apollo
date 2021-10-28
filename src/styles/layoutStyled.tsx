@@ -18,6 +18,17 @@ const MainLayoutWrapper = styled("div")({
   paddingTop: 64,
 });
 
+const AuthenticationWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  height: "100%",
+  justifyContent: "center",
+  textAlign: "center",
+  paddingTop: theme.spacing(1),
+  paddingBottom: theme.spacing(1),
+  backgroundColor: theme.palette.background.default,
+}));
+
 const GradientBackground = styled("div")(({ theme }) => ({
   background: theme.palette.background.default,
 }));
@@ -37,6 +48,7 @@ const ShadowStyled = styled("div")(({ theme }) => ({
 }));
 
 export {
+  AuthenticationWrapper,
   GradientBackground,
   NormalBackground,
   MainLayoutRoot,
