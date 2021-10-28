@@ -1,21 +1,17 @@
-import React from 'react'
-import Skeleton from '@mui/material/Skeleton'
-import Box from '@mui/material/Box'
+import React from "react";
+import Skeleton from "@mui/material/Skeleton";
+import Stack from "@mui/material/Stack";
+import { Divider } from "@mui/material";
 
 function AuthSkeleton() {
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      height="270px"
-      alignItems="center"
-      justifyContent="space-between"
-    >
-      <Skeleton variant="circular" width={220} height={220} />
-      <Skeleton variant="rectangular" width={180} height={25} />
-      <Skeleton variant="rectangular" width={150} height={20} />
-    </Box>
-  )
+    <Stack spacing={1}>
+      <Skeleton variant="text" height={30} />
+      <Skeleton variant="text" height={30} />
+      <Divider sx={{ my: 2 }} />
+      <Skeleton variant="rectangular" width="100%" height={40} />
+    </Stack>
+  );
 }
 
-export default AuthSkeleton
+export default AuthSkeleton;
