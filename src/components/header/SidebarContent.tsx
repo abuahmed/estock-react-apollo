@@ -105,7 +105,11 @@ const SidebarContent = () => {
               />
               <Box sx={{ flexGrow: 1 }} />
 
-              <IconButton style={{ color: "white" }} onClick={handleDrawerClose} size="large">
+              <IconButton
+                style={{ color: "white" }}
+                onClick={handleDrawerClose}
+                size="large"
+              >
                 {theme.direction === "rtl" ? (
                   <ChevronRightIcon />
                 ) : (
@@ -216,40 +220,12 @@ const SidebarContent = () => {
         </Box>
         <Typography>Copyright &copy; 2021</Typography>
       </Box>
-      {/* {!isMiniMode && (
-        <Box
-          sx={{
-            backgroundColor: 'background.default',
-            m: 2,
-            p: 2,
-          }}
-        >
-          <Typography align="center" gutterBottom variant="h4">
-            Need more?
-          </Typography>
-          <Typography align="center" variant="body2" noWrap>
-            Upgrade to PRO version and access 20 more screens
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              pt: 2,
-            }}
-          >
-            <Button
-              color="primary"
-              component="a"
-              href="https://react-material-kit.devias.io"
-              variant="contained"
-            >
-              See PRO version
-            </Button>
-          </Box>
-        </Box>
-      )} */}
 
-      <CustomDialog isOpen={open} handleDialogClose={dialogClose}>
+      <CustomDialog
+        title="Change Password"
+        isOpen={open}
+        handleDialogClose={dialogClose}
+      >
         <ChangePassword />
       </CustomDialog>
     </Box>
@@ -350,15 +326,6 @@ const getNavBarItems = (userRoles: string[]) => {
       privilegedMenuItems.push(item);
     }
   });
-  // menuItems.forEach((item) => {
-  //   for (let index = 0; index < userRoles.length; index++) {
-  //     const rl = userRoles[index];
-  //     if (rl.includes(item.title)) {
-  //       privilegedMenuItems.push(item);
-  //       break;
-  //     }
-  //   }
-  // });
 
   privilegedMenuItems = privilegedMenuItems.concat([
     {
