@@ -45,7 +45,7 @@ import {
 } from "./types/transactionTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
-import { changePageTitle } from "../settings/settingsSlice";
+import { changePageTitle } from "../preferences/preferencesSlice";
 import { Add, Backspace, Delete, Edit } from "@mui/icons-material";
 import {
   Grid,

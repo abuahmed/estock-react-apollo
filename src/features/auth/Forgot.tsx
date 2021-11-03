@@ -1,7 +1,8 @@
 import { Helmet } from "react-helmet";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { NavLink, Navigate, useNavigate } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
 
+import Link from "@mui/material/Link";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
@@ -94,7 +95,12 @@ export const Forgot = () => {
                 </Formik>
                 <Box sx={{ my: 2 }}>
                   Have an account?
-                  <Link to="/login" style={{ marginLeft: "10px" }}>
+                  <Link
+                    component={NavLink}
+                    underline="none"
+                    to="/login"
+                    style={{ marginLeft: "10px" }}
+                  >
                     <>Sign In here</>
                   </Link>
                 </Box>

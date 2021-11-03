@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import { Typography, Button, useTheme } from "@mui/material";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 import Logo from "../../components/Logo";
 import { LogoType, PaperRoot, GridContainer } from "../../styles/errorStyled";
@@ -45,7 +45,7 @@ export default function Home() {
           <Button
             variant="contained"
             color="primary"
-            component={Link}
+            component={NavLink}
             to="/app"
             size="large"
             sx={{ textTransform: "none", fontSize: 22 }}

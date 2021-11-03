@@ -10,7 +10,7 @@ import {
 } from "../../components/dashboard";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { changePageTitle } from "../settings/settingsSlice";
+import { changePageTitle } from "../preferences/preferencesSlice";
 import { TotalItems } from "../../components/dashboard/TotalItems";
 import {
   getSummary,

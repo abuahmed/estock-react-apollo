@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const LandingPage = () => {
   return (
@@ -24,7 +24,7 @@ const LandingPage = () => {
         <h2>Landing Page</h2>
 
         <div>
-          <Link to="/app">Dashboard</Link>
+          <NavLink to="/app">Dashboard</NavLink>
         </div>
       </div>
     </>

@@ -40,6 +40,7 @@ import {
 } from "../../apollo/queries";
 import { Inventory } from "./types/transactionTypes";
 import { addMonths, endOfDay, startOfDay } from "date-fns";
+import { Payment } from "./types/paymentTypes";
 //import { sleep } from "../../utils/sleep";
 
 export const fetchInventories = createAsyncThunk<
@@ -497,10 +498,14 @@ async function setErrorAction(
   }, 6000);
 }
 
-const defaultValues: TransactionLine = {
+const defaultLine: TransactionLine = {
   item: { displayName: "select item", id: 0 },
   qty: 0,
   eachPrice: 0,
+};
+const defaultPayment: Payment = {
+  paymentDate: new Date(),
+  amount: 0,
 };
 
 const initialState: TransactionsState = {
@@ -513,6 +518,7 @@ const initialState: TransactionsState = {
   selectedInventory: { id: 0 },
   headers: [],
   lines: [],
+  payments: [],
   selectedHeader: {
     type: TransactionType.Purchase,
     status: TransactionStatus.Draft,
@@ -521,11 +527,8 @@ const initialState: TransactionsState = {
     warehouse: { displayName: "Warehouse", id: 0 },
     toWarehouse: { displayName: "Destination", id: 0 },
   },
-  selectedLine: {
-    item: { displayName: "select item", id: 0 },
-    qty: 0,
-    eachPrice: 0,
-  },
+  selectedLine: { ...defaultLine },
+  selectedPayment: { ...defaultPayment },
   loading: "idle",
   currentRequestId: undefined,
   success: null,
@@ -549,7 +552,7 @@ export const transactionsSlice = createSlice({
       state.error = null;
     },
     resetSelectedLine: (state) => {
-      state.selectedLine = { ...defaultValues };
+      state.selectedLine = { ...defaultLine };
     },
     setSelectedLine: (state, { payload }) => {
       state.selectedLine = payload;

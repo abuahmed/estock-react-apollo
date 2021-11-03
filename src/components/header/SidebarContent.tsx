@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { NavLink as RouterLink } from "react-router-dom";
 import { Avatar, Box, Divider, List, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Link from "@mui/material/Link";
@@ -27,9 +27,9 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAuth } from "../../features/auth/authSlice";
 import {
-  selectSetting,
+  selectPreference,
   toggleThis,
-} from "../../features/settings/settingsSlice";
+} from "../../features/preferences/preferencesSlice";
 import { DrawerHeader } from "../DashboardSidebar";
 import CustomDialog from "../modals/CustomDialog";
 import ChangePassword from "../account/ChangePassword";
@@ -45,7 +45,7 @@ const SidebarContent = () => {
   const theme = useTheme();
   const { user } = useAppSelector(selectAuth);
   const { isDrawerOpen, isMobileDrawerOpen, isMiniMode } =
-    useAppSelector(selectSetting);
+    useAppSelector(selectPreference);
   const handleDrawerToggle = () => {
     dispatch(toggleThis({ type: "Mobile", newValue: false }));
   };

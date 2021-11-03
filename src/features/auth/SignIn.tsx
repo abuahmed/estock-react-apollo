@@ -1,5 +1,7 @@
-import { Link, Navigate } from "react-router-dom";
+import { NavLink, Navigate } from "react-router-dom";
 import { Form, FormikProps, Formik } from "formik";
+
+import Link from "@mui/material/Link";
 
 import Button from "@mui/material/Button";
 import Google from "./Google";
@@ -128,7 +130,11 @@ export const SignIn = () => {
                           />
                         </Grid>
                         <Grid item xs={12} sm={6} sx={{ textAlign: "right" }}>
-                          <Link to="/forgotPassword">
+                          <Link
+                            component={NavLink}
+                            underline="none"
+                            to="/forgotPassword"
+                          >
                             <>Forgot your password?</>
                           </Link>
                         </Grid>
@@ -151,7 +157,12 @@ export const SignIn = () => {
                 </Formik>
                 <Box sx={{ my: 2 }}>
                   Need an account?
-                  <Link to="/register" style={{ marginLeft: "10px" }}>
+                  <Link
+                    component={NavLink}
+                    underline="none"
+                    to="/register"
+                    style={{ marginLeft: "10px" }}
+                  >
                     <>Sign Up here</>
                   </Link>
                 </Box>

@@ -1,6 +1,8 @@
 import React from "react";
 import { Helmet } from "react-helmet";
-import { Navigate, useNavigate, Link } from "react-router-dom";
+import { Navigate, useNavigate, NavLink } from "react-router-dom";
+import Link from "@mui/material/Link";
+
 import { Form, FormikProps, Formik } from "formik";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
@@ -149,7 +151,12 @@ export const SignUp = () => {
                 </Formik>
                 <Box sx={{ my: 2 }}>
                   Have an account?
-                  <Link to="/login" style={{ marginLeft: "10px" }}>
+                  <Link
+                    component={NavLink}
+                    underline="none"
+                    to="/login"
+                    style={{ marginLeft: "10px" }}
+                  >
                     <>Sign In here</>
                   </Link>
                 </Box>

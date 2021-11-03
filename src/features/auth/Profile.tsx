@@ -8,7 +8,7 @@ import AuthSkeleton from "./AuthSkeleton";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { selectAuth } from "./authSlice";
 
-import { changePageTitle } from "../settings/settingsSlice";
+import { changePageTitle } from "../preferences/preferencesSlice";
 import AccountHeader from "../../components/account/AccountHeader";
 import { AccountDetail } from "../../components/account/AccountDetail";
 import ChangePassword from "../../components/account/ChangePassword";

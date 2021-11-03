@@ -6,7 +6,10 @@ import MuiDrawer from "@mui/material/Drawer";
 import SidebarContent from "./header/SidebarContent";
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectSetting, toggleThis } from "../features/settings/settingsSlice";
+import {
+  selectPreference,
+  toggleThis,
+} from "../features/preferences/preferencesSlice";
 import { SwipeableDrawer } from "@mui/material";
 const drawerWidth = 240;
 
@@ -64,7 +67,7 @@ const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
 const DashboardSidebar = () => {
   const dispatch = useAppDispatch();
 
-  const { isMobileDrawerOpen, isDrawerOpen } = useAppSelector(selectSetting);
+  const { isMobileDrawerOpen, isDrawerOpen } = useAppSelector(selectPreference);
 
   const handleDrawerToggle = () => {
     dispatch(toggleThis({ type: "Mobile", newValue: !isMobileDrawerOpen }));

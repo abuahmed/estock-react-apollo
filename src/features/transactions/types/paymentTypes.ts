@@ -67,6 +67,7 @@ export type Payment = {
   status?: PaymentStatus;
   paymentDate?: Date;
   dueDate?: Date;
+  amountRequired?: number;
   amount?: number;
   reason?: string;
   paymentRemark?: string;

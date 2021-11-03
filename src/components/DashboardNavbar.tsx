@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { NavLink as RouterLink } from "react-router-dom";
 import { IconButton, Toolbar, useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 //import { styled } from "@mui/material/styles";
@@ -8,7 +8,10 @@ import { styled, Theme } from "@mui/material/styles";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 
 import Logo from "./Logo";
-import { selectSetting, toggleThis } from "../features/settings/settingsSlice";
+import {
+  selectPreference,
+  toggleThis,
+} from "../features/preferences/preferencesSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import NavbarContent from "./header/NavbarContent";
 
@@ -42,7 +45,7 @@ const DashboardNavbar = () => {
   const dispatch = useAppDispatch();
   const isDesktop = useMediaQuery((theme: Theme) => theme.breakpoints.up("md"));
 
-  const { isDrawerOpen } = useAppSelector(selectSetting);
+  const { isDrawerOpen } = useAppSelector(selectPreference);
 
   useEffect(() => {
     if (isDesktop) {

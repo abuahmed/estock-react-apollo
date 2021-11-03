@@ -13,7 +13,7 @@ import { Backspace } from "@mui/icons-material";
 import Toast from "../../components/Layout/Toast";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { fetchRoles, getUser, selectUsers } from "./usersSlice";
-import { changePageTitle } from "../settings/settingsSlice";
+import { changePageTitle } from "../preferences/preferencesSlice";
 import { fetchWarehouses, selectSetups } from "../setups/setupSlices";
 import { UserWarehouses } from "./components/UserWarehouses";
 import { UserRoles } from "./components/UserRoles";

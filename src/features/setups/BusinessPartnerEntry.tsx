@@ -25,7 +25,7 @@ import {
 import { resetSelectedBusinessPartner } from "./setupSlices";
 import { BusinessPartner, BusinessPartnerProps } from "./types/bpTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
-import { changePageTitle } from "../settings/settingsSlice";
+import { changePageTitle } from "../preferences/preferencesSlice";
 
 export const BusinessPartnerEntry = ({ type }: BusinessPartnerProps) => {
   const { id } = useParams() as {

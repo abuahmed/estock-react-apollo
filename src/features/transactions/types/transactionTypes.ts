@@ -1,6 +1,7 @@
 import { BusinessPartner } from "../../setups/types/bpTypes";
 import { Item } from "../../setups/types/itemTypes";
 import { Warehouse } from "../../setups/types/warehouseTypes";
+import { Payment } from "./paymentTypes";
 
 export interface HeaderProps {
   type: TransactionType;
@@ -102,8 +103,10 @@ export type TransactionsState = {
   selectedInventory?: Inventory;
   headers: TransactionHeader[];
   lines: TransactionLine[];
+  payments: Payment[];
   selectedHeader: TransactionHeader;
   selectedLine: TransactionLine;
+  selectedPayment: Payment;
   loading: "idle" | "pending";
   currentRequestId: string | undefined;
   success: any;
@@ -125,22 +128,6 @@ export type TransactionArgs = {
   durationEnd?: Date;
   refreshList?: string;
   lastUpdated?: Date;
-};
-
-export type Setting = {
-  id?: number;
-  uuid?: string;
-  isEnabled?: boolean;
-  createdByUserId?: number;
-  modifiedByUserId?: number;
-  dateRecordCreated?: Date;
-  dateLastModified?: Date;
-  lastInventoryUpdated?: Date;
-  lastPIUpdated?: Date;
-  lastPurchaseUpdated?: Date;
-  lastSalesUpdated?: Date;
-  lastItemsUpdated?: Date;
-  lastBusinessPartnersUpdated?: Date;
 };
 
 export type InventorySummary = {

@@ -1,6 +1,6 @@
-import { Link as RouterLink } from 'react-router-dom'
-import { AppBar, Toolbar } from '@mui/material'
-import Logo from './Logo'
+import { NavLink as RouterLink } from "react-router-dom";
+import { AppBar, Toolbar } from "@mui/material";
+import Logo from "./Logo";
 
 const MainNavbar = () => (
   <AppBar elevation={0}>
@@ -10,6 +10,6 @@ const MainNavbar = () => (
       </RouterLink>
     </Toolbar>
   </AppBar>
-)
+);
 
-export default MainNavbar
+export default MainNavbar;
