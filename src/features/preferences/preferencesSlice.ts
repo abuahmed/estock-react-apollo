@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
-export type SettingsState = {
+export type PreferencesState = {
   isDesktop: boolean;
   isDrawerOpen: boolean;
   isMobileDrawerOpen: boolean;
@@ -10,7 +10,7 @@ export type SettingsState = {
   searchText: string | undefined;
 };
 
-const initialState: SettingsState = {
+const initialState: PreferencesState = {
   isDesktop: true,
   isDrawerOpen: false,
   isMiniMode: false,
@@ -19,8 +19,8 @@ const initialState: SettingsState = {
   searchText: undefined,
 };
 
-export const settingsSlice = createSlice({
-  name: "settings",
+export const preferencesSlice = createSlice({
+  name: "preferences",
   initialState,
   reducers: {
     toggleThis: (state, { payload }) => {
@@ -51,9 +51,9 @@ export const settingsSlice = createSlice({
 });
 
 export const { toggleThis, changePageTitle, setSearchText } =
-  settingsSlice.actions;
+  preferencesSlice.actions;
 
-export const selectSetting = (state: RootState) =>
-  state.settings as SettingsState;
+export const selectPreference = (state: RootState) =>
+  state.preferences as PreferencesState;
 
-export default settingsSlice.reducer;
+export default preferencesSlice.reducer;

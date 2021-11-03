@@ -1,6 +1,6 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { AuthState, AuthUser } from "../features/auth/types/authType";
-import { SettingsState } from "../features/settings/settingsSlice";
+import { PreferencesState } from "../features/preferences/preferencesSlice";
 import rootReducer from "./rootReducer";
 
 const userInfoFromStorage = localStorage.getItem("userInfo")
@@ -16,7 +16,7 @@ const mini = miniMode as boolean;
 // ) as AuthUser;
 const preloadedState = {
   auth: { user: { ...userInfoFromStorage } } as AuthState,
-  settings: { isMiniMode: mini } as SettingsState,
+  preferences: { isMiniMode: mini } as PreferencesState,
 };
 
 export const store = configureStore({

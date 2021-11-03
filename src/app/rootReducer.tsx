@@ -3,7 +3,7 @@ import { combineReducers } from "@reduxjs/toolkit";
 // Reducers
 import authReducer from "../features/auth/authReducers";
 import usersReducer from "../features/users/usersSlice";
-import settingsReducer from "../features/settings/settingsSlice";
+import preferencesReducer from "../features/preferences/preferencesSlice";
 import setupsReducer from "../features/setups/setupSlices";
 import transactionsReducer from "../features/transactions/transactionsSlice";
 
@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
   users: usersReducer,
   setups: setupsReducer,
   transactions: transactionsReducer,
-  settings: settingsReducer,
+  preferences: preferencesReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
