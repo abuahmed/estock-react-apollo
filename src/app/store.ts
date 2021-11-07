@@ -1,5 +1,5 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import { AuthState, AuthUser } from "../features/auth/types/authType";
+import { AuthState } from "../features/auth/types/authType";
 import { PreferencesState } from "../features/preferences/preferencesSlice";
 import rootReducer from "./rootReducer";
 

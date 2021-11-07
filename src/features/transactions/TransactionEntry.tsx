@@ -89,7 +89,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       ? BusinessPartnerType.Customer
       : BusinessPartnerType.Vendor;
   const [open, setOpen] = useState(false);
-  const opn = useRef(false);
+  //const opn = useRef(false);
   const [selectedItemId, setSelectedItemId] = useState(0);
   const [selectedInventory, setSelectedInventory] = useState<Inventory>({
     qtyOnHand: 0,

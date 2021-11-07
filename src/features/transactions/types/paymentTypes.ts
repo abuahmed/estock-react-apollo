@@ -84,6 +84,9 @@ export type Payment = {
 
 export enum PaymentMethods {
   Cash = "Cash",
+  Cpo = "Cpo",
+  Deposit = "Deposit",
+  MobileTransfer = "MobileTransfer",
   Credit = "Credit",
   Check = "Check",
 }
@@ -93,13 +96,14 @@ export enum CreditLimitTypes {
   Both = "Both",
 }
 export enum PaymentStatus {
-  Draft = "Draft",
-  OnProcess = "OnProcess",
-  NotDeposited = "NotDeposited",
-
-  CreditNotCleared = "CreditNotCleared",
-  NotCleared = "NotCleared",
+  NotPaid = "NotPaid", //will also contain NotPaidWithCheck = "NotPaidWithCheck",
+  Paid = "Paid", //will also contain CheckPaid = "CheckPaid",
+  Deposited = "Deposited",
+  Checked = "Checked",
+  Verified = "Verified",
   Cleared = "Cleared",
+  NotDeposited = "NotDeposited",
+  NotCleared = "NotCleared",
   NoPayment = "NoPayment",
   Refunded = "Refunded",
 }

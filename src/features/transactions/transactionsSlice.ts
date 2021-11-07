@@ -557,6 +557,13 @@ export const transactionsSlice = createSlice({
     setSelectedLine: (state, { payload }) => {
       state.selectedLine = payload;
     },
+    setSelectedPayment: (state, { payload }) => {
+      state.selectedPayment = payload;
+    },
+
+    resetSelectedPayment: (state, { payload }) => {
+      state.selectedPayment = payload;
+    },
     resetSelectedHeader: (state) => {
       state.selectedHeader = { type: TransactionType.Purchase };
     },
@@ -762,6 +769,8 @@ export const {
   setSelectedLine,
   resetSelectedHeader,
   setSelectedHeader,
+  setSelectedPayment,
+  resetSelectedPayment,
   setHeaders,
   resetHeaders,
   setLines,

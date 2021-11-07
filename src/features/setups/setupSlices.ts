@@ -1189,6 +1189,7 @@ export const setupsSlice = createSlice({
     builder.addCase(fetchWarehouses.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.warehouses = payload;
+      // state.warehouses = [...payload, { displayName: "Warehouse", id: 0 }];
     });
     builder.addCase(fetchWarehouses.rejected, (state, { error }) => {
       state.loading = "idle";
