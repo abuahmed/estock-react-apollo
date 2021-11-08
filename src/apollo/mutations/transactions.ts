@@ -179,6 +179,48 @@ export const UN_POST_HEADER = gql`
   }
 `;
 
+export const POST_HEADER_WITH_PAYMENT = gql`
+  mutation postHeader(
+    $id: Int!
+    $paymentDate: DateTime
+    $amount: Float
+    $amountRequired: Float
+  ) {
+    postHeaderWithPayment(
+      id: $id
+      paymentDate: $paymentDate
+      amount: $amount
+      amountRequired: $amountRequired
+    ) {
+      id
+      number
+      transactionDate
+      status
+      numberOfItems
+      totalAmount
+      totalQty
+      warehouse {
+        id
+        displayName
+      }
+      businessPartner {
+        id
+        displayName
+      }
+      lines {
+        id
+        item {
+          id
+          displayName
+        }
+        qty
+        eachPrice
+        diff
+      }
+    }
+  }
+`;
+
 export const REMOVE_LINE = gql`
   mutation removeLine($id: Int!) {
     removeLine(id: $id) {
