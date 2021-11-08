@@ -1,36 +1,27 @@
 import { Form, FormikProps, Formik } from "formik";
-
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
+import DateTimePicker from "@mui/lab/DateTimePicker";
 import {
-  Box,
   Button,
   Card,
-  CardActions,
   CardContent,
   Divider,
-  FormControlLabel,
   Grid,
   Stack,
   TextField,
-  Typography,
   useTheme,
 } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
 import { format } from "date-fns";
-
-import { FormikTextField } from "../Layout/FormikTextField";
 
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 
-import Toast from "../Layout/Toast";
 import {
   postHeader,
   selectTransactions,
   setSelectedPayment,
 } from "../../features/transactions/transactionsSlice";
-import {
-  TransactionHeader,
-  TransactionType,
-} from "../../features/transactions/types/transactionTypes";
+import { TransactionType } from "../../features/transactions/types/transactionTypes";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { BusinessPartnerType } from "../../features/setups/types/bpTypes";
 import { useEffect, useRef, useState } from "react";
@@ -138,7 +129,13 @@ const Post = ({ id }: Props) => {
         initialValues={selectedPayment as Payment}
         onSubmit={(values, actions) => {
           actions.setSubmitting(false);
-          //dispatch(postHeader(selectedHeader.id as number));
+          values = {
+            ...values,
+            amount: amountPaid,
+            amountRequired: selectedHeader.totalAmount as number,
+          };
+          //console.log(values);
+          dispatch(postHeader(selectedHeader.id as number));
         }}
       >
         {(props: FormikProps<Payment>) => (
@@ -146,6 +143,22 @@ const Post = ({ id }: Props) => {
             <Card>
               <CardContent>
                 <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DateTimePicker
+                        label="Payment Date"
+                        inputFormat="MMM-dd-yyyy"
+                        minDate={new Date("2021-01-01")}
+                        value={props.values.paymentDate}
+                        onChange={(value) => {
+                          props.setFieldValue("paymentDate", value);
+                        }}
+                        renderInput={(params) => (
+                          <TextField {...params} fullWidth helperText="" />
+                        )}
+                      />
+                    </LocalizationProvider>
+                  </Grid>
                   <Grid item sm={6} xs={12}>
                     <TextField
                       value={amountPaid}
