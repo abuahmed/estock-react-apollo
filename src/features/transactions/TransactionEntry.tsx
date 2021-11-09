@@ -207,8 +207,14 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   };
 
   function postTransaction() {
-    //dispatch(postHeader(selectedHeader.id as number));
-    postTransactionHandler();
+    if (
+      selectedHeader?.type === TransactionType.Sale ||
+      selectedHeader?.type === TransactionType.Purchase
+    ) {
+      postTransactionHandler();
+    } else {
+      dispatch(postHeader(selectedHeader.id as number));
+    }
   }
   function unPostTransaction() {
     dispatch(unPostHeader(selectedHeader.id as number));
