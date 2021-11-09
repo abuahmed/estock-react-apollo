@@ -49,7 +49,7 @@ export const fetchInventories = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("transactions/fetchInventories", async (_arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     let lastUpdated = startOfDay(new Date());
@@ -66,6 +66,8 @@ export const fetchInventories = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -75,7 +77,7 @@ export const fetchHeaders = createAsyncThunk<
   TransactionArgs,
   { rejectValue: RejectWithValueType }
 >("transactions/fetchHeaders", async (_arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     let lastUpdated = startOfDay(new Date());
@@ -97,6 +99,8 @@ export const fetchHeaders = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -106,7 +110,7 @@ export const fetchLines = createAsyncThunk<
   TransactionArgs,
   { rejectValue: RejectWithValueType }
 >("transactions/fetchLines", async (transactionArgs, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     let lastUpdated = startOfDay(new Date());
     if (transactionArgs.refreshList === "refresh") lastUpdated = new Date();
@@ -127,6 +131,8 @@ export const fetchLines = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -136,7 +142,7 @@ export const getHeader = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/getHeader", async (_id, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.query({
       query: GET_SELECTED_HEADER,
@@ -149,6 +155,8 @@ export const getHeader = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -279,12 +287,12 @@ export const addLine = createAsyncThunk<
   }
 });
 
-export const postHeader = createAsyncThunk<
+export const postHeaderWithPayment = createAsyncThunk<
   any,
   Payment,
   { rejectValue: RejectWithValueType }
->("transactions/postHeader", async (payment, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+>("transactions/postHeaderWithPayment", async (payment, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     //apolloClient.read.clearStore()
     //console.log(id);
@@ -296,47 +304,57 @@ export const postHeader = createAsyncThunk<
 
     if (response && response.data && response.data.postHeaderWithPayment) {
       const header = response.data.postHeaderWithPayment as TransactionHeader;
+      await setSuccessAction(dispatch, {
+        message: "Transaction Successfully Posted",
+      });
       //dispatch(setLines(header.lines as TransactionLine[]));
       return header;
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
-// export const postHeader = createAsyncThunk<
-//   any,
-//   number,
-//   { rejectValue: RejectWithValueType }
-// >("transactions/postHeader", async (id, thunkAPI) => {
-//   const { rejectWithValue } = thunkAPI;
-//   try {
-//     //apolloClient.read.clearStore()
-//     console.log(id);
-//     const response = await apolloClient.mutate({
-//       mutation: POST_HEADER,
-//       variables: { id },
-//     });
+export const postHeader = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: RejectWithValueType }
+>("transactions/postHeader", async (id, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
+  try {
+    //apolloClient.read.clearStore()
+    console.log(id);
+    const response = await apolloClient.mutate({
+      mutation: POST_HEADER,
+      variables: { id },
+    });
 
-//     if (response && response.data && response.data.postHeader) {
-//       const header = response.data.postHeader as TransactionHeader;
-//       //dispatch(setLines(header.lines as TransactionLine[]));
-//       return header;
-//     }
-//   } catch (error: any) {
-//     const { code, stack } = error;
-//     const message = error.message;
-//     return rejectWithValue({ code, message, id: uuidv4(), stack });
-//   }
-// });
+    if (response && response.data && response.data.postHeader) {
+      const header = response.data.postHeader as TransactionHeader;
+      //dispatch(setLines(header.lines as TransactionLine[]));
+      await setSuccessAction(dispatch, {
+        message: "Transaction Successfully Posted",
+      });
+      return header;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    await setErrorAction(dispatch, { message });
+
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
 
 export const unPostHeader = createAsyncThunk<
   any,
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/unPostHeader", async (id, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: UN_POST_HEADER,
@@ -346,11 +364,16 @@ export const unPostHeader = createAsyncThunk<
     if (response && response.data && response.data.unPostHeader) {
       const header = response.data.unPostHeader as TransactionHeader;
       //dispatch(setLines(header.lines as TransactionLine[]));
+      await setSuccessAction(dispatch, {
+        message: "Transaction Successfully UnPosted",
+      });
       return header;
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -374,11 +397,16 @@ export const removeHeader = createAsyncThunk<
       let restItems = [...headers];
       restItems = restItems.filter((item) => item.id !== id);
       dispatch(setHeaders(restItems));
+      await setSuccessAction(dispatch, {
+        message: "Transaction Successfully Removed",
+      });
       return restItems as TransactionHeader[];
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -405,12 +433,16 @@ export const removeLine = createAsyncThunk<
       dispatch(
         setSelectedHeader(response.data.removeLine as TransactionHeader)
       );
-
+      await setSuccessAction(dispatch, {
+        message: "Transaction Items Successfully Removed",
+      });
       return restItems as TransactionLine[];
     }
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -419,7 +451,7 @@ export const getItemInventory = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/getItemInventory", async (_id, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.query({
       query: GET_ITEM_INVENTORY,
@@ -432,6 +464,8 @@ export const getItemInventory = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -440,7 +474,7 @@ export const getSummary = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("transactions/getSummary", async (_arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     //await sleep(5000);
@@ -454,6 +488,8 @@ export const getSummary = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -462,7 +498,7 @@ export const getTopItems = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("transactions/getTopItems", async (_arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const includeSales = _arg === "sale" ? true : false;
@@ -479,6 +515,8 @@ export const getTopItems = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -487,7 +525,7 @@ export const GetDailyTransactions = createAsyncThunk<
   TransactionType,
   { rejectValue: RejectWithValueType }
 >("transactions/GetDailyTransactions", async (type, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -502,6 +540,8 @@ export const GetDailyTransactions = createAsyncThunk<
   } catch (error: any) {
     const { code, stack } = error;
     const message = error.message;
+    await setErrorAction(dispatch, { message });
+
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
@@ -611,140 +651,120 @@ export const transactionsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchHeaders.pending, (state, { meta }) => {
+    builder.addCase(fetchHeaders.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(fetchHeaders.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(fetchHeaders.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.headers = payload;
     });
-    builder.addCase(fetchHeaders.rejected, (state, { payload }) => {
+    builder.addCase(fetchHeaders.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
     });
 
-    builder.addCase(getSummary.pending, (state, { meta }) => {
+    builder.addCase(getSummary.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(getSummary.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(getSummary.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.inventorySummary = payload;
     });
-    builder.addCase(getSummary.rejected, (state, { payload }) => {
+    builder.addCase(getSummary.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
     });
 
-    builder.addCase(getTopItems.pending, (state, { meta }) => {
+    builder.addCase(getTopItems.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(getTopItems.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(getTopItems.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       if (payload.type === "purchase")
         state.topPurchasesItems = payload.lineSummary;
       else state.topSalesItems = payload.lineSummary;
     });
-    builder.addCase(getTopItems.rejected, (state, { payload }) => {
+    builder.addCase(getTopItems.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
     });
 
-    builder.addCase(GetDailyTransactions.pending, (state, { meta }) => {
+    builder.addCase(GetDailyTransactions.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(
-      GetDailyTransactions.fulfilled,
-      (state, { payload, meta }) => {
-        state.loading = "idle";
-        if (payload.type === TransactionType.Purchase)
-          state.dailyPurchasesSummary = payload.dailySummary;
-        else state.dailySalesSummary = payload.dailySummary;
-      }
-    );
-    builder.addCase(GetDailyTransactions.rejected, (state, { payload }) => {
+    builder.addCase(GetDailyTransactions.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.error = payload;
+      if (payload.type === TransactionType.Purchase)
+        state.dailyPurchasesSummary = payload.dailySummary;
+      else state.dailySalesSummary = payload.dailySummary;
+    });
+    builder.addCase(GetDailyTransactions.rejected, (state) => {
+      state.loading = "idle";
     });
 
-    builder.addCase(fetchInventories.pending, (state, { meta }) => {
+    builder.addCase(fetchInventories.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(fetchInventories.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(fetchInventories.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.inventories = payload;
     });
-    builder.addCase(fetchInventories.rejected, (state, { payload }) => {
+    builder.addCase(fetchInventories.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
     });
 
-    builder.addCase(fetchLines.pending, (state, { meta }) => {
+    builder.addCase(fetchLines.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(fetchLines.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(fetchLines.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.lines = payload;
     });
-    builder.addCase(fetchLines.rejected, (state, { payload }) => {
+    builder.addCase(fetchLines.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
     });
 
-    builder.addCase(getHeader.pending, (state, { meta }) => {
+    builder.addCase(getHeader.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(getHeader.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(getHeader.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedHeader = payload;
     });
-    builder.addCase(getHeader.rejected, (state, { payload, meta, error }) => {
+    builder.addCase(getHeader.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
     });
 
-    builder.addCase(getItemInventory.pending, (state, { meta }) => {
+    builder.addCase(getItemInventory.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(getItemInventory.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(getItemInventory.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedInventory = payload;
     });
-    builder.addCase(
-      getItemInventory.rejected,
-      (state, { payload, meta, error }) => {
-        state.loading = "idle";
-        state.error = payload;
-      }
-    );
+    builder.addCase(getItemInventory.rejected, (state) => {
+      state.loading = "idle";
+    });
 
-    builder.addCase(addLine.pending, (state, { meta }) => {
+    builder.addCase(addLine.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(addLine.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(addLine.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedHeader = payload;
     });
-    builder.addCase(addLine.rejected, (state, { payload, meta, error }) => {
-      //console.log(payload);
+    builder.addCase(addLine.rejected, (state) => {
       state.loading = "idle";
-      //state.error = payload;
     });
 
-    builder.addCase(removeHeader.pending, (state, { meta }) => {
+    builder.addCase(removeHeader.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(removeHeader.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(removeHeader.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.headers = payload;
       state.success = { message: "Transactions Removed Successfully" };
     });
-    builder.addCase(
-      removeHeader.rejected,
-      (state, { payload, meta, error }) => {
-        state.loading = "idle";
-        state.error = payload;
-      }
-    );
+    builder.addCase(removeHeader.rejected, (state) => {
+      state.loading = "idle";
+    });
 
     builder.addCase(postHeader.pending, (state) => {
       state.loading = "pending";
@@ -752,11 +772,20 @@ export const transactionsSlice = createSlice({
     builder.addCase(postHeader.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedHeader = payload;
-      state.success = { message: "Transaction Posted Successfully" };
     });
-    builder.addCase(postHeader.rejected, (state, { payload }) => {
+    builder.addCase(postHeader.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
+    });
+
+    builder.addCase(postHeaderWithPayment.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(postHeaderWithPayment.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedHeader = payload;
+    });
+    builder.addCase(postHeaderWithPayment.rejected, (state) => {
+      state.loading = "idle";
     });
 
     builder.addCase(unPostHeader.pending, (state) => {
@@ -765,24 +794,20 @@ export const transactionsSlice = createSlice({
     builder.addCase(unPostHeader.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedHeader = payload;
-      state.success = { message: "Transaction unPosted Successfully" };
     });
-    builder.addCase(unPostHeader.rejected, (state, { payload }) => {
+    builder.addCase(unPostHeader.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
     });
 
-    builder.addCase(removeLine.pending, (state, { meta }) => {
+    builder.addCase(removeLine.pending, (state) => {
       state.loading = "pending";
     });
-    builder.addCase(removeLine.fulfilled, (state, { payload, meta }) => {
+    builder.addCase(removeLine.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.lines = payload;
-      state.success = { message: "Transaction Items Removed Successfully" };
     });
-    builder.addCase(removeLine.rejected, (state, { payload, meta, error }) => {
+    builder.addCase(removeLine.rejected, (state) => {
       state.loading = "idle";
-      state.error = payload;
     });
   },
 });

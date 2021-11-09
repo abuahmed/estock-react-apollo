@@ -17,7 +17,7 @@ import { format } from "date-fns";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 
 import {
-  postHeader,
+  postHeaderWithPayment,
   selectTransactions,
   setSelectedPayment,
 } from "../../features/transactions/transactionsSlice";
@@ -140,7 +140,7 @@ const Post = ({ id }: Props) => {
             amountRequired: selectedHeader.totalAmount as number,
           };
           //console.log(values);
-          dispatch(postHeader(values));
+          dispatch(postHeaderWithPayment(values));
         }}
       >
         {(props: FormikProps<Payment>) => (
