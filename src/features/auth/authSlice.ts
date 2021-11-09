@@ -32,7 +32,7 @@ export const signInApollo = createAsyncThunk<
   UserCredentials,
   { rejectValue: RejectWithValueType }
 >("auth/signIn", async (authUser, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   const { email, password } = authUser;
 
   try {
@@ -48,6 +48,7 @@ export const signInApollo = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -56,7 +57,7 @@ export const updateProfile = createAsyncThunk<
   AuthUser,
   { rejectValue: RejectWithValueType }
 >("auth/updateProfile", async (editProfile, thunkAPI) => {
-  const { getState, dispatch } = thunkAPI;
+  const { getState, rejectWithValue, dispatch } = thunkAPI;
   const {
     auth: { user },
   } = getState() as { auth: AuthState };
@@ -81,6 +82,7 @@ export const updateProfile = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -89,7 +91,7 @@ export const changePassword = createAsyncThunk<
   UpdatePassword,
   { rejectValue: RejectWithValueType }
 >("auth/changePassword", async (changePass, thunkAPI) => {
-  const { getState, dispatch } = thunkAPI;
+  const { getState, rejectWithValue, dispatch } = thunkAPI;
   const { oldPassword, password, confirmPassword } = changePass;
   const {
     auth: { user },
@@ -109,6 +111,7 @@ export const changePassword = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -121,7 +124,7 @@ export const google = createAsyncThunk<
   GoogleIdToken,
   { rejectValue: RejectWithValueType }
 >("auth/google", async (res, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   const { idToken } = res;
   try {
     const response = await apolloClient.mutate({
@@ -138,6 +141,7 @@ export const google = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -151,7 +155,7 @@ export const facebook = createAsyncThunk<
   { rejectValue: RejectWithValueType }
 >("auth/facebook", async (res, thunkAPI) => {
   //console.log(res);
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   const { userID, accessToken } = res;
   try {
     const response = await apolloClient.mutate({
@@ -166,6 +170,7 @@ export const facebook = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -174,7 +179,7 @@ export const forgot = createAsyncThunk<
   ForgotAuth,
   { rejectValue: RejectWithValueType }
 >("auth/forgot", async (authUser, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   const { email } = authUser;
   try {
     const response = await apolloClient.mutate({
@@ -191,6 +196,7 @@ export const forgot = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -199,7 +205,7 @@ export const reset = createAsyncThunk<
   ResetAuth,
   { rejectValue: RejectWithValueType }
 >("auth/reset", async (authUser, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   const { password, confirmPassword, id, token } = authUser;
 
   try {
@@ -217,6 +223,7 @@ export const reset = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -225,7 +232,7 @@ export const verify = createAsyncThunk<
   VerifyAuth,
   { rejectValue: RejectWithValueType }
 >("auth/verify", async (authUser, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   const { expires, id, token, signature } = authUser;
   try {
     const response = await apolloClient.mutate({
@@ -242,6 +249,7 @@ export const verify = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const resend = createAsyncThunk<
@@ -249,7 +257,7 @@ export const resend = createAsyncThunk<
   VerifyResendAuth,
   { rejectValue: RejectWithValueType }
 >("auth/resend", async (authUser, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   const { id } = authUser;
   try {
     const response = await apolloClient.mutate({
@@ -266,6 +274,7 @@ export const resend = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -274,7 +283,7 @@ export const signUp = createAsyncThunk<
   NewUser,
   { rejectValue: RejectWithValueType }
 >("auth/signUp", async (newUser, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   const { email, name, password } = newUser;
 
   try {
@@ -293,6 +302,7 @@ export const signUp = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -301,7 +311,7 @@ export const uploadFile = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("auth/uploadImage", async (image, thunkAPI) => {
-  const { getState, dispatch } = thunkAPI;
+  const { getState, rejectWithValue, dispatch } = thunkAPI;
   const {
     auth: { user },
   } = getState() as { auth: AuthState };
@@ -324,6 +334,7 @@ export const uploadFile = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -332,7 +343,7 @@ export const uploadFileMulter = createAsyncThunk<
   File,
   { rejectValue: RejectWithValueType }
 >("auth/uploadImage", async (image, thunkAPI) => {
-  const { getState, dispatch } = thunkAPI;
+  const { getState, rejectWithValue, dispatch } = thunkAPI;
   const {
     auth: { user },
   } = getState() as { auth: AuthState };
@@ -355,6 +366,7 @@ export const uploadFileMulter = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const deleteFile = createAsyncThunk<
@@ -362,7 +374,7 @@ export const deleteFile = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("auth/deleteFile", async (fileName, thunkAPI) => {
-  const { getState, dispatch } = thunkAPI;
+  const { getState, rejectWithValue, dispatch } = thunkAPI;
 
   const {
     auth: { user },
@@ -385,6 +397,7 @@ export const deleteFile = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 

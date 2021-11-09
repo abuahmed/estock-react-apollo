@@ -115,8 +115,8 @@ export type Upload = {
 };
 
 export type RejectWithValueType = {
-  code: string;
+  code?: string;
   message: string;
-  stack: string;
-  id: string;
+  stack?: string;
+  id?: string;
 };

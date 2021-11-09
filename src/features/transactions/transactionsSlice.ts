@@ -46,7 +46,7 @@ export const fetchInventories = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("transactions/fetchInventories", async (_arg, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     let lastUpdated = startOfDay(new Date());
@@ -63,6 +63,7 @@ export const fetchInventories = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -71,7 +72,7 @@ export const fetchHeaders = createAsyncThunk<
   TransactionArgs,
   { rejectValue: RejectWithValueType }
 >("transactions/fetchHeaders", async (_arg, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     let lastUpdated = startOfDay(new Date());
@@ -93,6 +94,7 @@ export const fetchHeaders = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -101,7 +103,7 @@ export const fetchLines = createAsyncThunk<
   TransactionArgs,
   { rejectValue: RejectWithValueType }
 >("transactions/fetchLines", async (transactionArgs, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     let lastUpdated = startOfDay(new Date());
     if (transactionArgs.refreshList === "refresh") lastUpdated = new Date();
@@ -122,6 +124,7 @@ export const fetchLines = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -130,7 +133,7 @@ export const getHeader = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/getHeader", async (_id, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.query({
       query: GET_SELECTED_HEADER,
@@ -143,6 +146,7 @@ export const getHeader = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -151,7 +155,7 @@ export const addHeader = createAsyncThunk<
   TransactionHeader,
   { rejectValue: RejectWithValueType }
 >("transactions/addHeader", async (arg, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const {
       id,
@@ -206,6 +210,7 @@ export const addHeader = createAsyncThunk<
     const message = error.message;
     dispatch(setSelectedHeader(arg));
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -214,7 +219,7 @@ export const addLine = createAsyncThunk<
   TransactionLine,
   { rejectValue: RejectWithValueType }
 >("transactions/addLine", async (tranLine, thunkAPI) => {
-  const { getState, dispatch } = thunkAPI;
+  const { getState, rejectWithValue, dispatch } = thunkAPI;
   try {
     const { id, item, header, qty, eachPrice, diff } = tranLine;
     const { businessPartner, toWarehouse } = header as TransactionHeader;
@@ -261,6 +266,7 @@ export const addLine = createAsyncThunk<
     const message = error.message;
     dispatch(setSelectedLine(tranLine));
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -269,7 +275,7 @@ export const postHeaderWithPayment = createAsyncThunk<
   Payment,
   { rejectValue: RejectWithValueType }
 >("transactions/postHeaderWithPayment", async (payment, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const { headerId, paymentDate, amount, amountRequired } = payment;
     const response = await apolloClient.mutate({
@@ -288,6 +294,7 @@ export const postHeaderWithPayment = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const postHeader = createAsyncThunk<
@@ -295,7 +302,7 @@ export const postHeader = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/postHeader", async (id, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     //apolloClient.read.clearStore()
     console.log(id);
@@ -315,6 +322,7 @@ export const postHeader = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -323,7 +331,7 @@ export const unPostHeader = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/unPostHeader", async (id, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: UN_POST_HEADER,
@@ -341,6 +349,7 @@ export const unPostHeader = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -349,7 +358,7 @@ export const removeHeader = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/removeHeader", async (id, thunkAPI) => {
-  const { getState, dispatch } = thunkAPI;
+  const { getState, rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_HEADER,
@@ -371,6 +380,7 @@ export const removeHeader = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -379,7 +389,7 @@ export const removeLine = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/removeLine", async (id, thunkAPI) => {
-  const { getState, dispatch } = thunkAPI;
+  const { getState, rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_LINE,
@@ -404,6 +414,7 @@ export const removeLine = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const getItemInventory = createAsyncThunk<
@@ -411,7 +422,7 @@ export const getItemInventory = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("transactions/getItemInventory", async (_id, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.query({
       query: GET_ITEM_INVENTORY,
@@ -424,6 +435,7 @@ export const getItemInventory = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const getSummary = createAsyncThunk<
@@ -431,7 +443,7 @@ export const getSummary = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("transactions/getSummary", async (_arg, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     //await sleep(5000);
@@ -445,6 +457,7 @@ export const getSummary = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const getTopItems = createAsyncThunk<
@@ -452,7 +465,7 @@ export const getTopItems = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("transactions/getTopItems", async (_arg, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const includeSales = _arg === "sale" ? true : false;
@@ -469,6 +482,7 @@ export const getTopItems = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const GetDailyTransactions = createAsyncThunk<
@@ -476,7 +490,7 @@ export const GetDailyTransactions = createAsyncThunk<
   TransactionType,
   { rejectValue: RejectWithValueType }
 >("transactions/GetDailyTransactions", async (type, thunkAPI) => {
-  const { dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -491,6 +505,7 @@ export const GetDailyTransactions = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 async function setSuccessAction(

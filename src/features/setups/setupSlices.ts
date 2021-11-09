@@ -76,10 +76,9 @@ export const fetchItems = createAsyncThunk<
       return response.data.items as Item[];
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -103,10 +102,9 @@ export const fetchCategories = createAsyncThunk<
       };
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -126,10 +124,9 @@ export const getItem = createAsyncThunk<
       return response.data.getItem as Item;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 export const addItem = createAsyncThunk<
@@ -166,12 +163,11 @@ export const addItem = createAsyncThunk<
       return addedItem;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     dispatch(setSelectedItem(arg));
     await setErrorAction(dispatch, { message });
     //error.graphQLErrors[0].extensions.exception.response.status;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -207,10 +203,9 @@ export const addCategory = createAsyncThunk<
       }
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -235,10 +230,9 @@ export const removeItem = createAsyncThunk<
       return id as number;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -264,10 +258,9 @@ export const removeCategory = createAsyncThunk<
       return category as RemoveCategory;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -288,10 +281,9 @@ export const fetchBusinessPartners = createAsyncThunk<
       return response.data.businessPartners as BusinessPartner[];
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -311,10 +303,9 @@ export const getBusinessPartner = createAsyncThunk<
       return response.data.getBusinessPartner as BusinessPartner;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 export const addBusinessPartner = createAsyncThunk<
@@ -367,12 +358,10 @@ export const addBusinessPartner = createAsyncThunk<
     }
     // return businessPartner;
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     dispatch(setSelectedBusinessPartner(arg));
     await setErrorAction(dispatch, { message });
-
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -399,10 +388,9 @@ export const removeBusinessPartner = createAsyncThunk<
       return id as number;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -422,10 +410,9 @@ export const fetchClients = createAsyncThunk<
       return response.data.clients as Client[];
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -445,11 +432,10 @@ export const getClient = createAsyncThunk<
       return response.data.getClient as Client;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
 
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 export const addClient = createAsyncThunk<
@@ -487,12 +473,11 @@ export const addClient = createAsyncThunk<
     }
     // return businessPartner;
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     dispatch(setSelectedClient(arg));
     await setErrorAction(dispatch, { message });
 
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -517,10 +502,9 @@ export const removeClient = createAsyncThunk<
       return id as number;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -541,10 +525,9 @@ export const fetchOrganizations = createAsyncThunk<
       return response.data.organizations as Organization[];
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -564,10 +547,9 @@ export const getOrganization = createAsyncThunk<
       return response.data.getOrganization as Organization;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 export const addOrganization = createAsyncThunk<
@@ -613,12 +595,11 @@ export const addOrganization = createAsyncThunk<
     }
     // return businessPartner;
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     dispatch(setSelectedOrganization(arg));
     await setErrorAction(dispatch, { message });
 
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -643,10 +624,9 @@ export const removeOrganization = createAsyncThunk<
       return id as number;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -667,10 +647,9 @@ export const fetchWarehouses = createAsyncThunk<
       return response.data.warehouses as Warehouse[];
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -690,10 +669,9 @@ export const getWarehouse = createAsyncThunk<
       return response.data.getWarehouse as Warehouse;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 export const addWarehouse = createAsyncThunk<
@@ -739,12 +717,11 @@ export const addWarehouse = createAsyncThunk<
     }
     // return businessPartner;
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     dispatch(setSelectedWarehouse(arg));
     await setErrorAction(dispatch, { message });
 
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
@@ -769,10 +746,9 @@ export const removeWarehouse = createAsyncThunk<
       return id as number;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    return rejectWithValue({ message });
   }
 });
 
