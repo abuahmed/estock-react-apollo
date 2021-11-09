@@ -46,8 +46,8 @@ export type AuthState = {
   fileUploadUri: undefined | string;
   loading: "idle" | "pending";
   currentRequestId: undefined | string;
-  error: RejectWithValueType | undefined;
-  success: AuthSuccess | undefined;
+  error: RejectWithValueType | null;
+  success: AuthSuccess | null;
 };
 
 export type CreateUser = {
