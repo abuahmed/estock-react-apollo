@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchUsers, selectUsers, createUser } from "./usersSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { fetchUsers, selectSetups, createUser } from "../setupSlices";
 import Grid from "@mui/material/Grid";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,7 +11,7 @@ import TableHead from "@mui/material/TableHead";
 import Paper from "@mui/material/Paper";
 import { NavLink as RouterLink } from "react-router-dom";
 
-import { changePageTitle } from "../preferences/preferencesSlice";
+import { changePageTitle } from "../../preferences/preferencesSlice";
 import Avatar from "@mui/material/Avatar";
 import {
   Box,
@@ -28,12 +28,12 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Form, Formik, FormikProps } from "formik";
-import { FormikTextField } from "../../components/Layout/FormikTextField";
-import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
-import TableSkeleton from "../../components/Layout/TableSkeleton";
-import { createUserSchema } from "../setups/validation";
-import { CreateUser } from "../auth/types/authType";
-import { selectAuth } from "../auth/authSlice";
+import { FormikTextField } from "../../../components/Layout/FormikTextField";
+import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
+import TableSkeleton from "../../../components/Layout/TableSkeleton";
+import { createUserSchema } from "../validation";
+import { CreateUser } from "../../auth/types/authType";
+import { selectAuth } from "../../auth/authSlice";
 
 const defaultUser: CreateUser = {
   email: "",
@@ -45,7 +45,7 @@ export const Users = () => {
   const [selectedUser, setSelectedUser] = useState(defaultUser);
 
   const dispatch = useAppDispatch();
-  const { entities: users, loading } = useAppSelector(selectUsers);
+  const { users, loading } = useAppSelector(selectSetups);
   const { user } = useAppSelector(selectAuth);
 
   useEffect(() => {

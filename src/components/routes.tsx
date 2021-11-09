@@ -25,7 +25,7 @@ import { Headers } from "../features/transactions/Headers";
 import { Inventories } from "../features/transactions/Inventories";
 import { TransactionEntry } from "../features/transactions/TransactionEntry";
 import { TransactionType } from "../features/transactions/types/transactionTypes";
-import { Users, User } from "../features/users";
+import { Users, User } from "../features/setups/users";
 import DashboardLayout from "./DashboardLayout";
 import MainLayout from "./MainLayout";
 

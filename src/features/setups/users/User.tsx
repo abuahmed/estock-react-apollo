@@ -10,11 +10,11 @@ import Grid from "@mui/material/Grid";
 import { Button, Divider, TextField, Typography } from "@mui/material";
 import { Backspace } from "@mui/icons-material";
 
-import Toast from "../../components/Layout/Toast";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { fetchRoles, getUser, selectUsers } from "./usersSlice";
-import { changePageTitle } from "../preferences/preferencesSlice";
-import { fetchWarehouses, selectSetups } from "../setups/setupSlices";
+import Toast from "../../../components/Layout/Toast";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { fetchRoles, getUser } from "../setupSlices";
+import { changePageTitle } from "../../preferences/preferencesSlice";
+import { fetchWarehouses, selectSetups } from "../setupSlices";
 import { UserWarehouses } from "./components/UserWarehouses";
 import { UserRoles } from "./components/UserRoles";
 
@@ -23,9 +23,9 @@ export const User = () => {
     id: string;
   };
 
-  const { selectedUser, error } = useAppSelector(selectUsers);
-  const { warehouses } = useAppSelector(selectSetups);
-  const { roles } = useAppSelector(selectUsers);
+  const { selectedUser, roles, warehouses, error } =
+    useAppSelector(selectSetups);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+import { AuthUser, Role } from "../../auth/types/authType";
 import { TransactionHeader } from "../../transactions/types/transactionTypes";
 import { Category, Item } from "./itemTypes";
 import { Client, Organization, Warehouse } from "./warehouseTypes";
@@ -114,6 +115,9 @@ export type SetupsState = {
   selectedOrganization: Organization;
   warehouses: Warehouse[];
   selectedWarehouse: Warehouse;
+  users: AuthUser[];
+  roles: Role[];
+  selectedUser: AuthUser | null;
   loading: "idle" | "pending";
   currentRequestId: string | undefined;
   success: any;

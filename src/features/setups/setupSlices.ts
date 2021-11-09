@@ -56,8 +56,22 @@ import {
   GET_SELECTED_ORGANIZATION,
   GET_SELECTED_WAREHOUSE,
 } from "../../apollo/queries/warehouse";
-
-import { RejectWithValueType } from "../auth/types/authType";
+import {
+  ADD_USER_ROLES,
+  ADD_USER_WAREHOUSES,
+  CREATE_USER,
+} from "../../apollo/mutations/users";
+import {
+  GET_ALL_ROLES,
+  GET_ALL_USERS,
+  GET_SELECTED_USER,
+} from "../../apollo/queries";
+import {
+  RejectWithValueType,
+  AuthUser,
+  Role,
+  CreateUser,
+} from "../auth/types/authType";
 
 export const fetchItems = createAsyncThunk<
   any,
@@ -752,6 +766,137 @@ export const removeWarehouse = createAsyncThunk<
   }
 });
 
+export const fetchUsers = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: RejectWithValueType }
+>("users/fetchUsers", async (_arg, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    const response = await apolloClient.query({
+      query: GET_ALL_USERS,
+    });
+
+    if (response && response.data && response.data.Users) {
+      return response.data.Users as AuthUser[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const getUser = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: RejectWithValueType }
+>("users/getUser", async (userId, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const response = await apolloClient.query({
+      query: GET_SELECTED_USER,
+      variables: { id: userId },
+    });
+    if (response && response.data && response.data.GetUser) {
+      return response.data.GetUser as AuthUser;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const createUser = createAsyncThunk<
+  any,
+  CreateUser,
+  { rejectValue: RejectWithValueType }
+>("users/createUser", async (user, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    const response = await apolloClient.mutate({
+      mutation: CREATE_USER,
+      variables: { ...user },
+    });
+
+    if (response && response.data && response.data.createUser) {
+      return response.data.createUser as AuthUser;
+    }
+    //return [];
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const addUserRoles = createAsyncThunk<
+  any,
+  number[],
+  { rejectValue: RejectWithValueType }
+>("users/addUserRoles", async (arg, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    const response = await apolloClient.mutate({
+      mutation: ADD_USER_ROLES,
+      variables: { ids: arg },
+      refetchQueries: [{ query: GET_SELECTED_USER, variables: { id: arg[0] } }],
+    });
+
+    if (response && response.data && response.data.addUserRoles) {
+      return response.data.addUserRoles as AuthUser;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const addUserWarehouses = createAsyncThunk<
+  any,
+  number[],
+  { rejectValue: RejectWithValueType }
+>("users/addUserWarehouses", async (arg, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: ADD_USER_WAREHOUSES,
+      variables: { ids: arg },
+      refetchQueries: [{ query: GET_SELECTED_USER, variables: { id: arg[0] } }],
+    });
+
+    if (response && response.data && response.data.addUserWarehouses) {
+      return response.data.addUserWarehouses as AuthUser;
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+export const fetchRoles = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: RejectWithValueType }
+>("users/fetchRoles", async (_arg, thunkAPI) => {
+  const { rejectWithValue } = thunkAPI;
+
+  try {
+    const response = await apolloClient.query({
+      query: GET_ALL_ROLES,
+    });
+
+    if (response && response.data && response.data.GetRoles) {
+      return response.data.GetRoles as Role[];
+    }
+  } catch (error: any) {
+    const { code, stack } = error;
+    const message = error.message;
+    return rejectWithValue({ code, message, id: uuidv4(), stack });
+  }
+});
+
 async function setSuccessAction(
   dispatch: ThunkDispatch<any, BusinessPartner, any>,
   payload: any
@@ -833,6 +978,10 @@ const defaultWarehouse: Warehouse = {
   description: "",
   address: { mobile: "", telephone: "", email: "" },
 };
+const defaultUser: AuthUser = {
+  email: "",
+  name: "",
+};
 
 const initialSetupsState: SetupsState = {
   items: [],
@@ -847,6 +996,9 @@ const initialSetupsState: SetupsState = {
   selectedOrganization: { ...defaultOrganization },
   warehouses: [],
   selectedWarehouse: { ...defaultWarehouse },
+  users: [],
+  roles: [],
+  selectedUser: { ...defaultUser },
   loading: "idle",
   currentRequestId: undefined,
   success: null,
@@ -918,6 +1070,15 @@ export const setupsSlice = createSlice({
     },
     resetSelectedWarehouse: (state, { payload }) => {
       state.selectedWarehouse = payload;
+    },
+    setSelectedUser: (state, { payload }) => {
+      state.selectedUser = payload;
+    },
+    setUsers: (state, { payload }) => {
+      state.users = payload;
+    },
+    resetSelectedUser: (state, { payload }) => {
+      state.selectedUser = payload;
     },
   },
   extraReducers: (builder) => {
@@ -1022,7 +1183,7 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.businessPartners = payload;
     });
-    builder.addCase(fetchBusinessPartners.rejected, (state, { error }) => {
+    builder.addCase(fetchBusinessPartners.rejected, (state) => {
       state.loading = "idle";
     });
 
@@ -1061,7 +1222,7 @@ export const setupsSlice = createSlice({
         (c) => c.id !== payload
       );
     });
-    builder.addCase(removeBusinessPartner.rejected, (state, { error }) => {
+    builder.addCase(removeBusinessPartner.rejected, (state) => {
       state.loading = "idle";
     });
 
@@ -1072,7 +1233,7 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.clients = payload;
     });
-    builder.addCase(fetchClients.rejected, (state, { error }) => {
+    builder.addCase(fetchClients.rejected, (state) => {
       state.loading = "idle";
     });
 
@@ -1107,7 +1268,7 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.clients = state.clients.filter((c) => c.id !== payload);
     });
-    builder.addCase(removeClient.rejected, (state, { error }) => {
+    builder.addCase(removeClient.rejected, (state) => {
       state.loading = "idle";
     });
 
@@ -1118,7 +1279,7 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.organizations = payload;
     });
-    builder.addCase(fetchOrganizations.rejected, (state, { error }) => {
+    builder.addCase(fetchOrganizations.rejected, (state) => {
       state.loading = "idle";
     });
 
@@ -1155,7 +1316,7 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.organizations = state.organizations.filter((c) => c.id !== payload);
     });
-    builder.addCase(removeOrganization.rejected, (state, { error }) => {
+    builder.addCase(removeOrganization.rejected, (state) => {
       state.loading = "idle";
     });
 
@@ -1167,7 +1328,7 @@ export const setupsSlice = createSlice({
       state.warehouses = payload;
       // state.warehouses = [...payload, { displayName: "Warehouse", id: 0 }];
     });
-    builder.addCase(fetchWarehouses.rejected, (state, { error }) => {
+    builder.addCase(fetchWarehouses.rejected, (state) => {
       state.loading = "idle";
     });
 
@@ -1202,8 +1363,90 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.warehouses = state.warehouses.filter((c) => c.id !== payload);
     });
-    builder.addCase(removeWarehouse.rejected, (state, { error }) => {
+    builder.addCase(removeWarehouse.rejected, (state) => {
       state.loading = "idle";
+    });
+
+    builder.addCase(fetchUsers.pending, (state, { meta }) => {
+      if (state.loading === "idle") {
+        state.loading = "pending";
+        state.currentRequestId = meta.requestId;
+      }
+    });
+    builder.addCase(fetchUsers.fulfilled, (state, { payload, meta }) => {
+      const { requestId } = meta;
+      if (state.loading === "pending" && state.currentRequestId === requestId) {
+        state.loading = "idle";
+        state.users = payload;
+        state.currentRequestId = undefined;
+      }
+    });
+    builder.addCase(fetchUsers.rejected, (state, { meta, error }) => {
+      const { requestId } = meta;
+      if (state.loading === "pending" && state.currentRequestId === requestId) {
+        state.loading = "idle";
+        state.error = error;
+        state.currentRequestId = undefined;
+      }
+    });
+
+    builder.addCase(getUser.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(getUser.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedUser = payload;
+    });
+    builder.addCase(getUser.rejected, (state, { error }) => {
+      state.loading = "idle";
+      state.error = error;
+    });
+
+    builder.addCase(createUser.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(createUser.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedUser = payload;
+    });
+    builder.addCase(createUser.rejected, (state, { error }) => {
+      state.loading = "idle";
+      state.error = error;
+    });
+
+    builder.addCase(fetchRoles.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(fetchRoles.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.roles = payload;
+    });
+    builder.addCase(fetchRoles.rejected, (state, { error }) => {
+      state.loading = "idle";
+      state.error = error;
+    });
+
+    builder.addCase(addUserRoles.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(addUserRoles.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedUser = payload;
+    });
+    builder.addCase(addUserRoles.rejected, (state, { error }) => {
+      state.loading = "idle";
+      state.error = error;
+    });
+    builder.addCase(addUserWarehouses.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(addUserWarehouses.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedUser = payload;
+    });
+    builder.addCase(addUserWarehouses.rejected, (state, { error }) => {
+      state.loading = "idle";
+      state.error = error;
     });
   },
 });
@@ -1228,6 +1471,9 @@ export const {
   resetSelectedWarehouse,
   setSelectedWarehouse,
   setWarehouses,
+  setUsers,
+  setSelectedUser,
+  resetSelectedUser,
 } = actions;
 
 export default reducer;
