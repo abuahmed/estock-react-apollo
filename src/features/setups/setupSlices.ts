@@ -1,6 +1,6 @@
 import { createAsyncThunk, ThunkDispatch } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { v4 as uuidv4 } from "uuid";
+import { RootState } from "../../app/store";
 import { apolloClient } from "../../apollo/graphql";
 import {
   Category,
@@ -8,64 +8,53 @@ import {
   Item,
   RemoveCategory,
 } from "./types/itemTypes";
-import { BusinessPartnerType } from "./types/bpTypes";
 import {
+  BusinessPartnerType,
   BusinessPartner,
   SetupsState,
   RemoveBusinessPartner,
 } from "./types/bpTypes";
-import { RootState } from "../../app/store";
 import {
   Client,
   FetchWarehousesOptions,
   Organization,
   Warehouse,
 } from "./types/warehouseTypes";
+
 import {
   ADD_UPDATE_ITEM,
   ADD_UPDATE_ITEM_CATEGORY,
   REMOVE_CATEGORY,
   REMOVE_ITEM,
-} from "../../apollo/mutations";
-import {
-  GET_ALL_CATEGORIES,
-  GET_ALL_ITEMS,
-  GET_SELECTED_ITEM,
-} from "../../apollo/queries";
-import {
   ADD_UPDATE_BUSINESS_PARTNER,
   REMOVE_BUSINESS_PARTNER,
-} from "../../apollo/mutations";
-import {
   ADD_UPDATE_CLIENT,
   ADD_UPDATE_ORGANIZATION,
   ADD_UPDATE_WAREHOUSE,
   REMOVE_CLIENT,
   REMOVE_ORGANIZATION,
   REMOVE_WAREHOUSE,
-} from "../../apollo/mutations/warehouse";
+  ADD_USER_ROLES,
+  ADD_USER_WAREHOUSES,
+  CREATE_USER,
+} from "../../apollo/mutations";
 import {
+  GET_ALL_CATEGORIES,
+  GET_ALL_ITEMS,
+  GET_SELECTED_ITEM,
   GET_ALL_BUSINESS_PARTNERS,
   GET_SELECTED_BUSINESS_PARTNER,
-} from "../../apollo/queries";
-import {
   GET_ALL_CLIENTS,
   GET_ALL_ORGANIZATIONS,
   GET_ALL_WAREHOUSES,
   GET_SELECTED_CLIENT,
   GET_SELECTED_ORGANIZATION,
   GET_SELECTED_WAREHOUSE,
-} from "../../apollo/queries/warehouse";
-import {
-  ADD_USER_ROLES,
-  ADD_USER_WAREHOUSES,
-  CREATE_USER,
-} from "../../apollo/mutations/users";
-import {
   GET_ALL_ROLES,
   GET_ALL_USERS,
   GET_SELECTED_USER,
 } from "../../apollo/queries";
+
 import {
   RejectWithValueType,
   AuthUser,
@@ -771,7 +760,7 @@ export const fetchUsers = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("users/fetchUsers", async (_arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -782,9 +771,9 @@ export const fetchUsers = createAsyncThunk<
       return response.data.Users as AuthUser[];
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const getUser = createAsyncThunk<
@@ -792,7 +781,7 @@ export const getUser = createAsyncThunk<
   number,
   { rejectValue: RejectWithValueType }
 >("users/getUser", async (userId, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.query({
       query: GET_SELECTED_USER,
@@ -802,9 +791,9 @@ export const getUser = createAsyncThunk<
       return response.data.GetUser as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const createUser = createAsyncThunk<
@@ -812,7 +801,7 @@ export const createUser = createAsyncThunk<
   CreateUser,
   { rejectValue: RejectWithValueType }
 >("users/createUser", async (user, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.mutate({
@@ -825,9 +814,9 @@ export const createUser = createAsyncThunk<
     }
     //return [];
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const addUserRoles = createAsyncThunk<
@@ -835,7 +824,7 @@ export const addUserRoles = createAsyncThunk<
   number[],
   { rejectValue: RejectWithValueType }
 >("users/addUserRoles", async (arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.mutate({
@@ -848,9 +837,9 @@ export const addUserRoles = createAsyncThunk<
       return response.data.addUserRoles as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const addUserWarehouses = createAsyncThunk<
@@ -858,7 +847,7 @@ export const addUserWarehouses = createAsyncThunk<
   number[],
   { rejectValue: RejectWithValueType }
 >("users/addUserWarehouses", async (arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: ADD_USER_WAREHOUSES,
@@ -870,9 +859,9 @@ export const addUserWarehouses = createAsyncThunk<
       return response.data.addUserWarehouses as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 export const fetchRoles = createAsyncThunk<
@@ -880,7 +869,7 @@ export const fetchRoles = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("users/fetchRoles", async (_arg, thunkAPI) => {
-  const { rejectWithValue } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     const response = await apolloClient.query({
@@ -891,9 +880,9 @@ export const fetchRoles = createAsyncThunk<
       return response.data.GetRoles as Role[];
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
   }
 });
 
@@ -926,6 +915,13 @@ async function setSuccessAction(
           resetSelectedWarehouse({
             ...defaultWarehouse,
             organizationId: payload.parentId,
+          })
+        );
+        break;
+      case "User":
+        dispatch(
+          resetSelectedUser({
+            ...defaultUser,
           })
         );
         break;
@@ -1367,27 +1363,15 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
     });
 
-    builder.addCase(fetchUsers.pending, (state, { meta }) => {
-      if (state.loading === "idle") {
-        state.loading = "pending";
-        state.currentRequestId = meta.requestId;
-      }
+    builder.addCase(fetchUsers.pending, (state) => {
+      state.loading = "pending";
     });
-    builder.addCase(fetchUsers.fulfilled, (state, { payload, meta }) => {
-      const { requestId } = meta;
-      if (state.loading === "pending" && state.currentRequestId === requestId) {
-        state.loading = "idle";
-        state.users = payload;
-        state.currentRequestId = undefined;
-      }
+    builder.addCase(fetchUsers.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.users = payload;
     });
-    builder.addCase(fetchUsers.rejected, (state, { meta, error }) => {
-      const { requestId } = meta;
-      if (state.loading === "pending" && state.currentRequestId === requestId) {
-        state.loading = "idle";
-        state.error = error;
-        state.currentRequestId = undefined;
-      }
+    builder.addCase(fetchUsers.rejected, (state) => {
+      state.loading = "idle";
     });
 
     builder.addCase(getUser.pending, (state) => {
@@ -1397,9 +1381,8 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.selectedUser = payload;
     });
-    builder.addCase(getUser.rejected, (state, { error }) => {
+    builder.addCase(getUser.rejected, (state) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(createUser.pending, (state) => {
@@ -1409,9 +1392,8 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.selectedUser = payload;
     });
-    builder.addCase(createUser.rejected, (state, { error }) => {
+    builder.addCase(createUser.rejected, (state) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(fetchRoles.pending, (state) => {
@@ -1421,9 +1403,8 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.roles = payload;
     });
-    builder.addCase(fetchRoles.rejected, (state, { error }) => {
+    builder.addCase(fetchRoles.rejected, (state) => {
       state.loading = "idle";
-      state.error = error;
     });
 
     builder.addCase(addUserRoles.pending, (state) => {
@@ -1433,9 +1414,8 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.selectedUser = payload;
     });
-    builder.addCase(addUserRoles.rejected, (state, { error }) => {
+    builder.addCase(addUserRoles.rejected, (state) => {
       state.loading = "idle";
-      state.error = error;
     });
     builder.addCase(addUserWarehouses.pending, (state) => {
       state.loading = "pending";
@@ -1444,9 +1424,8 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       state.selectedUser = payload;
     });
-    builder.addCase(addUserWarehouses.rejected, (state, { error }) => {
+    builder.addCase(addUserWarehouses.rejected, (state) => {
       state.loading = "idle";
-      state.error = error;
     });
   },
 });
