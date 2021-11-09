@@ -116,7 +116,7 @@ export const REMOVE_HEADER = gql`
 `;
 
 export const POST_HEADER = gql`
-  mutation postHeader($id: Int!) {
+  mutation postHeader2($id: Int!) {
     postHeader(id: $id) {
       id
       number
@@ -181,16 +181,18 @@ export const UN_POST_HEADER = gql`
 
 export const POST_HEADER_WITH_PAYMENT = gql`
   mutation postHeader(
-    $id: Int!
+    $headerId: Int
     $paymentDate: DateTime
     $amount: Float
     $amountRequired: Float
   ) {
     postHeaderWithPayment(
-      id: $id
-      paymentDate: $paymentDate
-      amount: $amount
-      amountRequired: $amountRequired
+      input: {
+        headerId: $headerId
+        paymentDate: $paymentDate
+        amount: $amount
+        amountRequired: $amountRequired
+      }
     ) {
       id
       number

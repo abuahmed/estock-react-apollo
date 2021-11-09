@@ -34,6 +34,7 @@ interface Props {
 
 const defaultPayment: Payment = {
   amountRequired: 0,
+  paymentDate: new Date(),
   headerId: 0,
   amount: 0,
 };
@@ -41,9 +42,15 @@ const defaultPayment: Payment = {
 const Post = ({ id }: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
+
   let bpType = useRef<BusinessPartnerType>(BusinessPartnerType.Customer);
+
+  const { selectedHeader, selectedPayment } =
+    useAppSelector(selectTransactions);
+
   const [amountPaid, setAmountPaid] = useState(0);
   const [amountLeft, setAmountLeft] = useState(0);
+
   const amountPaidChanged = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const requiredAmount = selectedHeader.totalAmount as number;
@@ -54,8 +61,6 @@ const Post = ({ id }: Props) => {
       setAmountLeft(Number.parseFloat(left.toFixed(10)));
     }
   };
-  const { selectedHeader, selectedPayment } =
-    useAppSelector(selectTransactions);
 
   const initializePayment = {
     ...defaultPayment,
@@ -71,7 +76,7 @@ const Post = ({ id }: Props) => {
       dispatch(setSelectedPayment(initializePayment));
       setAmountPaid(selectedHeader.totalAmount as number);
     }
-  }, [selectedHeader]);
+  }, [dispatch, selectedHeader]);
 
   return (
     <Stack spacing={2} sx={{ minWidth: "600", padding: "10px" }}>
@@ -135,7 +140,7 @@ const Post = ({ id }: Props) => {
             amountRequired: selectedHeader.totalAmount as number,
           };
           //console.log(values);
-          dispatch(postHeader(selectedHeader.id as number));
+          dispatch(postHeader(values));
         }}
       >
         {(props: FormikProps<Payment>) => (

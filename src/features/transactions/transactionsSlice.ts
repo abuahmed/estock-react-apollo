@@ -24,6 +24,7 @@ import {
   CREATE_UPDATE_HEADER,
   CREATE_UPDATE_LINE,
   POST_HEADER,
+  POST_HEADER_WITH_PAYMENT,
   REMOVE_HEADER,
   REMOVE_LINE,
   UN_POST_HEADER,
@@ -280,20 +281,21 @@ export const addLine = createAsyncThunk<
 
 export const postHeader = createAsyncThunk<
   any,
-  number,
+  Payment,
   { rejectValue: RejectWithValueType }
->("transactions/postHeader", async (id, thunkAPI) => {
+>("transactions/postHeader", async (payment, thunkAPI) => {
   const { rejectWithValue } = thunkAPI;
   try {
     //apolloClient.read.clearStore()
-    console.log(id);
+    //console.log(id);
+    const { headerId, paymentDate, amount, amountRequired } = payment;
     const response = await apolloClient.mutate({
-      mutation: POST_HEADER,
-      variables: { id },
+      mutation: POST_HEADER_WITH_PAYMENT,
+      variables: { headerId, paymentDate, amount, amountRequired },
     });
 
-    if (response && response.data && response.data.postHeader) {
-      const header = response.data.postHeader as TransactionHeader;
+    if (response && response.data && response.data.postHeaderWithPayment) {
+      const header = response.data.postHeaderWithPayment as TransactionHeader;
       //dispatch(setLines(header.lines as TransactionLine[]));
       return header;
     }
@@ -303,6 +305,31 @@ export const postHeader = createAsyncThunk<
     return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
+// export const postHeader = createAsyncThunk<
+//   any,
+//   number,
+//   { rejectValue: RejectWithValueType }
+// >("transactions/postHeader", async (id, thunkAPI) => {
+//   const { rejectWithValue } = thunkAPI;
+//   try {
+//     //apolloClient.read.clearStore()
+//     console.log(id);
+//     const response = await apolloClient.mutate({
+//       mutation: POST_HEADER,
+//       variables: { id },
+//     });
+
+//     if (response && response.data && response.data.postHeader) {
+//       const header = response.data.postHeader as TransactionHeader;
+//       //dispatch(setLines(header.lines as TransactionLine[]));
+//       return header;
+//     }
+//   } catch (error: any) {
+//     const { code, stack } = error;
+//     const message = error.message;
+//     return rejectWithValue({ code, message, id: uuidv4(), stack });
+//   }
+// });
 
 export const unPostHeader = createAsyncThunk<
   any,

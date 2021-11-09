@@ -125,24 +125,39 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     dispatch(fetchBusinessPartners(bpType));
     dispatch(fetchWarehouses({ parent: "Organization", parentId: 2 }));
     dispatch(fetchItems("all"));
-    if (id && id !== "0") {
-      dispatch(getHeader(parseInt(id)));
-    } else {
-      resetFields();
-    }
-  }, [dispatch, type, id]);
+  }, [dispatch, type, bpType, id]);
 
   useEffect(() => {
-    setTranHeader(selectedHeader);
-    let ln: TransactionLine = {
-      header: selectedHeader,
-      item: { displayName: "select item", id: 0 },
-      qty: 0,
-      eachPrice: 0,
-    };
-    dispatch(setSelectedLine(ln));
-    dispatch(fetchLines({ headerId: parseInt(id) }));
-  }, [dispatch, id, selectedHeader, businessPartners, warehouses]);
+    if (
+      items.length > 0 &&
+      businessPartners.length > 0 &&
+      warehouses.length > 0
+    ) {
+      if (id && id !== "0") {
+        dispatch(getHeader(parseInt(id)));
+      } else {
+        resetFields();
+      }
+    }
+  }, [dispatch, id, items, businessPartners, warehouses]);
+
+  useEffect(() => {
+    if (selectedHeader) {
+      if (selectedHeader.status === TransactionStatus.Posted) {
+        setOpen(false);
+      } else {
+        setTranHeader(selectedHeader);
+        let ln: TransactionLine = {
+          header: selectedHeader,
+          item: { displayName: "select item", id: 0 },
+          qty: 0,
+          eachPrice: 0,
+        };
+        dispatch(setSelectedLine(ln));
+        dispatch(fetchLines({ headerId: parseInt(id) }));
+      }
+    }
+  }, [dispatch, id, selectedHeader]);
 
   useEffect(() => {
     setLeftItems(items.filter((i) => !lines.some((l) => l.item?.id === i.id)));
@@ -158,30 +173,22 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       if (inv) setSelectedInventory(inv as Inventory);
       else setSelectedInventory({ qtyOnHand: 0 });
     }
-  }, [selectedItemId]);
+  }, [inventories, selectedItemId]);
 
-  function resetFields() {
+  const resetFields = () => {
     dispatch(resetLines());
     const hd: TransactionHeader = {
       type,
       transactionDate: new Date(),
       status: TransactionStatus.Draft,
-      businessPartner: { displayName: `select ${bpType}`, id: 0 },
+      businessPartner: { ...businessPartners[0] },
       warehouse: {
-        displayName: type === TransactionType.Transfer ? `Origin` : `Warehouse`,
-        id: 0,
+        ...warehouses[0],
       },
-      toWarehouse: { displayName: "Destination", id: 0 },
+      toWarehouse: { ...warehouses[0] },
     };
     dispatch(setSelectedHeader(hd));
-    // let ln: TransactionLine = {
-    //   header: hd,
-    //   item: { displayName: "select item", id: 0 },
-    //   qty: 0,
-    //   eachPrice: 0,
-    // };
-    // dispatch(setSelectedLine(ln));
-  }
+  };
 
   const DeleteLine = (id: number) => {
     dispatch(removeLine(id));
@@ -194,18 +201,14 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   };
   const postTransactionHandler = () => {
     setOpen(true);
-    //opn.current = true;
   };
   const dialogClose = () => {
     setOpen(false);
-    //opn.current = false;
   };
 
   function postTransaction() {
     //dispatch(postHeader(selectedHeader.id as number));
     postTransactionHandler();
-    //opn.current = true;
-    //console.log(opn.current);
   }
   function unPostTransaction() {
     dispatch(unPostHeader(selectedHeader.id as number));
@@ -565,6 +568,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                 </Box>
               </>
             )}
+
           <Box sx={{ my: 1 }}>
             {loading === "pending" && (
               <Stack sx={{ width: "100%", color: "grey.500" }} spacing={2}>
