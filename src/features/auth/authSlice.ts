@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, ThunkDispatch } from "@reduxjs/toolkit";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 import { apolloClient } from "../../apollo/graphql";
 import {
   CHANGE_PASSWORD,
@@ -33,7 +32,7 @@ export const signInApollo = createAsyncThunk<
   UserCredentials,
   { rejectValue: RejectWithValueType }
 >("auth/signIn", async (authUser, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { dispatch } = thunkAPI;
   const { email, password } = authUser;
 
   try {
@@ -47,11 +46,8 @@ export const signInApollo = createAsyncThunk<
       return response.data.authUser as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -60,7 +56,7 @@ export const updateProfile = createAsyncThunk<
   AuthUser,
   { rejectValue: RejectWithValueType }
 >("auth/updateProfile", async (editProfile, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { getState, dispatch } = thunkAPI;
   const {
     auth: { user },
   } = getState() as { auth: AuthState };
@@ -83,11 +79,8 @@ export const updateProfile = createAsyncThunk<
     });
     return data;
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -96,7 +89,7 @@ export const changePassword = createAsyncThunk<
   UpdatePassword,
   { rejectValue: RejectWithValueType }
 >("auth/changePassword", async (changePass, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { getState, dispatch } = thunkAPI;
   const { oldPassword, password, confirmPassword } = changePass;
   const {
     auth: { user },
@@ -114,11 +107,8 @@ export const changePassword = createAsyncThunk<
       return response.data.changePassword as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -131,7 +121,7 @@ export const google = createAsyncThunk<
   GoogleIdToken,
   { rejectValue: RejectWithValueType }
 >("auth/google", async (res, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { dispatch } = thunkAPI;
   const { idToken } = res;
   try {
     const response = await apolloClient.mutate({
@@ -146,11 +136,8 @@ export const google = createAsyncThunk<
       return response.data.googleLogin as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -164,7 +151,7 @@ export const facebook = createAsyncThunk<
   { rejectValue: RejectWithValueType }
 >("auth/facebook", async (res, thunkAPI) => {
   //console.log(res);
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { dispatch } = thunkAPI;
   const { userID, accessToken } = res;
   try {
     const response = await apolloClient.mutate({
@@ -177,11 +164,8 @@ export const facebook = createAsyncThunk<
       return response.data.authUser as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -190,7 +174,7 @@ export const forgot = createAsyncThunk<
   ForgotAuth,
   { rejectValue: RejectWithValueType }
 >("auth/forgot", async (authUser, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { dispatch } = thunkAPI;
   const { email } = authUser;
   try {
     const response = await apolloClient.mutate({
@@ -205,11 +189,8 @@ export const forgot = createAsyncThunk<
       return response.data.forgotPassword as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -218,7 +199,7 @@ export const reset = createAsyncThunk<
   ResetAuth,
   { rejectValue: RejectWithValueType }
 >("auth/reset", async (authUser, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { dispatch } = thunkAPI;
   const { password, confirmPassword, id, token } = authUser;
 
   try {
@@ -234,10 +215,8 @@ export const reset = createAsyncThunk<
       return response.data.resetUserPassword as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -246,7 +225,7 @@ export const verify = createAsyncThunk<
   VerifyAuth,
   { rejectValue: RejectWithValueType }
 >("auth/verify", async (authUser, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { dispatch } = thunkAPI;
   const { expires, id, token, signature } = authUser;
   try {
     const response = await apolloClient.mutate({
@@ -261,10 +240,8 @@ export const verify = createAsyncThunk<
       return response.data.verifyEmail as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 export const resend = createAsyncThunk<
@@ -272,7 +249,7 @@ export const resend = createAsyncThunk<
   VerifyResendAuth,
   { rejectValue: RejectWithValueType }
 >("auth/resend", async (authUser, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { dispatch } = thunkAPI;
   const { id } = authUser;
   try {
     const response = await apolloClient.mutate({
@@ -287,10 +264,8 @@ export const resend = createAsyncThunk<
       return response.data.resendVerificationEmail as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -299,7 +274,7 @@ export const signUp = createAsyncThunk<
   NewUser,
   { rejectValue: RejectWithValueType }
 >("auth/signUp", async (newUser, thunkAPI) => {
-  const { rejectWithValue, dispatch } = thunkAPI;
+  const { dispatch } = thunkAPI;
   const { email, name, password } = newUser;
 
   try {
@@ -316,10 +291,8 @@ export const signUp = createAsyncThunk<
       return response.data.authUser as AuthUser;
     }
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -328,7 +301,7 @@ export const uploadFile = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("auth/uploadImage", async (image, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { getState, dispatch } = thunkAPI;
   const {
     auth: { user },
   } = getState() as { auth: AuthState };
@@ -349,10 +322,8 @@ export const uploadFile = createAsyncThunk<
     //console.log(data)
     return data;
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
@@ -361,7 +332,7 @@ export const uploadFileMulter = createAsyncThunk<
   File,
   { rejectValue: RejectWithValueType }
 >("auth/uploadImage", async (image, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { getState, dispatch } = thunkAPI;
   const {
     auth: { user },
   } = getState() as { auth: AuthState };
@@ -382,10 +353,8 @@ export const uploadFileMulter = createAsyncThunk<
 
     return data;
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 export const deleteFile = createAsyncThunk<
@@ -393,7 +362,7 @@ export const deleteFile = createAsyncThunk<
   string,
   { rejectValue: RejectWithValueType }
 >("auth/deleteFile", async (fileName, thunkAPI) => {
-  const { rejectWithValue, getState, dispatch } = thunkAPI;
+  const { getState, dispatch } = thunkAPI;
 
   const {
     auth: { user },
@@ -414,10 +383,8 @@ export const deleteFile = createAsyncThunk<
 
     return data;
   } catch (error: any) {
-    const { code, stack } = error;
     const message = error.message;
     await setErrorAction(dispatch, { message });
-    return rejectWithValue({ code, message, id: uuidv4(), stack });
   }
 });
 
