@@ -20,7 +20,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import LockRounded from "@mui/icons-material/LockRounded";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { signUp, selectAuth } from "./authSlice";
-import { resetSuccess } from "./authReducers";
+import { resetSuccess } from "./authSlice";
 import Toast from "../../components/Layout/Toast";
 import Google from "./Google";
 import Facebook from "./Facebook";

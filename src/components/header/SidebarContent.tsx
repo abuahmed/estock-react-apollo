@@ -33,7 +33,7 @@ import {
 import { DrawerHeader } from "../DashboardSidebar";
 import CustomDialog from "../modals/CustomDialog";
 import ChangePassword from "../account/ChangePassword";
-import { logout } from "../../features/auth/authReducers";
+import { logout } from "../../features/auth/authSlice";
 
 import { RoleTypes } from "../../features/auth/types/roleTypes";
 

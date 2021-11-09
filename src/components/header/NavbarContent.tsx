@@ -8,7 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 
 import { selectAuth } from "../../features/auth/authSlice";
-import { logout } from "../../features/auth/authReducers";
+import { logout } from "../../features/auth/authSlice";
 import { selectPreference } from "../../features/preferences/preferencesSlice";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
