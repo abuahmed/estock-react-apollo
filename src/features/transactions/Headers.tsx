@@ -83,6 +83,7 @@ export const Headers = ({ type }: HeaderProps) => {
           })
         );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, type, startDate, endDate]);
 
   const DeleteHeader = (id: number) => {

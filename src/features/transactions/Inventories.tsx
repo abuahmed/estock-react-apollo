@@ -129,6 +129,7 @@ export const Inventories = () => {
   };
   useEffect(() => {
     fetchInventoryLines("All");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     dispatch,
     selectedInventory,

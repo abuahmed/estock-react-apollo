@@ -88,6 +88,7 @@ export default function Search({ initialValue = "", deferTime = 1000 }) {
     debounce(v);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debounce = useCallback(
     _.debounce((_searchVal: string) => {
       dispatch(setSearchText(_searchVal));

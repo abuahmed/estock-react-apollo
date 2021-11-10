@@ -139,6 +139,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
         resetFields();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, items, businessPartners, warehouses]);
 
   useEffect(() => {
@@ -207,10 +208,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   };
 
   function postTransaction() {
-    if (
-      selectedHeader?.type === TransactionType.Sale ||
-      selectedHeader?.type === TransactionType.Purchase
-    ) {
+    if (type === TransactionType.Sale || type === TransactionType.Purchase) {
       postTransactionHandler();
     } else {
       dispatch(postHeader(selectedHeader.id as number));
