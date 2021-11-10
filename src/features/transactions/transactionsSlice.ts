@@ -11,6 +11,7 @@ import {
   InventorySummary,
   LineSummary,
   LineSummaryType,
+  PaymentArgs,
   TransactionArgs,
   TransactionHeader,
   TransactionLine,
@@ -36,6 +37,7 @@ import {
   GET_SELECTED_HEADER,
   GET_TOP_ITEMS,
   GET_TRANSACTION_LINES,
+  GET_TRANSACTION_PAYMENTS,
 } from "../../apollo/queries";
 import { Inventory } from "./types/transactionTypes";
 import { Payment, PaymentTypes } from "./types/paymentTypes";
@@ -120,6 +122,31 @@ export const fetchLines = createAsyncThunk<
 
     if (response && response.data && response.data.lines) {
       return response.data.lines as TransactionLine[];
+    }
+  } catch (error: any) {
+    const message = error.message;
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
+  }
+});
+export const fetchPayments = createAsyncThunk<
+  any,
+  PaymentArgs,
+  { rejectValue: RejectWithValueType }
+>("transactions/fetchPayments", async (paymentArgs, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.query({
+      query: GET_TRANSACTION_PAYMENTS,
+      variables: {
+        ...paymentArgs,
+        durationBegin: paymentArgs.durationBegin as Date,
+        durationEnd: paymentArgs.durationEnd as Date,
+      },
+    });
+
+    if (response && response.data && response.data.payments) {
+      return response.data.payments as Payment[];
     }
   } catch (error: any) {
     const message = error.message;
@@ -683,6 +710,17 @@ export const transactionsSlice = createSlice({
       state.lines = payload;
     });
     builder.addCase(fetchLines.rejected, (state) => {
+      state.loading = "idle";
+    });
+
+    builder.addCase(fetchPayments.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(fetchPayments.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.payments = payload;
+    });
+    builder.addCase(fetchPayments.rejected, (state) => {
       state.loading = "idle";
     });
 

@@ -191,6 +191,53 @@ export const GET_TRANSACTION_LINES = gql`
     }
   }
 `;
+export const GET_TRANSACTION_PAYMENTS = gql`
+  query GetPayments(
+    $headerId: Int
+    $durationBegin: DateTime
+    $durationEnd: DateTime
+    $status: PaymentStatus
+    $method: PaymentMethods
+    $type: PaymentTypes
+  ) {
+    payments(
+      headerId: $headerId
+      durationBegin: $durationBegin
+      durationEnd: $durationEnd
+      status: $status
+      method: $method
+      type: $type
+    ) {
+      id
+      amount
+      method
+      type
+      status
+      paymentDate
+      header {
+        id
+        type
+        transactionDate
+        number
+        status
+        warehouseId
+        warehouse {
+          id
+          displayName
+        }
+        toWarehouseId
+        toWarehouse {
+          id
+          displayName
+        }
+        businessPartner {
+          id
+          displayName
+        }
+      }
+    }
+  }
+`;
 
 export const GET_SELECTED_HEADER = gql`
   query GetSelectedHeader($id: Int!) {

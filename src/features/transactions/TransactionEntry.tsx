@@ -23,6 +23,7 @@ import Toast from "../../components/Layout/Toast";
 
 import {
   fetchLines,
+  fetchPayments,
   selectTransactions,
   setSelectedLine,
   resetLines,
@@ -111,6 +112,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
 
   const {
     lines,
+    payments,
     selectedHeader,
     selectedLine,
     inventories,
@@ -141,11 +143,12 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, items, businessPartners, warehouses]);
-
+  //const navigate = useNavigate();
   useEffect(() => {
     if (selectedHeader) {
       if (selectedHeader.status === TransactionStatus.Posted) {
         setOpen(false);
+        //if (id === "0") navigate(`/app/${type}`); ///${selectedHeader.id}
       } else {
         setTranHeader(selectedHeader);
         let ln: TransactionLine = {
@@ -156,8 +159,10 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
         };
         dispatch(setSelectedLine(ln));
         dispatch(fetchLines({ headerId: parseInt(id) }));
+        dispatch(fetchPayments({ headerId: parseInt(id) }));
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, selectedHeader]);
 
   useEffect(() => {
@@ -586,6 +591,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
             <Table size="small" aria-label="a dense table">
               <TableHead>
                 <StyledTableRow>
+                  <StyledTableCell>S.No</StyledTableCell>
                   <StyledTableCell>Item Name</StyledTableCell>
                   <StyledTableCell align="right">Qty</StyledTableCell>
                   {type === TransactionType.PI && (
@@ -598,8 +604,11 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
               </TableHead>
               <TableBody>
                 {lines &&
-                  lines.map((row) => (
+                  lines.map((row, index) => (
                     <StyledTableRow key={row.id}>
+                      <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
+                        {index + 1}
+                      </StyledTableCell>
                       <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
                         {row.item?.displayName}
                       </StyledTableCell>
@@ -679,6 +688,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                   >
                     {selectedHeader?.numberOfItems} Items
                   </StyledTableCell>
+                  <StyledTableCell></StyledTableCell>
                   <StyledTableCell
                     sx={{ fontWeight: "900" }}
                     scope="row"
@@ -698,6 +708,42 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
 
                   <StyledTableCell></StyledTableCell>
                 </StyledTableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          <TableContainer component={Paper} sx={{ mt: "8px" }}>
+            <Table size="small" aria-label="a dense table">
+              <TableHead>
+                <StyledTableRow>
+                  <StyledTableCell>S.No</StyledTableCell>
+                  <StyledTableCell>Payment Date</StyledTableCell>
+                  <StyledTableCell>Method</StyledTableCell>
+                  <StyledTableCell align="right">Amount</StyledTableCell>
+                </StyledTableRow>
+              </TableHead>
+              <TableBody>
+                {payments &&
+                  payments.map((row, index) => (
+                    <StyledTableRow key={row.id}>
+                      <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
+                        {index + 1}
+                      </StyledTableCell>
+                      <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
+                        {row.paymentDate}
+                      </StyledTableCell>
+                      <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
+                        {row.method}
+                      </StyledTableCell>
+                      <StyledTableCell
+                        scope="row"
+                        sx={{ padding: "0px 16px" }}
+                        align="right"
+                      >
+                        {row.amount?.toLocaleString()}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

@@ -1,7 +1,12 @@
 import { BusinessPartner } from "../../setups/types/bpTypes";
 import { Item } from "../../setups/types/itemTypes";
 import { Warehouse } from "../../setups/types/warehouseTypes";
-import { Payment } from "./paymentTypes";
+import {
+  Payment,
+  PaymentMethods,
+  PaymentStatus,
+  PaymentTypes,
+} from "./paymentTypes";
 
 export interface HeaderProps {
   type: TransactionType;
@@ -128,6 +133,17 @@ export type TransactionArgs = {
   durationEnd?: Date;
   refreshList?: string;
   lastUpdated?: Date;
+};
+
+export type PaymentArgs = {
+  skip?: number;
+  take?: number;
+  type?: PaymentTypes;
+  status?: PaymentStatus;
+  method?: PaymentMethods;
+  headerId?: number;
+  durationBegin?: Date;
+  durationEnd?: Date;
 };
 
 export type InventorySummary = {
