@@ -38,7 +38,7 @@ import {
   GET_TRANSACTION_LINES,
 } from "../../apollo/queries";
 import { Inventory } from "./types/transactionTypes";
-import { Payment } from "./types/paymentTypes";
+import { Payment, PaymentTypes } from "./types/paymentTypes";
 //import { sleep } from "../../utils/sleep";
 
 export const fetchInventories = createAsyncThunk<
@@ -277,10 +277,10 @@ export const postHeaderWithPayment = createAsyncThunk<
 >("transactions/postHeaderWithPayment", async (payment, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    const { headerId, paymentDate, amount, amountRequired } = payment;
+    const { type, headerId, paymentDate, amount, amountRequired } = payment;
     const response = await apolloClient.mutate({
       mutation: POST_HEADER_WITH_PAYMENT,
-      variables: { headerId, paymentDate, amount, amountRequired },
+      variables: { type, headerId, paymentDate, amount, amountRequired },
     });
 
     if (response && response.data && response.data.postHeaderWithPayment) {
@@ -536,6 +536,8 @@ const defaultLine: TransactionLine = {
 const defaultPayment: Payment = {
   paymentDate: new Date(),
   amount: 0,
+  amountRequired: 0,
+  type: PaymentTypes.Sale,
 };
 
 const initialState: TransactionsState = {
@@ -588,7 +590,7 @@ export const transactionsSlice = createSlice({
       state.selectedLine = payload;
     },
     setSelectedPayment: (state, { payload }) => {
-      state.selectedPayment = payload;
+      state.selectedPayment = payload; //{ ...defaultPayment, ...payload };
     },
 
     resetSelectedPayment: (state, { payload }) => {

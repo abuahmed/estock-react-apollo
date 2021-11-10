@@ -25,25 +25,22 @@ import { TransactionType } from "../../features/transactions/types/transactionTy
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { BusinessPartnerType } from "../../features/setups/types/bpTypes";
 import { useEffect, useRef, useState } from "react";
-import { Payment } from "../../features/transactions/types/paymentTypes";
+import {
+  Payment,
+  PaymentTypes,
+} from "../../features/transactions/types/paymentTypes";
 import { PostAdd } from "@mui/icons-material";
 
 interface Props {
   id: number;
 }
 
-const defaultPayment: Payment = {
-  amountRequired: 0,
-  paymentDate: new Date(),
-  headerId: 0,
-  amount: 0,
-};
-
 const Post = ({ id }: Props) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
 
   let bpType = useRef<BusinessPartnerType>(BusinessPartnerType.Customer);
+  //let paymentType = useRef<PaymentTypes>(PaymentTypes.Sale);
 
   const { selectedHeader, selectedPayment } =
     useAppSelector(selectTransactions);
@@ -62,20 +59,27 @@ const Post = ({ id }: Props) => {
     }
   };
 
-  const initializePayment = {
-    ...defaultPayment,
-    headerId: id,
-  };
-
   useEffect(() => {
     if (selectedHeader.id) {
       bpType.current =
         selectedHeader.type === TransactionType.Sale
           ? BusinessPartnerType.Customer
           : BusinessPartnerType.Vendor;
-      dispatch(setSelectedPayment(initializePayment));
+      const paymentType =
+        selectedHeader.type === TransactionType.Sale
+          ? PaymentTypes.Sale
+          : PaymentTypes.Purchase;
+
+      dispatch(
+        setSelectedPayment({
+          paymentDate: new Date(),
+          headerId: id,
+          type: paymentType,
+        })
+      );
       setAmountPaid(selectedHeader.totalAmount as number);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, selectedHeader]);
 
   return (

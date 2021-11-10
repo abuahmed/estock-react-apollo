@@ -182,12 +182,14 @@ export const UN_POST_HEADER = gql`
 export const POST_HEADER_WITH_PAYMENT = gql`
   mutation postHeader(
     $headerId: Int
+    $type: PaymentTypes
     $paymentDate: DateTime
     $amount: Float
     $amountRequired: Float
   ) {
     postHeaderWithPayment(
       input: {
+        type: $type
         headerId: $headerId
         paymentDate: $paymentDate
         amount: $amount
