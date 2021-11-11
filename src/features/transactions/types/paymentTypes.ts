@@ -122,17 +122,14 @@ export enum TransactionPaymentStatus {
   NoPayment = "NoPayment",
 }
 export enum PaymentListTypes {
-  All = "DoNotInvoice",
+  All = "All",
+  Paid = "Paid",
+  NotPaid = "NotPaid",
+  Checked = "Checked",
+  Verified = "Verified",
   Cleared = "Cleared",
-  NotCleared = "NotCleared",
-  NotClearedAndOverdue = "NotClearedAndOverdue",
-  NotDeposited = "NotDeposited",
-  DepositedNotCleared = "DepositedNotCleared",
-  DepositedCleared = "DepositedCleared",
-  CreditNotCleared = "CreditNotCleared",
-  CheckNotCleared = "CheckNotCleared",
-  CheckCleared = "CheckCleared",
 }
+
 export enum InvoiceTerms {
   Immediate = "Immediate",
   AfterDelivery = "AfterDelivery",

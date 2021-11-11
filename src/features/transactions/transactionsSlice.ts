@@ -136,6 +136,7 @@ export const fetchPayments = createAsyncThunk<
 >("transactions/fetchPayments", async (paymentArgs, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
+    //console.log(paymentArgs);
     const response = await apolloClient.query({
       query: GET_TRANSACTION_PAYMENTS,
       variables: {

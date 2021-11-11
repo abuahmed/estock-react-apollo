@@ -28,6 +28,7 @@ import { TransactionType } from "../features/transactions/types/transactionTypes
 import { Users, User } from "../features/setups/users";
 import DashboardLayout from "./DashboardLayout";
 import MainLayout from "./MainLayout";
+import { Payments } from "../features/transactions/Payments";
 
 let PrivilegedRoles: Role[] = [];
 const routes = (isLoggedIn: Boolean, roles: Role[]) => {
@@ -44,6 +45,10 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         {
           path: "onHand",
           element: isPrivileged(<Inventories />, RoleTypes.OnHandInventory),
+        },
+        {
+          path: "payments",
+          element: isPrivileged(<Payments />, RoleTypes.OnHandInventory),
         },
         {
           path: "sale",
