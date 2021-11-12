@@ -43,7 +43,7 @@ import {
   LinearProgress,
 } from "@mui/material";
 import Save from "@mui/icons-material/Save";
-import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 
 const defaultItemCategory = {
   displayName: "",

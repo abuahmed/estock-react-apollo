@@ -35,7 +35,7 @@ import {
 } from "@mui/material";
 import { Add, Backspace, Edit, Save } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
-import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
 import { Warehouse } from "./types/warehouseTypes";
 import { Form, Formik, FormikProps } from "formik";

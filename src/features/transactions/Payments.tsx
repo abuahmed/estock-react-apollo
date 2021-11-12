@@ -14,7 +14,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { Refresh } from "@mui/icons-material";
-import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import { fetchPayments, selectTransactions } from "./transactionsSlice";
 import { addMonths, endOfDay, format, startOfDay } from "date-fns";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";

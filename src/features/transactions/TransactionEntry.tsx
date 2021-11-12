@@ -63,7 +63,7 @@ import {
   LinearProgress,
 } from "@mui/material";
 import Save from "@mui/icons-material/Save";
-import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import { Item } from "../setups/types/itemTypes";
 import { lineSchema } from "./validation";
 import { selectAuth } from "../auth/authSlice";

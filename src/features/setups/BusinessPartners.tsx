@@ -28,7 +28,7 @@ import {
 } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
-import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
 import { BusinessPartnerProps } from "./types/bpTypes";
 

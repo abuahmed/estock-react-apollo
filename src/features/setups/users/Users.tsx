@@ -29,7 +29,7 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Form, Formik, FormikProps } from "formik";
 import { FormikTextField } from "../../../components/Layout/FormikTextField";
-import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
+import { StyledTableCell, StyledTableRow } from "../../../styles/tableStyles";
 import TableSkeleton from "../../../components/Layout/TableSkeleton";
 import { createUserSchema } from "../validation";
 import { CreateUser } from "../../auth/types/authType";

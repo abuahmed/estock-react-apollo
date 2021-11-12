@@ -29,13 +29,13 @@ import {
   Typography,
 } from "@mui/material";
 import { Backspace, History, Refresh, ViewList } from "@mui/icons-material";
-import { StyledTableCell, StyledTableRow } from "../styles/tableStyles";
+import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import {
   fetchInventories,
   fetchLines,
   selectTransactions,
 } from "./transactionsSlice";
-import { TabPanel } from "../styles/tabComponents";
+import { TabPanel } from "../../styles/tabComponents";
 import {
   Inventory,
   TransactionStatus,
