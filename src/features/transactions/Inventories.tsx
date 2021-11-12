@@ -10,7 +10,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import Paper from "@mui/material/Paper";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { changePageTitle } from "../preferences/preferencesSlice";
@@ -147,6 +147,7 @@ export const Inventories = () => {
         <title>Inventories List | Pinna Stock</title>
       </Helmet>
       <Tabs
+        sx={{ m: 1 }}
         value={tabValue}
         onChange={handleChange}
         aria-label="icon label tabs example"
@@ -161,12 +162,7 @@ export const Inventories = () => {
       <TabPanel value={tabValue} index={0}>
         <>
           <Box component="div">
-            <Button
-              color="secondary"
-              variant="contained"
-              sx={{ ml: 1 }}
-              onClick={RefreshList}
-            >
+            <Button color="secondary" variant="contained" onClick={RefreshList}>
               <Typography
                 variant="h5"
                 component="h5"
@@ -176,20 +172,20 @@ export const Inventories = () => {
               </Typography>
             </Button>
           </Box>
-          <Accordion sx={{ m: 1 }}>
-            <AccordionSummary
+          <Accordion sx={{ mt: 1 }}>
+            <StyledAccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
               <Typography>Filter List</Typography>
-            </AccordionSummary>
+            </StyledAccordionSummary>
             <AccordionDetails>
               <Divider variant="middle" sx={{ my: 2 }} />
             </AccordionDetails>
           </Accordion>
 
-          <Grid container justifyContent="flex-start">
+          <Grid container justifyContent="flex-start" sx={{ mt: 1 }}>
             <TableContainer component={Paper}>
               <Table size="small" aria-label="a simple table">
                 <TableHead>
@@ -287,14 +283,14 @@ export const Inventories = () => {
             </Button>
           </Box>
 
-          <Accordion sx={{ m: 1 }}>
-            <AccordionSummary
+          <Accordion sx={{ mt: 1 }}>
+            <StyledAccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
               <Typography>Filter List</Typography>
-            </AccordionSummary>
+            </StyledAccordionSummary>
             <AccordionDetails>
               <Stack
                 direction="row"
@@ -418,7 +414,7 @@ export const Inventories = () => {
               </Stack>
             </AccordionDetails>
           </Accordion>
-          <TableContainer component={Paper} sx={{ mt: "8px" }}>
+          <TableContainer component={Paper} sx={{ mt: 1 }}>
             <Table size="small" aria-label="a dense table">
               <TableHead>
                 <StyledTableRow>

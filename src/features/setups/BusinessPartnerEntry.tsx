@@ -11,7 +11,7 @@ import { Add, Backspace } from "@mui/icons-material";
 import { Grid, Divider, LinearProgress } from "@mui/material";
 import Save from "@mui/icons-material/Save";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { registerSchema } from "./validation";
@@ -98,13 +98,13 @@ export const BusinessPartnerEntry = ({ type }: BusinessPartnerProps) => {
                 {(props: FormikProps<BusinessPartner>) => (
                   <Form>
                     <Accordion sx={{ m: 1 }} expanded={true}>
-                      <AccordionSummary
+                      <StyledAccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                       >
                         <Typography>Detail</Typography>
-                      </AccordionSummary>
+                      </StyledAccordionSummary>
                       <AccordionDetails>
                         <Grid container spacing={2}>
                           <Grid item md={4} xs={12}>
@@ -145,13 +145,13 @@ export const BusinessPartnerEntry = ({ type }: BusinessPartnerProps) => {
                     </Accordion>
 
                     <Accordion sx={{ m: 1 }} expanded={true}>
-                      <AccordionSummary
+                      <StyledAccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                       >
                         <Typography>Address</Typography>
-                      </AccordionSummary>
+                      </StyledAccordionSummary>
                       <AccordionDetails>
                         <Grid container spacing={2}>
                           <Grid item md={4} xs={12}>

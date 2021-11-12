@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { NavLink as RouterLink, useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import { StyledAccordionSummary } from "../../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Grid from "@mui/material/Grid";
@@ -63,7 +63,7 @@ export const User = () => {
         <Divider variant="middle" sx={{ my: 2 }} />
 
         <Accordion sx={{ my: 1 }}>
-          <AccordionSummary
+          <StyledAccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
@@ -71,7 +71,7 @@ export const User = () => {
             <Typography variant="h5" component="div">
               User Info
             </Typography>
-          </AccordionSummary>
+          </StyledAccordionSummary>
           <AccordionDetails>
             <Grid container spacing={3}>
               <Grid item md={6} xs={12}>
@@ -99,7 +99,7 @@ export const User = () => {
         </Accordion>
 
         <Accordion sx={{ my: 1 }}>
-          <AccordionSummary
+          <StyledAccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
@@ -107,14 +107,14 @@ export const User = () => {
             <Typography variant="h5" component="div">
               Assign Warehouses
             </Typography>
-          </AccordionSummary>
+          </StyledAccordionSummary>
           <AccordionDetails>
             <UserWarehouses userId={parseInt(userId)} />
           </AccordionDetails>
         </Accordion>
 
         <Accordion sx={{ my: 1 }}>
-          <AccordionSummary
+          <StyledAccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
@@ -122,7 +122,7 @@ export const User = () => {
             <Typography variant="h5" component="div">
               Assign Roles
             </Typography>
-          </AccordionSummary>
+          </StyledAccordionSummary>
           <AccordionDetails>
             <UserRoles userId={parseInt(userId)} />
           </AccordionDetails>

@@ -10,7 +10,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import Paper from "@mui/material/Paper";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
@@ -30,6 +29,7 @@ import {
 } from "./types/paymentTypes";
 import { changePageTitle } from "../preferences/preferencesSlice";
 import { NavLink } from "react-router-dom";
+import { StyledAccordionSummary } from "../../styles/componentStyled";
 
 export const Payments = () => {
   const [startDate, setStartDate] = useState<Date | null>(
@@ -78,17 +78,12 @@ export const Payments = () => {
   return (
     <>
       <Helmet>
-        <title>Inventories List | Pinna Stock</title>
+        <title>Payments List | Pinna Stock</title>
       </Helmet>
 
-      <>
+      <Box sx={{ m: 1 }}>
         <Box component="div">
-          <Button
-            color="secondary"
-            variant="contained"
-            sx={{ ml: 1 }}
-            onClick={RefreshList}
-          >
+          <Button color="secondary" variant="contained" onClick={RefreshList}>
             <Typography
               variant="h5"
               component="h5"
@@ -99,15 +94,15 @@ export const Payments = () => {
           </Button>
         </Box>
 
-        <Accordion sx={{ m: 1 }}>
-          <AccordionSummary
+        <Accordion sx={{ mt: 1 }}>
+          <StyledAccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
             <Typography>Filter List</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
+          </StyledAccordionSummary>
+          <AccordionDetails sx={{ py: 3 }}>
             <Stack direction="row" justifyContent="center" alignItems="center">
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Grid
@@ -149,7 +144,7 @@ export const Payments = () => {
             </Stack>
           </AccordionDetails>
         </Accordion>
-        <TableContainer component={Paper} sx={{ mt: "8px" }}>
+        <TableContainer component={Paper} sx={{ mt: 1 }}>
           <Table size="small" aria-label="a dense table">
             <TableHead>
               <StyledTableRow>
@@ -221,7 +216,7 @@ export const Payments = () => {
         <Typography variant="h4" component="div">
           {payments.length} payments
         </Typography>
-      </>
+      </Box>
     </>
   );
 };

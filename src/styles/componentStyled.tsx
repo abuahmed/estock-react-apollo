@@ -3,8 +3,19 @@ import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Card, { CardProps } from "@mui/material/Card";
 import Link from "@mui/material/Link";
-
 import { orange } from "@mui/material/colors";
+import AccordionSummary, {
+  AccordionSummaryProps,
+} from "@mui/material/AccordionSummary";
+
+export const StyledAccordionSummary = styled(
+  AccordionSummary
+)<AccordionSummaryProps>(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.common.white,
+  borderRadius: "4px",
+}));
+
 export const StyledCard = styled(Card)<CardProps>(({ theme }) => ({
   maxWidth: 400,
   margin: "auto",

@@ -332,7 +332,6 @@ export const postHeader = createAsyncThunk<
 >("transactions/postHeader", async (id, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    //apolloClient.read.clearStore()
     console.log(id);
     const response = await apolloClient.mutate({
       mutation: POST_HEADER,

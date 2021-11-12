@@ -20,7 +20,7 @@ import TableHead from "@mui/material/TableHead";
 import Paper from "@mui/material/Paper";
 import { NavLink as RouterLink } from "react-router-dom";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { changePageTitle } from "../preferences/preferencesSlice";
@@ -100,14 +100,14 @@ export const Clients = () => {
         {(props: FormikProps<Client>) => (
           <Form>
             <Accordion sx={{ m: 1 }} expanded={expanded}>
-              <AccordionSummary
+              <StyledAccordionSummary
                 onClick={ToggleAccordion}
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
                 <Typography>Detail</Typography>
-              </AccordionSummary>
+              </StyledAccordionSummary>
               <AccordionDetails>
                 <Grid container spacing={2}>
                   <Grid item md={4} xs={12}>

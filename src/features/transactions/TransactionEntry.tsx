@@ -14,7 +14,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -301,14 +301,14 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
             isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
               <>
                 <Accordion sx={{ my: 1 }} expanded={true}>
-                  <AccordionSummary
+                  <StyledAccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                   >
                     <Typography>{type} Detail</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
+                  </StyledAccordionSummary>
+                  <AccordionDetails sx={{ py: 3 }}>
                     <Formik
                       enableReinitialize={true}
                       initialValues={tranHeader as TransactionHeader}

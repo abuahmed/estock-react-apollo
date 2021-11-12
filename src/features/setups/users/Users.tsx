@@ -24,7 +24,7 @@ import {
 import { Add, Edit, Save, Delete } from "@mui/icons-material";
 
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import { StyledAccordionSummary } from "../../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Form, Formik, FormikProps } from "formik";
@@ -97,14 +97,14 @@ export const Users = () => {
         {(props: FormikProps<CreateUser>) => (
           <Form>
             <Accordion sx={{ m: 1 }} expanded={expanded}>
-              <AccordionSummary
+              <StyledAccordionSummary
                 onClick={ToggleAccordion}
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
               >
                 <Typography>Detail</Typography>
-              </AccordionSummary>
+              </StyledAccordionSummary>
               <AccordionDetails>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
