@@ -74,7 +74,7 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell>Name</StyledTableCell>
-
+                <StyledTableCell>Credit(Birr)</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
               </StyledTableRow>
             </TableHead>
@@ -93,6 +93,9 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
                       >
                         {row.displayName}
                       </Button>
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      ${row.totalOutstandingCredit?.toLocaleString()}
                     </StyledTableCell>
 
                     <StyledTableCell>

@@ -8,6 +8,7 @@ export const GET_ALL_BUSINESS_PARTNERS = gql`
       description
       type
       initialOutstandingCredit
+      totalOutstandingCredit
       creditLimit
       creditTransactionsLimit
       address {
