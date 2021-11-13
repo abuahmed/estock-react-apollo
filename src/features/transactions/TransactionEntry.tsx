@@ -27,6 +27,7 @@ import {
   selectTransactions,
   setSelectedLine,
   resetLines,
+  resetPayments,
   setSelectedHeader,
   addLine,
   removeLine,
@@ -79,6 +80,8 @@ import { BusinessPartner, BusinessPartnerType } from "../setups/types/bpTypes";
 import { Warehouse } from "../setups/types/warehouseTypes";
 import CustomDialog from "../../components/modals/CustomDialog";
 import Post from "../../components/transaction/Post";
+import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
+import { format } from "date-fns";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
@@ -148,6 +151,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     if (selectedHeader) {
       if (selectedHeader.status === TransactionStatus.Posted) {
         setOpen(false);
+        dispatch(fetchPayments({ headerId: parseInt(id) }));
         //if (id === "0") navigate(`/app/${type}`); ///${selectedHeader.id}
       } else {
         setTranHeader(selectedHeader);
@@ -158,9 +162,8 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
           eachPrice: 0,
         };
         dispatch(setSelectedLine(ln));
-        dispatch(fetchLines({ headerId: parseInt(id) }));
-        dispatch(fetchPayments({ headerId: parseInt(id) }));
       }
+      dispatch(fetchLines({ headerId: parseInt(id) }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, selectedHeader]);
@@ -183,6 +186,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
 
   const resetFields = () => {
     dispatch(resetLines());
+    dispatch(resetPayments());
     const hd: TransactionHeader = {
       type,
       transactionDate: new Date(),
@@ -720,6 +724,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                   <StyledTableCell>Payment Date</StyledTableCell>
                   <StyledTableCell>Method</StyledTableCell>
                   <StyledTableCell align="right">Amount</StyledTableCell>
+                  <StyledTableCell>Status</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
@@ -729,8 +734,17 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
                         {index + 1}
                       </StyledTableCell>
-                      <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
-                        {row.paymentDate}
+                      <StyledTableCell component="th" scope="row">
+                        {format(
+                          new Date((row.paymentDate as Date).toString()),
+                          "MMM-dd-yyyy"
+                        )}
+                        (
+                        {getAmharicCalendarFormatted(
+                          row.paymentDate as Date,
+                          "-"
+                        )}
+                        )
                       </StyledTableCell>
                       <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
                         {row.method}
@@ -741,6 +755,9 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                         align="right"
                       >
                         {row.amount?.toLocaleString()}
+                      </StyledTableCell>
+                      <StyledTableCell component="th" scope="row">
+                        {row.status}
                       </StyledTableCell>
                     </StyledTableRow>
                   ))}

@@ -62,11 +62,11 @@ export const Payments = () => {
       fetchPayments({
         durationBegin: startDateHeader,
         durationEnd: endDateHeader,
-        type: PaymentTypes.Sale,
-        method: PaymentMethods.Cash,
-        status: PaymentStatus.Paid,
       })
     );
+    //status: PaymentStatus.NotCleared,
+    // type: PaymentTypes.Sale,
+    //     method: PaymentMethods.Cash,
   };
   useEffect(() => {
     dispatch(changePageTitle("Payments List"));
