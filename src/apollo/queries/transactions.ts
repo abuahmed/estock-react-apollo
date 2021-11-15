@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { HEADER, LINE } from "../fragments/transaction";
 
 export const GET_INVENTORY_SUMMARY = gql`
   query {
@@ -40,6 +41,7 @@ export const GET_TOP_ITEMS = gql`
   }
 `;
 export const GET_ALL_TRANSACTIONS = gql`
+  ${HEADER}
   query GetTransactions(
     $type: TransactionType!
     $durationBegin: DateTime
@@ -52,29 +54,7 @@ export const GET_ALL_TRANSACTIONS = gql`
       durationEnd: $durationEnd
       lastUpdated: $lastUpdated
     ) {
-      id
-      transactionDate
-      type
-      number
-      status
-      numberOfItems
-      totalQty
-      totalAmount
-      warehouseId
-      warehouse {
-        id
-        displayName
-      }
-      toWarehouseId
-      toWarehouse {
-        id
-        displayName
-      }
-      businessPartnerId
-      businessPartner {
-        id
-        displayName
-      }
+      ...getHeader
     }
   }
 `;
@@ -134,6 +114,8 @@ export const GET_ITEM_INVENTORY = gql`
   }
 `;
 export const GET_TRANSACTION_LINES = gql`
+  ${HEADER}
+  ${LINE}
   query GetLines(
     $headerId: Int
     $itemId: Int
@@ -158,40 +140,15 @@ export const GET_TRANSACTION_LINES = gql`
       status: $status
       lastUpdated: $lastUpdated
     ) {
-      id
-      item {
-        id
-        displayName
-      }
+      ...getLine
       header {
-        id
-        type
-        transactionDate
-        number
-        status
-        warehouseId
-        warehouse {
-          id
-          displayName
-        }
-        toWarehouseId
-        toWarehouse {
-          id
-          displayName
-        }
-        businessPartner {
-          id
-          displayName
-        }
+        ...getHeader
       }
-      qty
-      eachPrice
-      diff
-      linePrice
     }
   }
 `;
 export const GET_TRANSACTION_PAYMENTS = gql`
+  ${HEADER}
   query GetPayments(
     $headerId: Int
     $durationBegin: DateTime
@@ -215,56 +172,17 @@ export const GET_TRANSACTION_PAYMENTS = gql`
       status
       paymentDate
       header {
-        id
-        type
-        transactionDate
-        number
-        status
-        warehouseId
-        warehouse {
-          id
-          displayName
-        }
-        toWarehouseId
-        toWarehouse {
-          id
-          displayName
-        }
-        businessPartner {
-          id
-          displayName
-        }
+        ...getHeader
       }
     }
   }
 `;
 
 export const GET_SELECTED_HEADER = gql`
+  ${HEADER}
   query GetSelectedHeader($id: Int!) {
     getHeaderById(id: $id) {
-      id
-      type
-      transactionDate
-      number
-      status
-      numberOfItems
-      totalQty
-      totalAmount
-      warehouseId
-      warehouse {
-        id
-        displayName
-      }
-      toWarehouseId
-      toWarehouse {
-        id
-        displayName
-      }
-      businessPartnerId
-      businessPartner {
-        id
-        displayName
-      }
+      ...getHeader
     }
   }
 `;

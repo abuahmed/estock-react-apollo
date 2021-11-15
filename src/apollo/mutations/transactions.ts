@@ -1,6 +1,8 @@
 import { gql } from "@apollo/client";
+import { HEADER, LINE } from "../fragments/transaction";
 
 export const CREATE_UPDATE_HEADER = gql`
+  ${HEADER}
   mutation createUpdateTransaction(
     $type: TransactionType!
     $transactionDate: DateTime
@@ -19,30 +21,14 @@ export const CREATE_UPDATE_HEADER = gql`
         businessPartnerId: $businessPartnerId
       }
     ) {
-      id
-      number
-      transactionDate
-      status
-      numberOfItems
-      totalAmount
-      totalQty
-      warehouse {
-        id
-        displayName
-      }
-      toWarehouse {
-        id
-        displayName
-      }
-      businessPartner {
-        id
-        displayName
-      }
+      ...getHeader
     }
   }
 `;
 
 export const CREATE_UPDATE_LINE = gql`
+  ${HEADER}
+  ${LINE}
   mutation CreateUpdateLine(
     $id: Int
     $headerId: Int
@@ -73,35 +59,9 @@ export const CREATE_UPDATE_LINE = gql`
         diff: $diff
       }
     ) {
-      id
-      item {
-        id
-        displayName
-      }
-      qty
-      eachPrice
-      diff
-      linePrice
+      ...getLine
       header {
-        id
-        number
-        transactionDate
-        status
-        numberOfItems
-        totalAmount
-        totalQty
-        warehouse {
-          id
-          displayName
-        }
-        toWarehouse {
-          id
-          displayName
-        }
-        businessPartner {
-          id
-          displayName
-        }
+        ...getHeader
       }
     }
   }
@@ -116,70 +76,34 @@ export const REMOVE_HEADER = gql`
 `;
 
 export const POST_HEADER = gql`
+  ${HEADER}
+  ${LINE}
   mutation postHeader2($id: Int!) {
     postHeader(id: $id) {
-      id
-      number
-      transactionDate
-      status
-      numberOfItems
-      totalAmount
-      totalQty
-      warehouse {
-        id
-        displayName
-      }
-      businessPartner {
-        id
-        displayName
-      }
+      ...getHeader
       lines {
-        id
-        item {
-          id
-          displayName
-        }
-        qty
-        eachPrice
-        diff
+        ...getLine
       }
     }
   }
 `;
 
 export const UN_POST_HEADER = gql`
+  ${HEADER}
+  ${LINE}
   mutation unPostHeader($id: Int!) {
     unPostHeader(id: $id) {
-      id
-      number
-      transactionDate
-      status
-      numberOfItems
-      totalAmount
-      totalQty
-      warehouse {
-        id
-        displayName
-      }
-      businessPartner {
-        id
-        displayName
-      }
+      ...getHeader
       lines {
-        id
-        item {
-          id
-          displayName
-        }
-        qty
-        eachPrice
-        diff
+        ...getLine
       }
     }
   }
 `;
 
 export const POST_HEADER_WITH_PAYMENT = gql`
+  ${HEADER}
+  ${LINE}
   mutation postHeader(
     $headerId: Int
     $type: PaymentTypes
@@ -196,52 +120,19 @@ export const POST_HEADER_WITH_PAYMENT = gql`
         amountRequired: $amountRequired
       }
     ) {
-      id
-      number
-      transactionDate
-      status
-      numberOfItems
-      totalAmount
-      totalQty
-      warehouse {
-        id
-        displayName
-      }
-      businessPartner {
-        id
-        displayName
-      }
+      ...getHeader
       lines {
-        id
-        item {
-          id
-          displayName
-        }
-        qty
-        eachPrice
-        diff
+        ...getLine
       }
     }
   }
 `;
 
 export const REMOVE_LINE = gql`
+  ${HEADER}
   mutation removeLine($id: Int!) {
     removeLine(id: $id) {
-      id
-      number
-      transactionDate
-      numberOfItems
-      totalAmount
-      totalQty
-      warehouse {
-        id
-        displayName
-      }
-      businessPartner {
-        id
-        displayName
-      }
+      ...getHeader
     }
   }
 `;
