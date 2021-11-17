@@ -118,13 +118,48 @@ export type TransactionsState = {
   error: any;
 };
 
+export type InventoryArgs = {
+  skip?: number;
+  take?: number;
+  warehouseId?: number;
+  itemId?: number;
+  categoryId?: number;
+  uomId?: number;
+  searchText?: string;
+  itemsBelow?: number;
+  itemsAbove?: number;
+  amountBelow?: number;
+  amountAbove?: number;
+  refreshList?: string;
+  lastUpdated?: Date;
+};
+
 export type TransactionArgs = {
   skip?: number;
   take?: number;
   type?: TransactionType;
+  durationBegin?: Date;
+  durationEnd?: Date;
+  warehouseId?: number;
+  businessPartnerId?: number;
+  includeLines?: boolean;
+  searchText?: string;
+  itemsBelow?: number;
+  itemsAbove?: number;
+  amountBelow?: number;
+  amountAbove?: number;
+  refreshList?: string;
+  lastUpdated?: Date;
+};
+
+export type LineArgs = {
+  skip?: number;
+  take?: number;
   status?: TransactionStatus;
   headerId?: number;
   itemId?: number;
+  warehouseId?: number;
+  businessPartnerId?: number;
   includeSales?: boolean;
   includePurchases?: boolean;
   includePIs?: boolean;
@@ -144,6 +179,8 @@ export type PaymentArgs = {
   headerId?: number;
   durationBegin?: Date;
   durationEnd?: Date;
+  amountBelow?: number;
+  amountAbove?: number;
 };
 
 export type InventorySummary = {

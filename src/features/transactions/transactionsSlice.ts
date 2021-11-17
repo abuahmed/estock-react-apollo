@@ -9,6 +9,7 @@ import {
   DailySummary,
   DailySummaryType,
   InventorySummary,
+  LineArgs,
   LineSummary,
   LineSummaryType,
   PaymentArgs,
@@ -73,20 +74,22 @@ export const fetchHeaders = createAsyncThunk<
   any,
   TransactionArgs,
   { rejectValue: RejectWithValueType }
->("transactions/fetchHeaders", async (_arg, thunkAPI) => {
+>("transactions/fetchHeaders", async (headerArg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     let lastUpdated = startOfDay(new Date());
-    if (_arg.refreshList === "refresh") lastUpdated = new Date();
+    if (headerArg.refreshList === "refresh") lastUpdated = new Date();
 
     const response = await apolloClient.query({
       query: GET_ALL_TRANSACTIONS,
       variables: {
-        ..._arg,
-        lastUpdated: lastUpdated,
-        durationBegin: startOfDay(_arg.durationBegin as Date).toISOString(),
-        durationEnd: endOfDay(_arg.durationEnd as Date).toISOString(),
+        ...headerArg,
+        lastUpdated,
+        durationBegin: startOfDay(
+          headerArg.durationBegin as Date
+        ).toISOString(),
+        durationEnd: endOfDay(headerArg.durationEnd as Date).toISOString(),
       },
     });
 
@@ -102,21 +105,29 @@ export const fetchHeaders = createAsyncThunk<
 
 export const fetchLines = createAsyncThunk<
   any,
-  TransactionArgs,
+  LineArgs,
   { rejectValue: RejectWithValueType }
 >("transactions/fetchLines", async (transactionArgs, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
     let lastUpdated = startOfDay(new Date());
     if (transactionArgs.refreshList === "refresh") lastUpdated = new Date();
-
-    const response = await apolloClient.query({
-      query: GET_TRANSACTION_LINES,
-      variables: {
+    let tranArgs;
+    if (transactionArgs.headerId) {
+      tranArgs = { ...transactionArgs }; // { ...transactionArgs, lastUpdated: new Date() };
+    } else {
+      tranArgs = {
         ...transactionArgs,
         durationBegin: transactionArgs.durationBegin as Date,
         durationEnd: transactionArgs.durationEnd as Date,
         lastUpdated: lastUpdated,
+      };
+    }
+
+    const response = await apolloClient.query({
+      query: GET_TRANSACTION_LINES,
+      variables: {
+        ...tranArgs,
       },
     });
 
@@ -195,7 +206,13 @@ export const addHeader = createAsyncThunk<
     } = arg;
     let lastUpdated = new Date();
     const durationBegin = addMonths(new Date(), -1);
-
+    if (type === TransactionType.Sale || type === TransactionType.Purchase) {
+      if (!businessPartner || businessPartner.id === 0) {
+        const message = "Choose Business Partner First";
+        await setErrorAction(dispatch, { message });
+        return rejectWithValue({ message });
+      }
+    }
     const bpId =
       businessPartner && businessPartner.id !== 0 ? businessPartner.id : null;
     const toWareId =
@@ -247,10 +264,20 @@ export const addLine = createAsyncThunk<
   TransactionLine,
   { rejectValue: RejectWithValueType }
 >("transactions/addLine", async (tranLine, thunkAPI) => {
-  const { getState, rejectWithValue, dispatch } = thunkAPI;
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const { id, item, header, qty, eachPrice, diff } = tranLine;
     const { businessPartner, toWarehouse } = header as TransactionHeader;
+    if (
+      header?.type === TransactionType.Sale ||
+      header?.type === TransactionType.Purchase
+    ) {
+      if (!businessPartner || businessPartner.id === 0) {
+        const message = "Choose Business Partner First";
+        await setErrorAction(dispatch, { message });
+        return rejectWithValue({ message });
+      }
+    }
     const bpId =
       businessPartner && businessPartner.id !== 0 ? businessPartner.id : null;
     const toWareId =
@@ -270,25 +297,25 @@ export const addLine = createAsyncThunk<
         eachPrice: eachPrice,
         diff: diff,
       },
+      refetchQueries: [
+        {
+          query: GET_TRANSACTION_LINES,
+          variables: {
+            headerId: header?.id,
+          },
+        },
+      ],
     });
 
     if (response && response.data && response.data.createUpdateLine) {
-      const {
-        transactions: { lines },
-      } = getState() as { transactions: TransactionsState };
-      let restItems = [...lines];
       const addedLine = (await response.data
         .createUpdateLine) as TransactionLine;
-      if (tranLine && tranLine.id) {
-        restItems = restItems.filter((it) => it.id !== tranLine.id);
-      }
-      restItems.push(addedLine);
-      dispatch(setLines(restItems));
-      await setSuccessAction(dispatch, {
-        message: `Item Successfully Added`,
-      });
 
-      return addedLine.header;
+      // await setSuccessAction(dispatch, {
+      //   message: `Item Successfully Added`,
+      // });
+
+      return addedLine;
     }
   } catch (error: any) {
     const message = error.message;
@@ -652,6 +679,7 @@ export const transactionsSlice = createSlice({
     builder.addCase(fetchHeaders.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.headers = payload;
+      if (payload.length > 0) state.selectedHeader = payload[0];
     });
     builder.addCase(fetchHeaders.rejected, (state) => {
       state.loading = "idle";
@@ -754,7 +782,9 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(addLine.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.selectedHeader = payload;
+      state.selectedHeader = payload.header;
+      state.lines = state.lines.filter((c) => c.id !== payload.id);
+      state.lines.unshift(payload);
     });
     builder.addCase(addLine.rejected, (state) => {
       state.loading = "idle";
