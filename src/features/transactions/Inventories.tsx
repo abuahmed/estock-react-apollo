@@ -190,6 +190,8 @@ export const Inventories = () => {
               <Table size="small" aria-label="a simple table">
                 <TableHead>
                   <StyledTableRow>
+                    <StyledTableCell>S.No</StyledTableCell>
+
                     <StyledTableCell>Warehouse</StyledTableCell>
                     <StyledTableCell>Item</StyledTableCell>
                     <StyledTableCell>Category</StyledTableCell>
@@ -207,8 +209,11 @@ export const Inventories = () => {
                     <TableSkeleton numRows={10} numColumns={8} />
                   ) : (
                     inventories &&
-                    inventories.map((row) => (
+                    inventories.map((row, index) => (
                       <StyledTableRow key={row.id}>
+                        <StyledTableCell component="th" scope="row">
+                          {index + 1}
+                        </StyledTableCell>
                         <StyledTableCell component="th" scope="row">
                           {row.warehouse?.displayName}
                         </StyledTableCell>
@@ -418,6 +423,8 @@ export const Inventories = () => {
             <Table size="small" aria-label="a dense table">
               <TableHead>
                 <StyledTableRow>
+                  <StyledTableCell>S.No</StyledTableCell>
+
                   <StyledTableCell>Type</StyledTableCell>
                   <StyledTableCell>Warehouse</StyledTableCell>
                   <StyledTableCell>Date</StyledTableCell>
@@ -433,12 +440,14 @@ export const Inventories = () => {
                   <TableSkeleton numRows={10} numColumns={8} />
                 ) : (
                   lines &&
-                  lines.map((row) => (
+                  lines.map((row, index) => (
                     <StyledTableRow key={row.id}>
+                      <StyledTableCell component="th" scope="row">
+                        {index + 1}
+                      </StyledTableCell>
                       <StyledTableCell component="th" scope="row">
                         {row.header?.type}
                       </StyledTableCell>
-
                       <StyledTableCell component="th" scope="row">
                         {row.header?.warehouse?.displayName}
                       </StyledTableCell>
