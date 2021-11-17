@@ -16,7 +16,7 @@ export const GET_DAILY_TRANSACTIONS_SUMMARY = gql`
     dailyTransactions(
       type: $type
       durationBegin: "2021-08-11"
-      durationEnd: "2021-10-11"
+      durationEnd: "2021-12-11"
     ) {
       transactionDate
       totalTransactions
@@ -44,12 +44,18 @@ export const GET_ALL_TRANSACTIONS = gql`
   ${HEADER}
   query GetTransactions(
     $type: TransactionType!
+    $searchText: String
+    $skip: Int
+    $take: Int
     $durationBegin: DateTime
     $durationEnd: DateTime
     $lastUpdated: DateTime
   ) {
     transactions(
       type: $type
+      skip: $skip
+      take: $take
+      searchText: $searchText
       durationBegin: $durationBegin
       durationEnd: $durationEnd
       lastUpdated: $lastUpdated

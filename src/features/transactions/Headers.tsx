@@ -28,6 +28,7 @@ import {
   Button,
   IconButton,
   Stack,
+  TablePagination,
   TextField,
   Typography,
 } from "@mui/material";
@@ -58,22 +59,25 @@ export const Headers = ({ type }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const { headers, loading } = useAppSelector(selectTransactions);
 
-  const { user } = useAppSelector(selectAuth);
+  const [total, setTotal] = useState(20);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     dispatch(changePageTitle(`${type} List`));
 
-    if (headers.length === 0)
+      const skipRows = currentPage * rowsPerPage;
       dispatch(
         fetchHeaders({
           type,
           durationBegin: startDate as Date,
           durationEnd: endDate as Date,
           refreshList: "All",
+          skip: skipRows,
+          take: rowsPerPage,
         })
       );
-    else {
-      if (headers[0].type !== type)
+  }, [dispatch, type, startDate, endDate, currentPage, rowsPerPage]);
         dispatch(
           fetchHeaders({
             type,
@@ -88,6 +92,20 @@ export const Headers = ({ type }: HeaderProps) => {
 
   const DeleteHeader = (id: number) => {
     dispatch(removeHeader(id));
+  };
+  const handlePageChange = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    page: number
+  ) => {
+    setCurrentPage(page);
+  };
+  const handleRowsPerPageChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const rows = parseInt(event.target.value);
+    //if (rows === -1) rows = total;
+    setCurrentPage(0);
+    setRowsPerPage(rows);
   };
   const RefreshList = () => {
     dispatch(
@@ -221,6 +239,9 @@ export const Headers = ({ type }: HeaderProps) => {
                   headers.map((row) => (
                     <StyledTableRow key={row.id}>
                       <StyledTableCell component="th" scope="row">
+                        {currentPage * rowsPerPage + index + 1}
+                      </StyledTableCell>
+                      <StyledTableCell component="th" scope="row">
                         {format(
                           new Date(row.transactionDate as Date),
                           "MMM-dd-yyyy"
@@ -317,9 +338,34 @@ export const Headers = ({ type }: HeaderProps) => {
               </TableBody>
             </Table>
           </TableContainer>
-          <Typography variant="h4" component="div">
+          {/* <Pagination
+            hideNextButton
+            hidePrevButton
+            showFirstButton
+            showLastButton
+          /> */}
+          <TablePagination
+            component="div"
+            count={total}
+            onPageChange={handlePageChange}
+            showFirstButton
+            showLastButton
+            rowsPerPageOptions={[
+              5,
+              10,
+              25,
+              50,
+              100,
+              { value: total, label: "All" },
+            ]}
+            page={currentPage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            labelRowsPerPage="Number of items per page"
+          ></TablePagination>
+          {/* <Typography variant="h4" component="div">
             {headers.length} {type}s
-          </Typography>
+          </Typography> */}
         </Grid>
       </Box>
     </>
