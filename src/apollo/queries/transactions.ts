@@ -17,6 +17,8 @@ export const GET_DAILY_TRANSACTIONS_SUMMARY = gql`
       type: $type
       durationBegin: "2021-08-11"
       durationEnd: "2021-12-11"
+      take: 7
+      groupByDate: true
     ) {
       transactionDate
       totalTransactions
@@ -60,7 +62,11 @@ export const GET_ALL_TRANSACTIONS = gql`
       durationEnd: $durationEnd
       lastUpdated: $lastUpdated
     ) {
-      ...getHeader
+      totalTransactions
+      totalAmount
+      headers {
+        ...getHeader
+      }
     }
   }
 `;

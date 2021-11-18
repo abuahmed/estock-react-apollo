@@ -28,6 +28,11 @@ export type TransactionLine = {
   linePrice?: number;
 };
 
+export type TransactionsWithSummary = {
+  totalTransactions?: number;
+  totalAmount?: number;
+  headers?: TransactionHeader[];
+};
 export type TransactionHeader = {
   id?: number;
   uuid?: string;
@@ -107,6 +112,7 @@ export type TransactionsState = {
   dailySalesSummary: DailySummary[];
   selectedInventory?: Inventory;
   headers: TransactionHeader[];
+  headersWithSummary: TransactionsWithSummary;
   lines: TransactionLine[];
   payments: Payment[];
   selectedHeader: TransactionHeader;
@@ -143,6 +149,7 @@ export type TransactionArgs = {
   warehouseId?: number;
   businessPartnerId?: number;
   includeLines?: boolean;
+  groupByDate?: boolean;
   searchText?: string;
   itemsBelow?: number;
   itemsAbove?: number;

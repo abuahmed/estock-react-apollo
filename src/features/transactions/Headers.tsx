@@ -22,13 +22,15 @@ import Accordion from "@mui/material/Accordion";
 import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { changePageTitle } from "../preferences/preferencesSlice";
+import {
+  changePageTitle,
+  selectPreference,
+} from "../preferences/preferencesSlice";
 import {
   Box,
   Button,
   IconButton,
   Stack,
-  TablePagination,
   TextField,
   Typography,
 } from "@mui/material";
@@ -46,26 +48,36 @@ import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
 import { BusinessPartnerType } from "../setups/types/bpTypes";
+import Paging from "../../components/Layout/Paging";
 
 export const Headers = ({ type }: HeaderProps) => {
-  const [startDate, setStartDate] = useState<Date | null>(
-    addMonths(new Date(), -1)
-  );
   const bpType =
     type === TransactionType.Sale
       ? BusinessPartnerType.Customer
       : BusinessPartnerType.Vendor;
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
-  const dispatch = useAppDispatch();
-  const { headers, loading } = useAppSelector(selectTransactions);
 
-  const [total, setTotal] = useState(20);
+  const [startDate, setStartDate] = useState<Date | null>(
+    addMonths(new Date(), -3)
+  );
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
+
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector(selectAuth);
+  const { searchText } = useAppSelector(selectPreference);
+  const {
+    headersWithSummary: { headers, totalTransactions, totalAmount },
+    loading,
+  } = useAppSelector(selectTransactions);
+
+  const [total, setTotal] = useState(0);
+  const [summaryAmount, setSummaryAmount] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     dispatch(changePageTitle(`${type} List`));
 
+    if (type && startDate && endDate) {
       const skipRows = currentPage * rowsPerPage;
       dispatch(
         fetchHeaders({
@@ -77,36 +89,35 @@ export const Headers = ({ type }: HeaderProps) => {
           take: rowsPerPage,
         })
       );
-  }, [dispatch, type, startDate, endDate, currentPage, rowsPerPage]);
-        dispatch(
-          fetchHeaders({
-            type,
-            durationBegin: startDate as Date,
-            durationEnd: endDate as Date,
-            refreshList: "All",
-          })
-        );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, type, startDate, endDate]);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, type, startDate, endDate, currentPage, rowsPerPage]);
+
+  useEffect(() => {
+    if (searchText && searchText.length > 0)
+      dispatch(
+        fetchHeaders({
+          type,
+          durationBegin: startDate as Date,
+          durationEnd: endDate as Date,
+          refreshList: "All",
+          searchText,
+        })
+      );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, searchText]);
+
+  useEffect(() => {
+    setTotal(totalTransactions as number);
+    setSummaryAmount(totalAmount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalTransactions, totalAmount]);
   const DeleteHeader = (id: number) => {
     dispatch(removeHeader(id));
   };
-  const handlePageChange = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    page: number
-  ) => {
-    setCurrentPage(page);
-  };
-  const handleRowsPerPageChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const rows = parseInt(event.target.value);
-    //if (rows === -1) rows = total;
-    setCurrentPage(0);
-    setRowsPerPage(rows);
-  };
+
   const RefreshList = () => {
     dispatch(
       fetchHeaders({
@@ -114,6 +125,8 @@ export const Headers = ({ type }: HeaderProps) => {
         durationBegin: startDate as Date,
         durationEnd: endDate as Date,
         refreshList: "refresh",
+        skip: currentPage * rowsPerPage,
+        take: rowsPerPage,
       })
     );
   };
@@ -156,7 +169,7 @@ export const Headers = ({ type }: HeaderProps) => {
             </Typography>
           </Button>
         </Box>
-        <Accordion sx={{ mt: 1 }}>
+        <Accordion sx={{ mt: 1 }} expanded={true}>
           <StyledAccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -164,7 +177,7 @@ export const Headers = ({ type }: HeaderProps) => {
           >
             <Typography>Filter List</Typography>
           </StyledAccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails sx={{ py: 2 }}>
             <Stack direction="row" justifyContent="center" alignItems="center">
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Grid
@@ -212,6 +225,7 @@ export const Headers = ({ type }: HeaderProps) => {
             <Table size="small" aria-label="a simple table">
               <TableHead>
                 <StyledTableRow>
+                  <StyledTableCell>S.No</StyledTableCell>
                   <StyledTableCell>Date</StyledTableCell>
                   <StyledTableCell>Warehouse</StyledTableCell>
                   {(type === TransactionType.Sale ||
@@ -236,7 +250,7 @@ export const Headers = ({ type }: HeaderProps) => {
                   <TableSkeleton numRows={10} numColumns={7} />
                 ) : (
                   headers &&
-                  headers.map((row) => (
+                  headers.map((row, index) => (
                     <StyledTableRow key={row.id}>
                       <StyledTableCell component="th" scope="row">
                         {currentPage * rowsPerPage + index + 1}
@@ -338,34 +352,22 @@ export const Headers = ({ type }: HeaderProps) => {
               </TableBody>
             </Table>
           </TableContainer>
-          {/* <Pagination
-            hideNextButton
-            hidePrevButton
-            showFirstButton
-            showLastButton
-          /> */}
-          <TablePagination
-            component="div"
-            count={total}
-            onPageChange={handlePageChange}
-            showFirstButton
-            showLastButton
-            rowsPerPageOptions={[
-              5,
-              10,
-              25,
-              50,
-              100,
-              { value: total, label: "All" },
-            ]}
-            page={currentPage}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            labelRowsPerPage="Number of items per page"
-          ></TablePagination>
-          {/* <Typography variant="h4" component="div">
-            {headers.length} {type}s
-          </Typography> */}
+
+          <Stack spacing={1}>
+            <Paging
+              total={total}
+              rowsPerPage={rowsPerPage}
+              currentPage={currentPage}
+              setRowsPerPage={setRowsPerPage}
+              setCurrentPage={setCurrentPage}
+            />
+            <Typography variant="h6" component="div">
+              Number of Transactions: {totalTransactions}
+            </Typography>
+            <Typography variant="h6" component="div">
+              Total Amount: {summaryAmount}
+            </Typography>
+          </Stack>
         </Grid>
       </Box>
     </>

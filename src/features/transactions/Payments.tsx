@@ -22,11 +22,11 @@ import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 //import { selectAuth } from "../auth/authSlice";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
-import {
-  PaymentMethods,
-  PaymentStatus,
-  PaymentTypes,
-} from "./types/paymentTypes";
+// import {
+//   PaymentMethods,
+//   PaymentStatus,
+//   PaymentTypes,
+// } from "./types/paymentTypes";
 import { changePageTitle } from "../preferences/preferencesSlice";
 import { NavLink } from "react-router-dom";
 import { StyledAccordionSummary } from "../../styles/componentStyled";

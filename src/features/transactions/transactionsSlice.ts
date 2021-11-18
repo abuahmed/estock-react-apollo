@@ -18,6 +18,7 @@ import {
   TransactionLine,
   TransactionsState,
   TransactionStatus,
+  TransactionsWithSummary,
   TransactionType,
 } from "./types/transactionTypes";
 import {
@@ -94,7 +95,7 @@ export const fetchHeaders = createAsyncThunk<
     });
 
     if (response && response.data && response.data.transactions) {
-      return response.data.transactions as TransactionHeader[];
+      return response.data.transactions as TransactionsWithSummary[];
     }
   } catch (error: any) {
     const message = error.message;
@@ -603,6 +604,7 @@ const initialState: TransactionsState = {
   dailySalesSummary: [],
   selectedInventory: { id: 0 },
   headers: [],
+  headersWithSummary: {},
   lines: [],
   payments: [],
   selectedHeader: {
@@ -678,8 +680,8 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(fetchHeaders.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.headers = payload;
-      if (payload.length > 0) state.selectedHeader = payload[0];
+      state.headersWithSummary = payload;
+      // if (payload.length > 0) state.selectedHeader = payload[0];
     });
     builder.addCase(fetchHeaders.rejected, (state) => {
       state.loading = "idle";
