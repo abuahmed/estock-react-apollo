@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_ITEMS = gql`
-  query GetItems {
-    items {
+  query GetItems($searchText: String, $skip: Int, $take: Int) {
+    items(skip: $skip, take: $take, searchText: $searchText) {
       id
       displayName
       description

@@ -10,7 +10,11 @@ export type Category = {
   parentCategory?: Category;
   childCategories?: [Category];
 };
-
+export type itemsWithSummary = {
+  totalCount?: number;
+  totalAmount?: number;
+  items?: Item[];
+};
 export type RemoveCategory = {
   type?: CategoryType;
   id?: number;
@@ -48,3 +52,15 @@ enum ItemType {
   Manufactured,
   Service,
 }
+
+export type ItemArgs = {
+  skip?: number;
+  take?: number;
+  itemCategoryId?: number;
+  unitOfMeasureId?: number;
+  searchText?: string;
+  amountBelow?: number;
+  amountAbove?: number;
+  refreshList?: string;
+  lastUpdated?: Date;
+};

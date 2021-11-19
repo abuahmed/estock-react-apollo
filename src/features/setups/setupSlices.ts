@@ -6,6 +6,7 @@ import {
   Category,
   CategoryType,
   Item,
+  ItemArgs,
   RemoveCategory,
 } from "./types/itemTypes";
 import {
@@ -64,15 +65,18 @@ import {
 
 export const fetchItems = createAsyncThunk<
   any,
-  string,
+  ItemArgs,
   { rejectValue: RejectWithValueType }
->("setups/fetchItems", async (_arg, thunkAPI) => {
+>("setups/fetchItems", async (itemArg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
     //await sleep(5000);
     const response = await apolloClient.query({
       query: GET_ALL_ITEMS,
+      variables: {
+        ...itemArg,
+      },
     });
 
     if (response && response.data && response.data.items) {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -14,7 +14,10 @@ import TableHead from "@mui/material/TableHead";
 import Paper from "@mui/material/Paper";
 import { NavLink as RouterLink } from "react-router-dom";
 
-import { changePageTitle } from "../preferences/preferencesSlice";
+import {
+  changePageTitle,
+  selectPreference,
+} from "../preferences/preferencesSlice";
 import {
   Box,
   Button,
@@ -27,15 +30,21 @@ import { Add, Edit } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
+import Paging from "../../components/Layout/Paging";
 
 export const Items = () => {
   const dispatch = useAppDispatch();
   const { items, loading } = useAppSelector(selectSetups);
-
+  const { searchText } = useAppSelector(selectPreference);
+  const [total, setTotal] = useState(13);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     dispatch(changePageTitle("Items List"));
-    dispatch(fetchItems("all"));
-  }, [dispatch]);
+    const skipRows = currentPage * rowsPerPage;
+
+    dispatch(fetchItems({ skip: skipRows, take: rowsPerPage }));
+  }, [dispatch, currentPage, rowsPerPage]);
 
   const DeleteItem = (id: number) => {
     dispatch(removeItem(id));
@@ -69,6 +78,7 @@ export const Items = () => {
           <Table size="small" aria-label="a simple table">
             <TableHead>
               <StyledTableRow>
+                <StyledTableCell>S.No</StyledTableCell>
                 <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Category</StyledTableCell>
                 <StyledTableCell>UOM</StyledTableCell>
@@ -84,8 +94,11 @@ export const Items = () => {
                 <TableSkeleton numRows={10} numColumns={6} />
               ) : (
                 items &&
-                items.map((row) => (
+                items.map((row, index) => (
                   <StyledTableRow key={row.id}>
+                    <StyledTableCell component="th" scope="row">
+                      {currentPage * rowsPerPage + index + 1}
+                    </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       <Button
                         color="primary"
@@ -135,9 +148,24 @@ export const Items = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Typography variant="h4" component="div">
+        <Stack spacing={1}>
+          <Paging
+            total={total}
+            rowsPerPage={rowsPerPage}
+            currentPage={currentPage}
+            setRowsPerPage={setRowsPerPage}
+            setCurrentPage={setCurrentPage}
+          />
+          {/* <Typography variant="h6" component="div">
+            Number of Transactions: {totalTransactions}
+          </Typography>
+          <Typography variant="h6" component="div">
+            Total Amount: {summaryAmount}
+          </Typography> */}
+        </Stack>
+        {/* <Typography variant="h4" component="div">
           {items.length} Items
-        </Typography>
+        </Typography> */}
       </Grid>
     </>
   );
