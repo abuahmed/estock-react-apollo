@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { GET_ITEM } from "../fragments/items";
 import { HEADER, LINE } from "../fragments/transaction";
 
 export const GET_INVENTORY_SUMMARY = gql`
@@ -71,20 +72,12 @@ export const GET_ALL_TRANSACTIONS = gql`
   }
 `;
 export const GET_INVENTORIES = gql`
+  ${GET_ITEM}
   query GetInventories($lastUpdated: DateTime) {
     inventories(lastUpdated: $lastUpdated) {
       id
       item {
-        id
-        displayName
-        itemCategory {
-          id
-          displayName
-        }
-        unitOfMeasure {
-          id
-          displayName
-        }
+        ...getItem
       }
       warehouse {
         id
@@ -98,20 +91,12 @@ export const GET_INVENTORIES = gql`
   }
 `;
 export const GET_ITEM_INVENTORY = gql`
+  ${GET_ITEM}
   query GetItemInventory($id: Int!) {
     getItemInventory(id: $id) {
       id
       item {
-        id
-        displayName
-        itemCategory {
-          id
-          displayName
-        }
-        unitOfMeasure {
-          id
-          displayName
-        }
+        ...getItem
       }
       warehouse {
         id
@@ -198,33 +183,3 @@ export const GET_SELECTED_HEADER = gql`
     }
   }
 `;
-
-// export const GET_SELECTED_LINE = gql`
-//   query GetSelectedLine($id: Int!) {
-//     getSelectedLine(id: $id) {
-//       itemId
-//       item{
-//         id
-//         displayName
-//       }
-//       qty
-//       eachPrice
-//       header :{id
-//       transactionDate
-//       number
-//       numberOfItems
-//       totalQty
-//       totalAmount
-//       warehouseId
-//       warehouse {
-//         id
-//         displayName
-//       }
-//       businessPartnerId
-//       businessPartner {
-//         id
-//         displayName
-//       }}
-//     }
-//   }
-// `;
