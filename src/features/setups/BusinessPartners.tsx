@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -17,30 +17,59 @@ import TableHead from "@mui/material/TableHead";
 import Paper from "@mui/material/Paper";
 import { NavLink as RouterLink } from "react-router-dom";
 
-import { changePageTitle } from "../preferences/preferencesSlice";
+import {
+  changePageTitle,
+  selectPreference,
+} from "../preferences/preferencesSlice";
 import {
   Box,
   Button,
   Divider,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { Add, Edit } from "@mui/icons-material";
+import { Add, Edit, Refresh } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
 import { BusinessPartnerProps } from "./types/bpTypes";
+import Paging from "../../components/Layout/Paging";
 
 export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
   const dispatch = useAppDispatch();
   const { businessPartners, loading } = useAppSelector(selectSetups);
-
+  const { searchText } = useAppSelector(selectPreference);
+  const [total, setTotal] = useState(4);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     dispatch(changePageTitle(`${type} List`));
-    dispatch(fetchBusinessPartners(type));
-  }, [dispatch, type]);
+    const skipRows = currentPage * rowsPerPage;
 
+    dispatch(
+      fetchBusinessPartners({
+        type,
+        searchText,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  }, [dispatch, type, searchText, currentPage, rowsPerPage]);
+  const RefreshList = () => {
+    const skipRows = currentPage * rowsPerPage;
+
+    dispatch(
+      fetchBusinessPartners({
+        type,
+        refreshList: "refresh",
+        searchText,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  };
   const DeleteBusinessPartner = (id: number) => {
     dispatch(removeBusinessPartner({ id, type }));
   };
@@ -50,22 +79,28 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
       <Helmet>
         <title>{type} List | Pinna Stock</title>
       </Helmet>
-      <Box component="div">
-        <Button
-          color="secondary"
-          variant="contained"
-          component={RouterLink}
-          to={`/app/${type}/0`}
-        >
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        justifyItems="center"
+      >
+        <Tooltip title={`Refresh ${type}s List`}>
+          <Button color="secondary" variant="contained" onClick={RefreshList}>
+            <Refresh />
+          </Button>
+        </Tooltip>
+        <Tooltip title={`Add New ${type}`}>
+          <Button
+            color="secondary"
+            variant="contained"
+            component={RouterLink}
+            to={`/app/${type}/0`}
           >
-            <Add /> Add New {type}
-          </Typography>
-        </Button>
-      </Box>
+            <Add />
+          </Button>
+        </Tooltip>
+      </Stack>
+
       <Divider variant="middle" sx={{ my: 2 }} />
 
       <Grid container justifyContent="flex-start">
@@ -73,6 +108,7 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
           <Table size="small" aria-label="a simple table">
             <TableHead>
               <StyledTableRow>
+                <StyledTableCell>S.No</StyledTableCell>
                 <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Credit(Birr)</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
@@ -83,8 +119,11 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
                 <TableSkeleton numRows={10} numColumns={1} />
               ) : (
                 businessPartners &&
-                businessPartners.map((row) => (
+                businessPartners.map((row, index) => (
                   <StyledTableRow key={row.id}>
+                    <StyledTableCell component="th" scope="row">
+                      {currentPage * rowsPerPage + index + 1}
+                    </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       <Button
                         color="primary"
@@ -125,9 +164,18 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Typography variant="h4" component="div">
-          {businessPartners.length} {type}s
-        </Typography>
+        <Stack spacing={1}>
+          <Paging
+            total={total}
+            rowsPerPage={rowsPerPage}
+            currentPage={currentPage}
+            setRowsPerPage={setRowsPerPage}
+            setCurrentPage={setCurrentPage}
+          />
+          <Typography variant="h6" component="div">
+            Total Number of {type}s: {total}
+          </Typography>
+        </Stack>
       </Grid>
     </>
   );
