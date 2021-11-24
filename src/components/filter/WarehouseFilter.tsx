@@ -8,9 +8,13 @@ import {
 import { Warehouse } from "../../features/setups/types/warehouseTypes";
 
 interface Props {
-  setWarehouseId: any;
+  setWarehouseId?: any;
+  setToWarehouseId?: any;
 }
-export const WarehouseFilter = ({ setWarehouseId }: Props) => {
+export const WarehouseFilter = ({
+  setWarehouseId,
+  setToWarehouseId,
+}: Props) => {
   const dispatch = useAppDispatch();
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>({
     displayName: "select",
@@ -23,17 +27,24 @@ export const WarehouseFilter = ({ setWarehouseId }: Props) => {
   return (
     <>
       <Autocomplete
-        id="selectedWarehouseId"
+        id={setToWarehouseId ? "selectedToWarehouseId" : "selectedWarehouseId"}
         options={warehouses}
         value={selectedWarehouse}
         getOptionLabel={(option) => option.displayName as string}
         sx={{ mt: 1 }}
         onChange={(e, value) => {
           setSelectedWarehouse(value as Warehouse);
-          setWarehouseId(value?.id as number);
+          if (setWarehouseId) setWarehouseId(value?.id as number);
+          else if (setToWarehouseId) setToWarehouseId(value?.id as number);
         }}
         renderInput={(params) => (
-          <TextField label="Warehouse" name="selectedWarehouseId" {...params} />
+          <TextField
+            label={setToWarehouseId ? "Destination" : "Warehouse"}
+            name={
+              setToWarehouseId ? "selectedToWarehouseId" : "selectedWarehouseId"
+            }
+            {...params}
+          />
         )}
       />
     </>

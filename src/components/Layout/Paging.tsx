@@ -40,7 +40,7 @@ function Paging({
       page={currentPage}
       rowsPerPage={rowsPerPage}
       onRowsPerPageChange={handleRowsPerPageChange}
-      labelRowsPerPage="Number of items per page"
+      labelRowsPerPage="rows per page"
     ></TablePagination>
   );
 }

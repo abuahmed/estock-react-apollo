@@ -4,6 +4,7 @@ import { RootState } from "../../app/store";
 import { apolloClient } from "../../apollo/graphql";
 import {
   Category,
+  CategoryArgs,
   CategoryType,
   Item,
   ItemArgs,
@@ -14,6 +15,7 @@ import {
   BusinessPartner,
   SetupsState,
   RemoveBusinessPartner,
+  BusinessPartnerArgs,
 } from "./types/bpTypes";
 import {
   Client,
@@ -69,14 +71,19 @@ export const fetchItems = createAsyncThunk<
   { rejectValue: RejectWithValueType }
 >("setups/fetchItems", async (itemArg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
+  const { refreshList } = itemArg;
 
   try {
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
+
     //await sleep(5000);
     const response = await apolloClient.query({
       query: GET_ALL_ITEMS,
       variables: {
         ...itemArg,
       },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.items) {
@@ -91,20 +98,24 @@ export const fetchItems = createAsyncThunk<
 
 export const fetchCategories = createAsyncThunk<
   any,
-  CategoryType,
+  CategoryArgs,
   { rejectValue: RejectWithValueType }
->("setups/fetchCategories", async (categoryType, thunkAPI) => {
+>("setups/fetchCategories", async (categoryArg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
+    const fetchPolicy =
+      categoryArg.refreshList === "refresh" ? "network-only" : "cache-first";
+
     const response = await apolloClient.query({
       query: GET_ALL_CATEGORIES,
-      variables: { type: categoryType },
+      variables: { ...categoryArg },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.getCategories) {
       return {
-        type: categoryType,
+        type: categoryArg.type,
         data: response.data.getCategories as Category[],
       };
     }
@@ -140,21 +151,15 @@ export const addItem = createAsyncThunk<
   any,
   Item,
   { rejectValue: RejectWithValueType }
->("setups/addItem", async (arg, thunkAPI) => {
+>("setups/addItem", async (item, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    let item = { ...arg };
-    item.itemCategory = {
-      id: item.itemCategoryId as number,
-    };
-    item.unitOfMeasure = {
-      id: item.unitOfMeasureId as number,
-    };
-
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_ITEM,
       variables: {
         ...item,
+        itemCategoryId: item.itemCategory?.id,
+        unitOfMeasureId: item.unitOfMeasure?.id,
       },
       refetchQueries: [{ query: GET_ALL_ITEMS }],
     });
@@ -171,7 +176,7 @@ export const addItem = createAsyncThunk<
     }
   } catch (error: any) {
     const message = error.message;
-    dispatch(setSelectedItem(arg));
+    dispatch(setSelectedItem(item));
     await setErrorAction(dispatch, { message });
     //error.graphQLErrors[0].extensions.exception.response.status;
     return rejectWithValue({ message });
@@ -193,12 +198,13 @@ export const addCategory = createAsyncThunk<
       refetchQueries: [
         {
           query: GET_ALL_CATEGORIES,
-          variables: { type: category.type },
+          variables: { type: category.type, skip: 0, take: -1 },
         },
       ],
     });
 
     if (response && response.data && response.data.createItemCategory) {
+      dispatch(setSelectedCategory({ ...category, id: 0, displayName: "" }));
       if (category.type === CategoryType.ItemCategory) {
         const addedCategory = (await response.data
           .createItemCategory) as Category;
@@ -211,6 +217,7 @@ export const addCategory = createAsyncThunk<
     }
   } catch (error: any) {
     const message = error.message;
+    dispatch(setSelectedCategory(category));
     await setErrorAction(dispatch, { message });
     return rejectWithValue({ message });
   }
@@ -256,7 +263,7 @@ export const removeCategory = createAsyncThunk<
       refetchQueries: [
         {
           query: GET_ALL_CATEGORIES,
-          variables: { type: category.type },
+          variables: { type: category.type, skip: 0, take: -1 },
         },
       ],
     });
@@ -273,15 +280,19 @@ export const removeCategory = createAsyncThunk<
 
 export const fetchBusinessPartners = createAsyncThunk<
   any,
-  BusinessPartnerType,
+  BusinessPartnerArgs,
   { rejectValue: RejectWithValueType }
->("setups/fetchBusinessPartners", async (type, thunkAPI) => {
+>("setups/fetchBusinessPartners", async (businessPartnerArg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
-
+  const { refreshList } = businessPartnerArg;
   try {
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
+
     const response = await apolloClient.query({
       query: GET_ALL_BUSINESS_PARTNERS,
-      variables: { type },
+      variables: { ...businessPartnerArg },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.businessPartners) {
@@ -945,11 +956,16 @@ async function setErrorAction(
 const defaultItem: Item = {
   displayName: "",
   description: "",
-  itemCategoryId: 0,
-  unitOfMeasureId: 0,
+  itemCategory: { id: 0, displayName: "select..." },
+  unitOfMeasure: { id: 0, displayName: "select..." },
   purchasePrice: 0,
   sellingPrice: 0,
   safeQty: 0,
+};
+const defaultCategory: Category = {
+  displayName: "",
+  id: 0,
+  type: CategoryType.ItemCategory,
 };
 const defaultBusinessPartner: BusinessPartner = {
   type: BusinessPartnerType.Customer,
@@ -987,6 +1003,7 @@ const initialSetupsState: SetupsState = {
   items: [],
   categories: [],
   uoms: [],
+  selectedCategory: { ...defaultCategory },
   selectedItem: { ...defaultItem },
   businessPartners: [],
   selectedBusinessPartner: { ...defaultBusinessPartner },
@@ -1021,12 +1038,19 @@ export const setupsSlice = createSlice({
     resetError: (state) => {
       state.error = null;
     },
+    resetSelectedCategory: (state) => {
+      state.selectedCategory = { ...defaultCategory };
+    },
+    setSelectedCategory: (state, { payload }) => {
+      state.selectedCategory = payload;
+    },
     resetSelectedItem: (state) => {
       state.selectedItem = { ...defaultItem };
     },
     setSelectedItem: (state, { payload }) => {
       state.selectedItem = payload;
     },
+
     setItems: (state, { payload }) => {
       state.items = payload;
     },
@@ -1149,11 +1173,13 @@ export const setupsSlice = createSlice({
     builder.addCase(addCategory.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       if (payload.type === CategoryType.ItemCategory) {
-        state.categories = state.categories.filter((c) => c.id !== payload.id);
-        state.categories.unshift(payload);
+        state.categories = state.categories.filter(
+          (c) => c.id !== payload.data.id
+        );
+        state.categories.unshift(payload.data);
       } else {
-        state.uoms = state.uoms.filter((c) => c.id !== payload.id);
-        state.uoms.unshift(payload);
+        state.uoms = state.uoms.filter((c) => c.id !== payload.data.id);
+        state.uoms.unshift(payload.data);
       }
     });
     builder.addCase(addCategory.rejected, (state, { payload }) => {
@@ -1441,6 +1467,8 @@ export const {
   setError,
   resetSelectedItem,
   setSelectedItem,
+  resetSelectedCategory,
+  setSelectedCategory,
   setItems,
   resetSelectedBusinessPartner,
   setSelectedBusinessPartner,

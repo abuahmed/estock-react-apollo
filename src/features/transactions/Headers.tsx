@@ -29,9 +29,11 @@ import {
 import {
   Box,
   Button,
+  Divider,
   IconButton,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { Add, Edit, Visibility, Refresh } from "@mui/icons-material";
@@ -49,6 +51,8 @@ import { isPrivilegedTransaction } from "../../utils/authUtils";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
 import { BusinessPartnerType } from "../setups/types/bpTypes";
 import Paging from "../../components/Layout/Paging";
+import { WarehouseFilter } from "../../components/filter/WarehouseFilter";
+import { BusinessPartnerFilter } from "../../components/filter/BusinessPartnerFilter";
 
 export const Headers = ({ type }: HeaderProps) => {
   const bpType =
@@ -71,8 +75,11 @@ export const Headers = ({ type }: HeaderProps) => {
 
   const [total, setTotal] = useState(0);
   const [summaryAmount, setSummaryAmount] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
+  const [warehouseId, setWarehouseId] = useState<number>(0);
+  const [toWarehouseId, setToWarehouseId] = useState<number>(0);
+  const [businessPartnerId, setBusinessPartnerId] = useState<number>(0);
 
   useEffect(() => {
     dispatch(changePageTitle(`${type} List`));
@@ -82,6 +89,9 @@ export const Headers = ({ type }: HeaderProps) => {
       dispatch(
         fetchHeaders({
           type,
+          warehouseId: warehouseId !== 0 ? warehouseId : undefined,
+          businessPartnerId:
+            businessPartnerId !== 0 ? businessPartnerId : undefined,
           durationBegin: startDate as Date,
           durationEnd: endDate as Date,
           refreshList: "All",
@@ -92,13 +102,25 @@ export const Headers = ({ type }: HeaderProps) => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, type, startDate, endDate, currentPage, rowsPerPage]);
+  }, [
+    dispatch,
+    type,
+    startDate,
+    endDate,
+    currentPage,
+    rowsPerPage,
+    warehouseId,
+    businessPartnerId,
+  ]);
 
   useEffect(() => {
     if (searchText && searchText.length > 0)
       dispatch(
         fetchHeaders({
           type,
+          warehouseId: warehouseId !== 0 ? warehouseId : undefined,
+          businessPartnerId:
+            businessPartnerId !== 0 ? businessPartnerId : undefined,
           durationBegin: startDate as Date,
           durationEnd: endDate as Date,
           refreshList: "All",
@@ -114,8 +136,8 @@ export const Headers = ({ type }: HeaderProps) => {
     setSummaryAmount(totalAmount as number);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalTransactions, totalAmount]);
-  const DeleteHeader = (id: number) => {
-    dispatch(removeHeader(id));
+  const DeleteHeader = (id: number, totalAmount: number) => {
+    dispatch(removeHeader({ id, totalAmount }));
   };
 
   const RefreshList = () => {
@@ -137,86 +159,100 @@ export const Headers = ({ type }: HeaderProps) => {
         <title>{type} List | Pinna Stock</title>
       </Helmet>
       <Box sx={{ m: 1 }}>
-        <Box component="div">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          justifyItems="center"
+        >
+          <Tooltip title={`Refresh ${type}s List`}>
+            <Button color="secondary" variant="contained" onClick={RefreshList}>
+              <Refresh />
+            </Button>
+          </Tooltip>
           {isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
-            <Button
-              color="secondary"
-              variant="contained"
-              component={RouterLink}
-              to={`/app/${type}/0`}
-            >
-              <Typography
-                variant="h5"
-                component="h5"
-                sx={{ display: "flex", justifyItems: "center" }}
+            <Tooltip title={`Add New ${type}`}>
+              <Button
+                color="secondary"
+                variant="contained"
+                component={RouterLink}
+                to={`/app/${type}/0`}
               >
                 <Add />
-              </Typography>
-            </Button>
+              </Button>
+            </Tooltip>
           )}
-          <Button
-            color="secondary"
-            variant="contained"
-            sx={{ ml: 1 }}
-            onClick={RefreshList}
-          >
-            <Typography
-              variant="h5"
-              component="h5"
-              sx={{ display: "flex", justifyItems: "center" }}
-            >
-              <Refresh />
-            </Typography>
-          </Button>
-        </Box>
-        <Accordion sx={{ mt: 1 }} expanded={true}>
+        </Stack>
+        <Accordion sx={{ mt: 1 }}>
           <StyledAccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
             id="panel1a-header"
           >
-            <Typography>Filter List</Typography>
+            <Typography>Filter {type}s List</Typography>
           </StyledAccordionSummary>
           <AccordionDetails sx={{ py: 2 }}>
-            <Stack direction="row" justifyContent="center" alignItems="center">
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="center"
+            >
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <Grid
-                  container
-                  spacing={2}
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <Grid item sm={4} xs={12}>
-                    <DatePicker
-                      label={"Start Date"}
-                      views={["day", "month", "year"]}
-                      minDate={new Date("2021-01-01")}
-                      value={startDate}
-                      onChange={(newValue) => {
-                        setStartDate(newValue);
-                      }}
-                      renderInput={(params) => (
-                        <TextField {...params} fullWidth helperText="" />
-                      )}
-                    />
-                  </Grid>
-                  <Grid item sm={4} xs={12}>
-                    <DatePicker
-                      label={"End Date"}
-                      views={["day", "month", "year"]}
-                      minDate={new Date("2021-01-01")}
-                      value={endDate}
-                      onChange={(newValue) => {
-                        setEndDate(newValue);
-                      }}
-                      renderInput={(params) => (
-                        <TextField {...params} fullWidth helperText="" />
-                      )}
-                    />
-                  </Grid>
+                <Grid item sm={4} xs={12}>
+                  <DatePicker
+                    label={"From Date"}
+                    views={["day", "month", "year"]}
+                    minDate={new Date("2021-01-01")}
+                    value={startDate}
+                    onChange={(newValue) => {
+                      setStartDate(newValue);
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth helperText="" />
+                    )}
+                  />
+                </Grid>
+                <Grid item sm={4} xs={12}>
+                  <DatePicker
+                    label={"To Date"}
+                    views={["day", "month", "year"]}
+                    minDate={new Date("2021-01-01")}
+                    value={endDate}
+                    onChange={(newValue) => {
+                      setEndDate(newValue);
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} fullWidth helperText="" />
+                    )}
+                  />
                 </Grid>
               </LocalizationProvider>
-            </Stack>
+            </Grid>
+
+            <Divider variant="middle" sx={{ my: 2 }} />
+
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Grid item sm={4} xs={12}>
+                <WarehouseFilter setWarehouseId={setWarehouseId} />
+              </Grid>
+              <Grid item sm={4} xs={12}>
+                {(type === TransactionType.Sale ||
+                  type === TransactionType.Purchase) && (
+                  <BusinessPartnerFilter
+                    bpType={bpType}
+                    setBusinessPartnerId={setBusinessPartnerId}
+                  />
+                )}
+                {type === TransactionType.Transfer && (
+                  <WarehouseFilter setToWarehouseId={setToWarehouseId} />
+                )}
+              </Grid>
+            </Grid>
           </AccordionDetails>
         </Accordion>
 
@@ -337,7 +373,10 @@ export const Headers = ({ type }: HeaderProps) => {
                               <IconButton
                                 color="secondary"
                                 onClick={() =>
-                                  DeleteHeader(row ? (row.id as number) : 0)
+                                  DeleteHeader(
+                                    row ? (row.id as number) : 0,
+                                    row ? (row.totalAmount as number) : 0
+                                  )
                                 }
                                 size="large"
                               >
@@ -362,7 +401,7 @@ export const Headers = ({ type }: HeaderProps) => {
               setCurrentPage={setCurrentPage}
             />
             <Typography variant="h6" component="div">
-              Number of Transactions: {totalTransactions}
+              Number of {type}s: {totalTransactions}
             </Typography>
             <Typography variant="h6" component="div">
               Total Amount: {summaryAmount}
