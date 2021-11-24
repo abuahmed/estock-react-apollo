@@ -102,10 +102,22 @@ export type RemoveBusinessPartner = {
   id?: number;
 };
 
+export type BusinessPartnerArgs = {
+  type: BusinessPartnerType;
+  skip?: number;
+  take?: number;
+  searchText?: string;
+  amountBelow?: number;
+  amountAbove?: number;
+  refreshList?: string;
+  lastUpdated?: Date;
+};
+
 export type SetupsState = {
   items: Item[];
   categories: Category[];
   uoms: Category[];
+  selectedCategory: Category;
   selectedItem: Item;
   businessPartners: BusinessPartner[];
   selectedBusinessPartner: BusinessPartner;

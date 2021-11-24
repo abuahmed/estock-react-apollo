@@ -1,8 +1,18 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_BUSINESS_PARTNERS = gql`
-  query GetBusinessPartners($type: BusinessPartnerType!) {
-    businessPartners(type: $type) {
+  query GetBusinessPartners(
+    $type: BusinessPartnerType!
+    $searchText: String
+    $skip: Int
+    $take: Int
+  ) {
+    businessPartners(
+      type: $type
+      skip: $skip
+      take: $take
+      searchText: $searchText
+    ) {
       id
       displayName
       description
