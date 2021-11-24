@@ -29,6 +29,7 @@ import { Users, User } from "../features/setups/users";
 import DashboardLayout from "./DashboardLayout";
 import MainLayout from "./MainLayout";
 import { Payments } from "../features/transactions/Payments";
+import { ItemsHistory } from "../features/transactions/ItemsHistory";
 
 let PrivilegedRoles: Role[] = [];
 const routes = (isLoggedIn: Boolean, roles: Role[]) => {
@@ -45,6 +46,14 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         {
           path: "onHand",
           element: isPrivileged(<Inventories />, RoleTypes.OnHandInventory),
+        },
+        {
+          path: "itemsHistory",
+          element: isPrivileged(<ItemsHistory />, RoleTypes.OnHandInventory),
+        },
+        {
+          path: "itemsHistory/:id",
+          element: isPrivileged(<ItemsHistory />, RoleTypes.OnHandInventory),
         },
         {
           path: "payments",

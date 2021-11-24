@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
+import { NavLink as RouterLink } from "react-router-dom";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
@@ -17,497 +18,189 @@ import { changePageTitle } from "../preferences/preferencesSlice";
 import {
   Box,
   Button,
-  Checkbox,
   Divider,
-  FormControlLabel,
-  FormGroup,
   IconButton,
   Stack,
-  Tab,
-  Tabs,
-  TextField,
   Typography,
 } from "@mui/material";
-import { Backspace, History, Refresh, ViewList } from "@mui/icons-material";
+import { History, Refresh } from "@mui/icons-material";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
-import {
-  fetchInventories,
-  fetchLines,
-  selectTransactions,
-} from "./transactionsSlice";
-import { TabPanel } from "../../styles/tabComponents";
-import {
-  Inventory,
-  TransactionStatus,
-  TransactionType,
-} from "./types/transactionTypes";
-import { addMonths, endOfDay, format, startOfDay } from "date-fns";
-import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
-import { DatePicker, LocalizationProvider } from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import { NavLink } from "react-router-dom";
-import { Role } from "../auth/types/authType";
-import { selectAuth } from "../auth/authSlice";
-import { isPrivilegedTransaction } from "../../utils/authUtils";
+import { fetchInventories, selectTransactions } from "./transactionsSlice";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
+import Paging from "../../components/Layout/Paging";
+import { WarehouseFilter } from "../../components/filter/WarehouseFilter";
+import { CategoryFilter } from "../../components/filter/CategoryFilter";
+import { CategoryType } from "../setups/types/itemTypes";
+import { ItemFilter } from "../../components/filter/ItemFilter";
 
 export const Inventories = () => {
-  const [tabValue, setTabValue] = useState(0);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
-
-  const [state, setState] = useState({
-    includeSale: true,
-    includePurchase: true,
-    includePI: true,
-    includeTransfer: true,
-  });
-
-  const handleChangeType = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.checked,
-    });
-  };
-
-  const { includeSale, includePurchase, includePI, includeTransfer } = state;
-
-  const [startDate, setStartDate] = useState<Date | null>(
-    addMonths(new Date(), -1)
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
-
-  const [selectedInventory, setSelectedInventory] = useState<Inventory>({});
   const dispatch = useAppDispatch();
-  const { inventories, loading, lines } = useAppSelector(selectTransactions);
-  const { user } = useAppSelector(selectAuth);
+  const { inventories, loading } = useAppSelector(selectTransactions);
+  const [total, setTotal] = useState(14);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [warehouseId, setWarehouseId] = useState<number>(0);
+  const [itemId, setItemId] = useState<number>(0);
+  const [itemCategoryId, setItemCategoryId] = useState<number>(0);
+  const [itemUomId, setItemUomId] = useState<number>(0);
 
   useEffect(() => {
-    if (inventories.length === 0) dispatch(fetchInventories("all"));
     dispatch(changePageTitle("Inventories List"));
-  }, [dispatch, inventories.length]);
+    const skipRows = currentPage * rowsPerPage;
+    dispatch(
+      fetchInventories({
+        itemId: itemId !== 0 ? itemId : undefined,
+        warehouseId: warehouseId !== 0 ? warehouseId : undefined,
+        categoryId: itemCategoryId !== 0 ? itemCategoryId : undefined,
+        uomId: itemUomId !== 0 ? itemUomId : undefined,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  }, [
+    dispatch,
+    currentPage,
+    rowsPerPage,
+    itemId,
+    warehouseId,
+    itemCategoryId,
+    itemUomId,
+  ]);
 
   const RefreshList = () => {
-    dispatch(fetchInventories("refresh"));
-    fetchInventoryLines("refresh");
-  };
-  const ChangeTab = (id: number, tabIndex: number) => {
-    if (tabIndex === 1)
-      setSelectedInventory(inventories.find((i) => i.id === id) as Inventory);
-    setTabValue(tabIndex);
-  };
+    const skipRows = currentPage * rowsPerPage;
 
-  const fetchInventoryLines = (refresh: string) => {
-    const userRoles = user?.roles as Role[];
-    let startDateHeader = startDate as Date;
-    let endDateHeader = endDate as Date;
-    if (refresh !== "refresh") {
-      startDateHeader = startOfDay(startDateHeader);
-      endDateHeader = endOfDay(endDateHeader);
-    }
     dispatch(
-      fetchLines({
-        itemId: selectedInventory.item?.id,
-        includeSales:
-          includeSale &&
-          isPrivilegedTransaction(userRoles, TransactionType.Sale, "View"),
-        includePurchases:
-          includePurchase &&
-          isPrivilegedTransaction(userRoles, TransactionType.Purchase, "View"),
-        includePIs:
-          includePI &&
-          isPrivilegedTransaction(userRoles, TransactionType.PI, "View"),
-        includeTransfers:
-          includeTransfer &&
-          isPrivilegedTransaction(userRoles, TransactionType.Transfer, "View"),
-        durationBegin: startDateHeader,
-        durationEnd: endDateHeader,
-        status: TransactionStatus.Posted,
+      fetchInventories({
+        refreshList: "refresh",
+        skip: skipRows,
+        take: rowsPerPage,
       })
     );
   };
-  useEffect(() => {
-    fetchInventoryLines("All");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    dispatch,
-    selectedInventory,
-    includeSale,
-    includePurchase,
-    includePI,
-    includeTransfer,
-    startDate,
-    endDate,
-  ]);
 
   return (
     <>
       <Helmet>
         <title>Inventories List | Pinna Stock</title>
       </Helmet>
-      <Tabs
-        sx={{ m: 1 }}
-        value={tabValue}
-        onChange={handleChange}
-        aria-label="icon label tabs example"
-        variant="fullWidth"
-        centered
-        textColor="secondary"
-        indicatorColor="secondary"
-      >
-        <Tab icon={<ViewList />} label="Inventories" />
-        <Tab icon={<History />} label="Item History" />
-      </Tabs>
-      <TabPanel value={tabValue} index={0}>
-        <>
-          <Box component="div">
-            <Button color="secondary" variant="contained" onClick={RefreshList}>
-              <Typography
-                variant="h5"
-                component="h5"
-                sx={{ display: "flex", justifyItems: "center" }}
-              >
-                <Refresh />
-              </Typography>
-            </Button>
-          </Box>
-          <Accordion sx={{ mt: 1 }}>
-            <StyledAccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
+
+      <>
+        <Box component="div">
+          <Button color="secondary" variant="contained" onClick={RefreshList}>
+            <Typography
+              variant="h5"
+              component="h5"
+              sx={{ display: "flex", justifyItems: "center" }}
             >
-              <Typography>Filter List</Typography>
-            </StyledAccordionSummary>
-            <AccordionDetails>
-              <Divider variant="middle" sx={{ my: 2 }} />
-            </AccordionDetails>
-          </Accordion>
-
-          <Grid container justifyContent="flex-start" sx={{ mt: 1 }}>
-            <TableContainer component={Paper}>
-              <Table size="small" aria-label="a simple table">
-                <TableHead>
-                  <StyledTableRow>
-                    <StyledTableCell>S.No</StyledTableCell>
-
-                    <StyledTableCell>Warehouse</StyledTableCell>
-                    <StyledTableCell>Item</StyledTableCell>
-                    <StyledTableCell>Category</StyledTableCell>
-                    <StyledTableCell>UOM</StyledTableCell>
-                    <StyledTableCell>Qty. OnHand</StyledTableCell>
-                    <StyledTableCell>Total Purchase</StyledTableCell>
-                    <StyledTableCell>Total Sale</StyledTableCell>
-                    <StyledTableCell>Expected Profit</StyledTableCell>
-
-                    <StyledTableCell>View Item History</StyledTableCell>
-                  </StyledTableRow>
-                </TableHead>
-                <TableBody>
-                  {loading === "pending" ? (
-                    <TableSkeleton numRows={10} numColumns={8} />
-                  ) : (
-                    inventories &&
-                    inventories.map((row, index) => (
-                      <StyledTableRow key={row.id}>
-                        <StyledTableCell component="th" scope="row">
-                          {index + 1}
-                        </StyledTableCell>
-                        <StyledTableCell component="th" scope="row">
-                          {row.warehouse?.displayName}
-                        </StyledTableCell>
-                        <StyledTableCell component="th" scope="row">
-                          {row.item?.displayName}
-                        </StyledTableCell>
-                        <StyledTableCell component="th" scope="row">
-                          {row.item?.itemCategory?.displayName}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          {row.item?.unitOfMeasure?.displayName}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          {row.qtyOnHand?.toLocaleString()}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          {row.totalPurchaseValue?.toLocaleString()}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          {row.totalSaleValue?.toLocaleString()}
-                        </StyledTableCell>
-                        <StyledTableCell>
-                          {row.totalProfitValue?.toLocaleString()}
-                        </StyledTableCell>
-
-                        <StyledTableCell>
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                            alignItems="center"
-                          >
-                            <IconButton
-                              color="primary"
-                              onClick={() => ChangeTab(row.id as number, 1)}
-                              size="large"
-                            >
-                              <History />
-                            </IconButton>
-                          </Stack>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Typography variant="h4" component="div">
-              {inventories.length} inventories
+              <Refresh />
             </Typography>
-          </Grid>
-        </>
-      </TabPanel>
-      <TabPanel value={tabValue} index={1}>
-        <>
-          <Box
-            component="div"
-            sx={{ display: "flex", justifyContent: "space-between" }}
+          </Button>
+        </Box>
+        <Accordion sx={{ mt: 1 }}>
+          <StyledAccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
           >
-            <Button
-              color="secondary"
-              variant="contained"
-              sx={{ ml: 1 }}
-              onClick={() => ChangeTab(0, 0)}
+            <Typography>Filter List</Typography>
+          </StyledAccordionSummary>
+          <AccordionDetails>
+            <Grid
+              container
+              spacing={2}
+              alignItems="center"
+              justifyContent="center"
             >
-              <Typography
-                variant="h5"
-                component="h5"
-                sx={{ display: "flex", justifyItems: "center" }}
-              >
-                <Backspace />
-              </Typography>
-            </Button>
-          </Box>
+              <Grid item sm={3} xs={12}>
+                <WarehouseFilter setWarehouseId={setWarehouseId} />
+              </Grid>
+              <Grid item sm={3} xs={12}>
+                <ItemFilter setItemId={setItemId} />
+              </Grid>
+              <Grid item sm={3} xs={12}>
+                <CategoryFilter
+                  bpType={CategoryType.ItemCategory}
+                  setItemCategoryId={setItemCategoryId}
+                  setItemUomId={setItemUomId}
+                />
+              </Grid>
+              <Grid item sm={3} xs={12}>
+                <CategoryFilter
+                  bpType={CategoryType.UnitOfMeasure}
+                  setItemCategoryId={setItemCategoryId}
+                  setItemUomId={setItemUomId}
+                />
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
 
-          <Accordion sx={{ mt: 1 }}>
-            <StyledAccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-              id="panel1a-header"
-            >
-              <Typography>Filter List</Typography>
-            </StyledAccordionSummary>
-            <AccordionDetails>
-              <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <FormGroup aria-label="position" row>
-                  {isPrivilegedTransaction(
-                    user?.roles as Role[],
-                    TransactionType.Sale,
-                    "View"
-                  ) && (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={includeSale}
-                          onChange={handleChangeType}
-                          name="includeSale"
-                          inputProps={{ "aria-label": "controlled" }}
-                        />
-                      }
-                      label="Sales"
-                    />
-                  )}
-                  {isPrivilegedTransaction(
-                    user?.roles as Role[],
-                    TransactionType.Purchase,
-                    "View"
-                  ) && (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={includePurchase}
-                          onChange={handleChangeType}
-                          name="includePurchase"
-                          inputProps={{ "aria-label": "controlled" }}
-                        />
-                      }
-                      label="Purchases"
-                    />
-                  )}
-                  {isPrivilegedTransaction(
-                    user?.roles as Role[],
-                    TransactionType.PI,
-                    "View"
-                  ) && (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={includePI}
-                          onChange={handleChangeType}
-                          name="includePI"
-                          inputProps={{ "aria-label": "controlled" }}
-                        />
-                      }
-                      label="PIs"
-                    />
-                  )}
-                  {isPrivilegedTransaction(
-                    user?.roles as Role[],
-                    TransactionType.Transfer,
-                    "View"
-                  ) && (
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={includeTransfer}
-                          onChange={handleChangeType}
-                          name="includeTransfer"
-                          inputProps={{ "aria-label": "controlled" }}
-                        />
-                      }
-                      label="Transfers"
-                    />
-                  )}
-                </FormGroup>
-              </Stack>
-              <Divider variant="middle" sx={{ my: 2 }} />
-              <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <Grid
-                    container
-                    spacing={2}
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Grid item sm={4} xs={12}>
-                      <DatePicker
-                        label={"Start Date"}
-                        views={["day", "month", "year"]}
-                        minDate={new Date("2021-01-01")}
-                        value={startDate}
-                        onChange={(newValue) => {
-                          setStartDate(newValue);
-                        }}
-                        renderInput={(params) => (
-                          <TextField {...params} fullWidth helperText="" />
-                        )}
-                      />
-                    </Grid>
-                    <Grid item sm={4} xs={12}>
-                      <DatePicker
-                        label={"End Date"}
-                        views={["day", "month", "year"]}
-                        minDate={new Date("2021-01-01")}
-                        value={endDate}
-                        onChange={(newValue) => {
-                          setEndDate(newValue);
-                        }}
-                        renderInput={(params) => (
-                          <TextField {...params} fullWidth helperText="" />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
-                </LocalizationProvider>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
-          <TableContainer component={Paper} sx={{ mt: 1 }}>
-            <Table size="small" aria-label="a dense table">
+        <Grid container justifyContent="flex-start" sx={{ mt: 1 }}>
+          <TableContainer component={Paper}>
+            <Table size="small" aria-label="a simple table">
               <TableHead>
                 <StyledTableRow>
                   <StyledTableCell>S.No</StyledTableCell>
 
-                  <StyledTableCell>Type</StyledTableCell>
                   <StyledTableCell>Warehouse</StyledTableCell>
-                  <StyledTableCell>Date</StyledTableCell>
-                  <StyledTableCell align="center">Number</StyledTableCell>
-                  <StyledTableCell align="center">Item</StyledTableCell>
-                  <StyledTableCell align="right">Qty(Diff)</StyledTableCell>
-                  <StyledTableCell align="right">Each Price</StyledTableCell>
-                  <StyledTableCell align="right">Line Price</StyledTableCell>
+                  <StyledTableCell>Item</StyledTableCell>
+                  <StyledTableCell>Category</StyledTableCell>
+                  <StyledTableCell>UOM</StyledTableCell>
+                  <StyledTableCell>Qty. OnHand</StyledTableCell>
+                  <StyledTableCell>Total Purchase</StyledTableCell>
+                  <StyledTableCell>Total Sale</StyledTableCell>
+                  <StyledTableCell>Expected Profit</StyledTableCell>
+
+                  <StyledTableCell>View Item History</StyledTableCell>
                 </StyledTableRow>
               </TableHead>
               <TableBody>
                 {loading === "pending" ? (
                   <TableSkeleton numRows={10} numColumns={8} />
                 ) : (
-                  lines &&
-                  lines.map((row, index) => (
+                  inventories &&
+                  inventories.map((row, index) => (
                     <StyledTableRow key={row.id}>
                       <StyledTableCell component="th" scope="row">
-                        {index + 1}
+                        {currentPage * rowsPerPage + index + 1}
                       </StyledTableCell>
                       <StyledTableCell component="th" scope="row">
-                        {row.header?.type}
+                        {row.warehouse?.displayName}
                       </StyledTableCell>
                       <StyledTableCell component="th" scope="row">
-                        {row.header?.warehouse?.displayName}
+                        {row.item?.displayName}
+                      </StyledTableCell>
+                      <StyledTableCell component="th" scope="row">
+                        {row.item?.itemCategory?.displayName}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {row.item?.unitOfMeasure?.displayName}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {row.qtyOnHand?.toLocaleString()}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {row.totalPurchaseValue?.toLocaleString()}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {row.totalSaleValue?.toLocaleString()}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {row.totalProfitValue?.toLocaleString()}
                       </StyledTableCell>
 
-                      <StyledTableCell component="th" scope="row">
-                        {format(
-                          new Date(
-                            (row.header?.transactionDate as Date).toString()
-                          ),
-                          "MMM-dd-yyyy"
-                        )}
-                        (
-                        {getAmharicCalendarFormatted(
-                          row.header?.transactionDate as Date,
-                          "-"
-                        )}
-                        )
-                      </StyledTableCell>
-                      <StyledTableCell component="th" scope="row">
-                        <Button
-                          color="primary"
-                          component={NavLink}
-                          to={"/app/" + row.header?.type + "/" + row.header?.id}
-                        >
-                          {row.header?.number}
-                        </Button>
-                      </StyledTableCell>
-                      <StyledTableCell component="th" scope="row">
-                        <Button
-                          color="primary"
-                          component={NavLink}
-                          to={"/app/item/" + row.item?.id}
-                        >
-                          {row.item?.displayName}
-                        </Button>
-                      </StyledTableCell>
-                      <StyledTableCell
-                        scope="row"
-                        sx={{ padding: "0px 16px" }}
-                        align="right"
-                      >
-                        {row.header?.type === TransactionType.PI
-                          ? row.diff?.toLocaleString()
-                          : row.qty?.toLocaleString()}
-                      </StyledTableCell>
-
-                      <StyledTableCell
-                        scope="row"
-                        sx={{ padding: "0px 16px" }}
-                        align="right"
-                      >
-                        {row.eachPrice?.toLocaleString()}
-                      </StyledTableCell>
-
-                      <StyledTableCell
-                        scope="row"
-                        sx={{ padding: "0px 16px" }}
-                        align="right"
-                      >
-                        {row.linePrice?.toLocaleString()}
+                      <StyledTableCell>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <IconButton
+                            color="primary"
+                            component={RouterLink}
+                            to={`/app/itemsHistory/${row.item?.id}`}
+                            size="large"
+                          >
+                            <History />
+                          </IconButton>
+                        </Stack>
                       </StyledTableCell>
                     </StyledTableRow>
                   ))
@@ -515,11 +208,26 @@ export const Inventories = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          <Typography variant="h4" component="div">
-            {lines.length} transactions
+          <Stack spacing={1}>
+            <Paging
+              total={total}
+              rowsPerPage={rowsPerPage}
+              currentPage={currentPage}
+              setRowsPerPage={setRowsPerPage}
+              setCurrentPage={setCurrentPage}
+            />
+            {/* <Typography variant="h6" component="div">
+            Number of Transactions: {totalTransactions}
           </Typography>
-        </>
-      </TabPanel>
+          <Typography variant="h6" component="div">
+            Total Amount: {summaryAmount}
+          </Typography> */}
+          </Stack>
+          {/* <Typography variant="h4" component="div">
+              {inventories.length} inventories
+            </Typography> */}
+        </Grid>
+      </>
     </>
   );
 };
