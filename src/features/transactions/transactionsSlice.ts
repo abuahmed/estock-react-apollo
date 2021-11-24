@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, ThunkDispatch } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  ThunkDispatch,
+  createSelector,
+} from "@reduxjs/toolkit";
 //import { store } from "../../app/store";
 import { addMonths, endOfDay, startOfDay } from "date-fns";
 
@@ -8,6 +13,7 @@ import { RejectWithValueType } from "../auth/types/authType";
 import {
   DailySummary,
   DailySummaryType,
+  InventoryArgs,
   InventorySummary,
   LineArgs,
   LineSummary,
@@ -18,6 +24,7 @@ import {
   TransactionLine,
   TransactionsState,
   TransactionStatus,
+  TransactionSummary,
   TransactionsWithSummary,
   TransactionType,
 } from "./types/transactionTypes";
@@ -47,18 +54,21 @@ import { Payment, PaymentTypes } from "./types/paymentTypes";
 
 export const fetchInventories = createAsyncThunk<
   any,
-  string,
+  InventoryArgs,
   { rejectValue: RejectWithValueType }
->("transactions/fetchInventories", async (_arg, thunkAPI) => {
+>("transactions/fetchInventories", async (inventoryArg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
-
+  const { refreshList } = inventoryArg;
   try {
-    let lastUpdated = startOfDay(new Date());
-    if (_arg === "refresh") lastUpdated = new Date();
+    //let lastUpdated = startOfDay(new Date());
+    //if (_arg === "refresh") lastUpdated = new Date();
 
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
     const response = await apolloClient.query({
       query: GET_INVENTORIES,
-      variables: { lastUpdated: lastUpdated },
+      variables: { ...inventoryArg },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.inventories) {
@@ -108,20 +118,20 @@ export const fetchLines = createAsyncThunk<
   any,
   LineArgs,
   { rejectValue: RejectWithValueType }
->("transactions/fetchLines", async (transactionArgs, thunkAPI) => {
+>("transactions/fetchLines", async (lineArgs, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    let lastUpdated = startOfDay(new Date());
-    if (transactionArgs.refreshList === "refresh") lastUpdated = new Date();
+    const { refreshList } = lineArgs;
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
     let tranArgs;
-    if (transactionArgs.headerId) {
-      tranArgs = { ...transactionArgs }; // { ...transactionArgs, lastUpdated: new Date() };
+    if (lineArgs.headerId) {
+      tranArgs = { ...lineArgs };
     } else {
       tranArgs = {
-        ...transactionArgs,
-        durationBegin: transactionArgs.durationBegin as Date,
-        durationEnd: transactionArgs.durationEnd as Date,
-        lastUpdated: lastUpdated,
+        ...lineArgs,
+        durationBegin: lineArgs.durationBegin as Date,
+        durationEnd: lineArgs.durationEnd as Date,
       };
     }
 
@@ -130,6 +140,7 @@ export const fetchLines = createAsyncThunk<
       variables: {
         ...tranArgs,
       },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.lines) {
@@ -360,7 +371,7 @@ export const postHeader = createAsyncThunk<
 >("transactions/postHeader", async (id, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    console.log(id);
+    //console.log(id);
     const response = await apolloClient.mutate({
       mutation: POST_HEADER,
       variables: { id },
@@ -410,27 +421,21 @@ export const unPostHeader = createAsyncThunk<
 
 export const removeHeader = createAsyncThunk<
   any,
-  number,
+  TransactionSummary,
   { rejectValue: RejectWithValueType }
->("transactions/removeHeader", async (id, thunkAPI) => {
-  const { getState, rejectWithValue, dispatch } = thunkAPI;
+>("transactions/removeHeader", async (transactionSummary, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: REMOVE_HEADER,
-      variables: { id },
+      variables: { id: transactionSummary.id },
     });
 
     if (response && response.data && response.data.removeHeader) {
-      const {
-        transactions: { headers },
-      } = getState() as { transactions: TransactionsState };
-      let restItems = [...headers];
-      restItems = restItems.filter((item) => item.id !== id);
-      dispatch(setHeaders(restItems));
       await setSuccessAction(dispatch, {
         message: "Transaction Successfully Removed",
       });
-      return restItems as TransactionHeader[];
+      return transactionSummary as TransactionSummary;
     }
   } catch (error: any) {
     const message = error.message;
@@ -797,8 +802,12 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(removeHeader.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.headers = payload;
-      state.success = { message: "Transactions Removed Successfully" };
+      state.headersWithSummary.totalTransactions =
+        (state.headersWithSummary.totalTransactions as number) - 1;
+      state.headersWithSummary.totalAmount =
+        (state.headersWithSummary.totalAmount as number) - payload.totalAmount;
+      state.headersWithSummary.headers =
+        state.headersWithSummary.headers?.filter((h) => h.id !== payload.id);
     });
     builder.addCase(removeHeader.rejected, (state) => {
       state.loading = "idle";
@@ -873,3 +882,17 @@ export const selectTransactions = (state: RootState) =>
   state.transactions as TransactionsState;
 
 export default transactionsSlice.reducer;
+
+// State selectors
+// export const selectTodos = (state: RootState) => state.firestore.ordered.todos
+// export const selectTodosCount = createSelector(selectTodos, (todos) => todos.length)
+// export const selectActiveTodosCount = createSelector(
+//   selectTodos,
+//   (todos: Todo[]) => todos && todos.filter((todo) => !todo.isCompleted).length
+// )
+
+//State Selectors with Argument
+// const selectItemsByCategory = createSelector(
+//   [(state) => state.items, (state, category) => category],
+//   (items, category) => items.filter((item) => item.category === category)
+// );

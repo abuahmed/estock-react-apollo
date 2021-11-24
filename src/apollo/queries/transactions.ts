@@ -48,6 +48,8 @@ export const GET_ALL_TRANSACTIONS = gql`
   query GetTransactions(
     $type: TransactionType!
     $searchText: String
+    $warehouseId: Int
+    $businessPartnerId: Int
     $skip: Int
     $take: Int
     $durationBegin: DateTime
@@ -56,6 +58,8 @@ export const GET_ALL_TRANSACTIONS = gql`
   ) {
     transactions(
       type: $type
+      warehouseId: $warehouseId
+      businessPartnerId: $businessPartnerId
       skip: $skip
       take: $take
       searchText: $searchText
@@ -73,8 +77,24 @@ export const GET_ALL_TRANSACTIONS = gql`
 `;
 export const GET_INVENTORIES = gql`
   ${GET_ITEM}
-  query GetInventories($lastUpdated: DateTime) {
-    inventories(lastUpdated: $lastUpdated) {
+  query GetInventories(
+    $warehouseId: Int
+    $itemId: Int
+    $categoryId: Int
+    $uomId: Int
+    $searchText: String
+    $skip: Int
+    $take: Int
+  ) {
+    inventories(
+      warehouseId: $warehouseId
+      itemId: $itemId
+      categoryId: $categoryId
+      uomId: $uomId
+      skip: $skip
+      take: $take
+      searchText: $searchText
+    ) {
       id
       item {
         ...getItem
@@ -122,6 +142,9 @@ export const GET_TRANSACTION_LINES = gql`
     $includeTransfers: Boolean
     $durationBegin: DateTime
     $durationEnd: DateTime
+    $searchText: String
+    $skip: Int
+    $take: Int
     $status: TransactionStatus
     $lastUpdated: DateTime
   ) {
@@ -134,6 +157,9 @@ export const GET_TRANSACTION_LINES = gql`
       includeTransfers: $includeTransfers
       durationBegin: $durationBegin
       durationEnd: $durationEnd
+      skip: $skip
+      take: $take
+      searchText: $searchText
       status: $status
       lastUpdated: $lastUpdated
     ) {

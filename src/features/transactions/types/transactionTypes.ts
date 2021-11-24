@@ -33,6 +33,10 @@ export type TransactionsWithSummary = {
   totalAmount?: number;
   headers?: TransactionHeader[];
 };
+export type TransactionSummary = {
+  id?: number;
+  totalAmount?: number;
+};
 export type TransactionHeader = {
   id?: number;
   uuid?: string;
