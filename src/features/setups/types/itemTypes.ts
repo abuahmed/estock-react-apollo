@@ -56,11 +56,22 @@ enum ItemType {
 export type ItemArgs = {
   skip?: number;
   take?: number;
-  itemCategoryId?: number;
-  unitOfMeasureId?: number;
+  itemId?: number;
+  categoryId?: number;
+  uomId?: number;
   searchText?: string;
   amountBelow?: number;
   amountAbove?: number;
+  refreshList?: string;
+  lastUpdated?: Date;
+};
+export type CategoryArgs = {
+  skip?: number;
+  take?: number;
+  type?: CategoryType;
+
+  searchText?: string;
+
   refreshList?: string;
   lastUpdated?: Date;
 };

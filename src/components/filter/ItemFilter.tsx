@@ -30,7 +30,7 @@ export const ItemFilter = ({ setItemId }: Props) => {
           setItemId(value?.id as number);
         }}
         renderInput={(params) => (
-          <TextField label="Items" name="itemId" {...params} />
+          <TextField label="Item" name="itemId" {...params} />
         )}
       />
     </>

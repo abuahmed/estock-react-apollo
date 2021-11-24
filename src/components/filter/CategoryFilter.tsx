@@ -25,7 +25,7 @@ export const CategoryFilter = ({
   const { categories, uoms } = useAppSelector(selectSetups);
 
   useEffect(() => {
-    dispatch(fetchCategories(bpType));
+    dispatch(fetchCategories({ type: bpType, take: -1, skip: 0 }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
