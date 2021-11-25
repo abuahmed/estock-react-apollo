@@ -48,4 +48,18 @@ export enum RoleTypes {
   PostTransfer = "Post Transfer",
   UnPostTransfer = "UnPost Transfer",
   DeleteTransfer = "Delete Transfer",
+
+  ReserveItems = "Reserve Items",
+  ManageFinancialAccounts = "Manage Financial Accounts",
+  SalesPayments = "Sales Payments",
+  PurchasePayments = "Purchase Payments",
+  AddChecks = "Add Checks",
+  DepositPayments = "Deposit Payments",
+  CheckPayments = "Check Payments",
+  VerifyPayments = "Verify Payments",
+  ClearPayments = "Clear Payments",
+  ViewExpenses = "View Expenses",
+  ManageExpenses = "Manage Expenses",
+  ViewLoans = "View Loans",
+  ManageLoans = "Manage Loans",
 }
