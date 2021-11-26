@@ -30,6 +30,7 @@ import TableSkeleton from "../../components/Layout/TableSkeleton";
 import { changePageTitle } from "../preferences/preferencesSlice";
 import { NavLink } from "react-router-dom";
 import { StyledAccordionSummary } from "../../styles/componentStyled";
+import Paging from "../../components/Layout/Paging";
 
 export const Payments = () => {
   const [startDate, setStartDate] = useState<Date | null>(
@@ -39,7 +40,18 @@ export const Payments = () => {
 
   const dispatch = useAppDispatch();
   const { payments, loading } = useAppSelector(selectTransactions);
-  //const { user } = useAppSelector(selectAuth);
+  //  const { user } = useAppSelector(selectAuth);
+
+  const [total, setTotal] = useState(18);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  useEffect(() => {
+    dispatch(changePageTitle("Payments List"));
+
+    fetchPaymentLines("All");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, startDate, endDate, currentPage, rowsPerPage]);
 
   const RefreshList = () => {
     fetchPaymentLines("refresh");
@@ -49,6 +61,8 @@ export const Payments = () => {
     //const userRoles = user?.roles as Role[];
     let startDateHeader = startDate as Date;
     let endDateHeader = endDate as Date;
+    const skipRows = currentPage * rowsPerPage;
+
     if (refresh !== "refresh") {
       startDateHeader = startOfDay(startDateHeader);
       endDateHeader = endOfDay(endDateHeader);
@@ -62,18 +76,15 @@ export const Payments = () => {
       fetchPayments({
         durationBegin: startDateHeader,
         durationEnd: endDateHeader,
+        refreshList: refresh,
+        skip: skipRows,
+        take: rowsPerPage,
       })
     );
     //status: PaymentStatus.NotCleared,
     // type: PaymentTypes.Sale,
     //     method: PaymentMethods.Cash,
   };
-  useEffect(() => {
-    dispatch(changePageTitle("Payments List"));
-
-    fetchPaymentLines("All");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, startDate, endDate]);
 
   return (
     <>
@@ -165,7 +176,7 @@ export const Payments = () => {
                 payments.map((row, index) => (
                   <StyledTableRow key={row.id}>
                     <StyledTableCell component="th" scope="row">
-                      {index + 1}
+                      {currentPage * rowsPerPage + index + 1}
                     </StyledTableCell>
 
                     <StyledTableCell component="th" scope="row">
@@ -213,9 +224,18 @@ export const Payments = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Typography variant="h4" component="div">
-          {payments.length} payments
-        </Typography>
+        <Stack spacing={1}>
+          <Paging
+            total={total}
+            rowsPerPage={rowsPerPage}
+            currentPage={currentPage}
+            setRowsPerPage={setRowsPerPage}
+            setCurrentPage={setCurrentPage}
+          />
+          <Typography variant="h6" component="div">
+            Number of Payments: {total}
+          </Typography>
+        </Stack>
       </Box>
     </>
   );

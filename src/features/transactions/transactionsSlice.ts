@@ -159,7 +159,9 @@ export const fetchPayments = createAsyncThunk<
 >("transactions/fetchPayments", async (paymentArgs, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
-    //console.log(paymentArgs);
+    const { refreshList } = paymentArgs;
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
     const response = await apolloClient.query({
       query: GET_TRANSACTION_PAYMENTS,
       variables: {
@@ -167,6 +169,7 @@ export const fetchPayments = createAsyncThunk<
         durationBegin: paymentArgs.durationBegin as Date,
         durationEnd: paymentArgs.durationEnd as Date,
       },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.payments) {
