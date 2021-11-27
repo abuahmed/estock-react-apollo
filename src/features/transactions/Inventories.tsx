@@ -201,25 +201,20 @@ export const Inventories = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          <Stack spacing={1}>
-            <Paging
-              total={total}
-              rowsPerPage={rowsPerPage}
-              currentPage={currentPage}
-              setRowsPerPage={setRowsPerPage}
-              setCurrentPage={setCurrentPage}
-            />
-            {/* <Typography variant="h6" component="div">
-            Number of Transactions: {totalTransactions}
-          </Typography>
-          <Typography variant="h6" component="div">
-            Total Amount: {summaryAmount}
-          </Typography> */}
-          </Stack>
-          {/* <Typography variant="h4" component="div">
-              {inventories.length} inventories
-            </Typography> */}
         </Grid>
+
+        <Stack spacing={1}>
+          <Paging
+            total={total}
+            rowsPerPage={rowsPerPage}
+            currentPage={currentPage}
+            setRowsPerPage={setRowsPerPage}
+            setCurrentPage={setCurrentPage}
+          />
+          <Typography variant="h6" component="div">
+            Number of Inventories: {total}
+          </Typography>
+        </Stack>
       </>
     </>
   );

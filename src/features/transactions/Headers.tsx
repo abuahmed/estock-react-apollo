@@ -391,23 +391,22 @@ export const Headers = ({ type }: HeaderProps) => {
               </TableBody>
             </Table>
           </TableContainer>
-
-          <Stack spacing={1}>
-            <Paging
-              total={total}
-              rowsPerPage={rowsPerPage}
-              currentPage={currentPage}
-              setRowsPerPage={setRowsPerPage}
-              setCurrentPage={setCurrentPage}
-            />
-            <Typography variant="h6" component="div">
-              Number of {type}s: {totalTransactions}
-            </Typography>
-            <Typography variant="h6" component="div">
-              Total Amount: {summaryAmount}
-            </Typography>
-          </Stack>
         </Grid>
+        <Stack spacing={1}>
+          <Paging
+            total={total}
+            rowsPerPage={rowsPerPage}
+            currentPage={currentPage}
+            setRowsPerPage={setRowsPerPage}
+            setCurrentPage={setCurrentPage}
+          />
+          <Typography variant="h6" component="div">
+            Number of {type}s: {totalTransactions}
+          </Typography>
+          <Typography variant="h6" component="div">
+            Total Amount: {summaryAmount}
+          </Typography>
+        </Stack>
       </>
     </>
   );

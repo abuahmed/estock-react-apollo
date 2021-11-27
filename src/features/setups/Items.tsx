@@ -218,25 +218,19 @@ export const Items = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Stack spacing={1}>
-          <Paging
-            total={total}
-            rowsPerPage={rowsPerPage}
-            currentPage={currentPage}
-            setRowsPerPage={setRowsPerPage}
-            setCurrentPage={setCurrentPage}
-          />
-          {/* <Typography variant="h6" component="div">
-            Number of Transactions: {totalTransactions}
-          </Typography>
-          <Typography variant="h6" component="div">
-            Total Amount: {summaryAmount}
-          </Typography> */}
-        </Stack>
-        {/* <Typography variant="h4" component="div">
-          {items.length} Items
-        </Typography> */}
       </Grid>
+      <Stack spacing={1}>
+        <Paging
+          total={total}
+          rowsPerPage={rowsPerPage}
+          currentPage={currentPage}
+          setRowsPerPage={setRowsPerPage}
+          setCurrentPage={setCurrentPage}
+        />
+        <Typography variant="h6" component="div">
+          Number of Items: {total}
+        </Typography>
+      </Stack>
     </>
   );
 };

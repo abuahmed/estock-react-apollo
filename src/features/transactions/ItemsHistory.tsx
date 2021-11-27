@@ -389,16 +389,10 @@ export const ItemsHistory = () => {
           setRowsPerPage={setRowsPerPage}
           setCurrentPage={setCurrentPage}
         />
-        {/* <Typography variant="h6" component="div">
-            Number of Transactions: {totalTransactions}
-          </Typography>
-          <Typography variant="h6" component="div">
-            Total Amount: {summaryAmount}
-          </Typography> */}
+        <Typography variant="h6" component="div">
+          Number of Items History: {total}
+        </Typography>
       </Stack>
-      {/* <Typography variant="h4" component="div">
-          {lines.length} transactions
-        </Typography> */}
     </>
   );
 };
