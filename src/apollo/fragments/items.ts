@@ -20,3 +20,20 @@ export const GET_ITEM = gql`
     safeQty
   }
 `;
+
+export const GET_FINANCIAL_ACCOUNT = gql`
+  fragment getFinancialAccount on FinancialAccount {
+    id
+    branch
+    accountNumber
+    accountFormat
+    iban
+    swiftCode
+    country
+    bankId
+    bank {
+      id
+      displayName
+    }
+  }
+`;

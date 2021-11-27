@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-import { GET_ITEM } from "../fragments/items";
+import { GET_FINANCIAL_ACCOUNT, GET_ITEM } from "../fragments/items";
 
 export const GET_ALL_ITEMS = gql`
   ${GET_ITEM}
@@ -20,6 +20,29 @@ export const GET_ALL_ITEMS = gql`
       searchText: $searchText
     ) {
       ...getItem
+    }
+  }
+`;
+
+export const GET_ALL_FINANCIAL_ACCOUNTS = gql`
+  ${GET_FINANCIAL_ACCOUNT}
+  query GetFinancialAccounts(
+    $bankId: Int
+    $organizationId: Int
+    $businessPartnerId: Int
+    $searchText: String
+    $skip: Int
+    $take: Int
+  ) {
+    items(
+      bankId: $bankId
+      organizationId: $organizationId
+      businessPartnerId: $businessPartnerId
+      skip: $skip
+      take: $take
+      searchText: $searchText
+    ) {
+      ...getFinancialAccount
     }
   }
 `;
@@ -49,6 +72,15 @@ export const GET_SELECTED_ITEM = gql`
   query GetSelectedItem($id: Int!) {
     getItem(id: $id) {
       ...getItem
+    }
+  }
+`;
+
+export const GET_SELECTED_FINANCIAL_ACCOUNT = gql`
+  ${GET_FINANCIAL_ACCOUNT}
+  query GetSelectedFinancialAccount($id: Int!) {
+    getFinancialAccount(id: $id) {
+      ...getFinancialAccount
     }
   }
 `;

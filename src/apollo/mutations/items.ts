@@ -1,5 +1,5 @@
 import { gql } from "@apollo/client";
-
+import { GET_FINANCIAL_ACCOUNT, GET_ITEM } from "../fragments/items";
 export const REMOVE_ITEM = gql`
   mutation removeAnItem($id: Int!) {
     removeItem(id: $id) {
@@ -7,8 +7,17 @@ export const REMOVE_ITEM = gql`
     }
   }
 `;
+export const REMOVE_FINANCIAL_ACCOUNT = gql`
+  mutation removeAnFinancialAccount($id: Int!) {
+    removeFinancialAccount(id: $id) {
+      affectedRows
+    }
+  }
+`;
 
 export const ADD_UPDATE_ITEM = gql`
+  ${GET_ITEM}
+
   mutation AddUpdateItem(
     $id: Int
     $displayName: String!
@@ -31,22 +40,38 @@ export const ADD_UPDATE_ITEM = gql`
         safeQty: $safeQty
       }
     ) {
-      id
-      displayName
-      description
-
-      pictureUrl
-      itemCategory {
-        id
-        displayName
+      ...getItem
+    }
+  }
+`;
+export const ADD_UPDATE_FINANCIAL_ACCOUNT = gql`
+  ${GET_FINANCIAL_ACCOUNT}
+  mutation AddUpdateFinancialAccount(
+    $id: Int
+    $accountNumber: String!
+    $branch: String
+    $bankId: Int
+    $organizationId: Int
+    $businessPartnerId: Int
+    $accountFormat: String
+    $iban: String
+    $swiftCode: String
+    $country: String
+  ) {
+    createFinancialAccount(
+      input: {
+        id: $id
+        accountNumber: $accountNumber
+        bank: { id: $bankId }
+        organizationId: $organizationId
+        businessPartnerId: $businessPartnerId
+        accountFormat: $accountFormat
+        iban: $iban
+        swiftCode: $swiftCode
+        country: $country
       }
-      unitOfMeasure {
-        id
-        displayName
-      }
-      purchasePrice
-      sellingPrice
-      safeQty
+    ) {
+      ...getFinancialAccount
     }
   }
 `;
