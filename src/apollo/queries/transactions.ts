@@ -179,6 +179,9 @@ export const GET_TRANSACTION_PAYMENTS = gql`
     $status: PaymentStatus
     $method: PaymentMethods
     $type: PaymentTypes
+    $searchText: String
+    $skip: Int
+    $take: Int
   ) {
     payments(
       headerId: $headerId
@@ -187,6 +190,9 @@ export const GET_TRANSACTION_PAYMENTS = gql`
       status: $status
       method: $method
       type: $type
+      skip: $skip
+      take: $take
+      searchText: $searchText
     ) {
       id
       amount

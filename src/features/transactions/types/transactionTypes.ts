@@ -188,10 +188,12 @@ export type PaymentArgs = {
   status?: PaymentStatus;
   method?: PaymentMethods;
   headerId?: number;
+  searchText?: string;
   durationBegin?: Date;
   durationEnd?: Date;
   amountBelow?: number;
   amountAbove?: number;
+  refreshList?: string;
 };
 
 export type InventorySummary = {

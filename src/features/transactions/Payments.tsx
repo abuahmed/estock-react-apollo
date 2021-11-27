@@ -92,7 +92,7 @@ export const Payments = () => {
         <title>Payments List | Pinna Stock</title>
       </Helmet>
 
-      <Box sx={{ m: 1 }}>
+      <>
         <Box component="div">
           <Button color="secondary" variant="contained" onClick={RefreshList}>
             <Typography
@@ -236,7 +236,7 @@ export const Payments = () => {
             Number of Payments: {total}
           </Typography>
         </Stack>
-      </Box>
+      </>
     </>
   );
 };

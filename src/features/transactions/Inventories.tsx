@@ -15,14 +15,7 @@ import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { changePageTitle } from "../preferences/preferencesSlice";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import { History, Refresh } from "@mui/icons-material";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import { fetchInventories, selectTransactions } from "./transactionsSlice";

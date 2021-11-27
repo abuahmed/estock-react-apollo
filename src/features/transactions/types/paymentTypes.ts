@@ -102,13 +102,14 @@ export enum PaymentStatus {
   Checked = "Checked",
   Verified = "Verified",
   Cleared = "Cleared",
-  NotDeposited = "NotDeposited",
-  NotCleared = "NotCleared",
-  NoPayment = "NoPayment",
+  NotDeposited = "Not Deposited",
+  NotCleared = "Not Cleared",
+  NoPayment = "No Payment",
   Refunded = "Refunded",
 }
 export enum PaymentTypes {
   //We may only need CashIn & CashOut the others will be replaced by PaymentMethod and Sale/Purchase properties
+  //CashIn may be Loans from others && CashOut are like Expenses and Loans to others
   Sale = "Sale",
   Purchase = "Purchase",
   CashIn = "CashIn",

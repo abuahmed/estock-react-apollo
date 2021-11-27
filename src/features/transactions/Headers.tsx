@@ -158,7 +158,7 @@ export const Headers = ({ type }: HeaderProps) => {
       <Helmet>
         <title>{type} List | Pinna Stock</title>
       </Helmet>
-      <Box sx={{ m: 1 }}>
+      <>
         <Stack
           direction="row"
           justifyContent="space-between"
@@ -408,7 +408,7 @@ export const Headers = ({ type }: HeaderProps) => {
             </Typography>
           </Stack>
         </Grid>
-      </Box>
+      </>
     </>
   );
 };
