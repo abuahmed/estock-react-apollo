@@ -23,16 +23,20 @@ import Accordion from "@mui/material/Accordion";
 import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { changePageTitle } from "../preferences/preferencesSlice";
+import {
+  changePageTitle,
+  selectPreference,
+} from "../preferences/preferencesSlice";
 import {
   Box,
   Button,
   Divider,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { Add, Edit, ListAltSharp, Save } from "@mui/icons-material";
+import { Add, Edit, ListAltSharp, Refresh, Save } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
@@ -41,6 +45,7 @@ import { Form, Formik, FormikProps } from "formik";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import { registerSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
+import Paging from "../../components/Layout/Paging";
 
 export const Clients = () => {
   const [expanded, setExpanded] = useState(false);
@@ -49,10 +54,23 @@ export const Clients = () => {
   const { clients, selectedClient, success, error, loading } =
     useAppSelector(selectSetups);
 
+  const { searchText } = useAppSelector(selectPreference);
+  const [total, setTotal] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
+  const [currentPage, setCurrentPage] = useState(0);
+
   useEffect(() => {
     dispatch(changePageTitle(`Client List`));
-    dispatch(fetchClients("all"));
-  }, [dispatch]);
+    const skipRows = currentPage * rowsPerPage;
+
+    dispatch(
+      fetchClients({
+        searchText,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  }, [dispatch, currentPage, rowsPerPage, searchText]);
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);
@@ -69,46 +87,60 @@ export const Clients = () => {
     dispatch(resetSelectedClient());
     setExpanded(true);
   };
-
+  const RefreshList = () => {
+    const skipRows = currentPage * rowsPerPage;
+    dispatch(
+      fetchClients({
+        refreshList: "refresh",
+        searchText,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  };
   return (
     <>
       <Helmet>
         <title>Client List | Pinna Stock</title>
       </Helmet>
-      <Box component="div">
-        <Button color="secondary" variant="contained" onClick={ResetFields}>
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
-          >
-            <Add /> Add New Client
-          </Typography>
-        </Button>
-      </Box>
-      <Divider variant="middle" sx={{ my: 2 }} />
-
-      <Formik
-        enableReinitialize={true}
-        initialValues={selectedClient as Client}
-        validationSchema={registerSchema}
-        onSubmit={(values, actions) => {
-          actions.setSubmitting(false);
-          dispatch(addClient(values));
-        }}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        justifyItems="center"
       >
-        {(props: FormikProps<Client>) => (
-          <Form>
-            <Accordion sx={{ m: 1 }} expanded={expanded}>
-              <StyledAccordionSummary
-                onClick={ToggleAccordion}
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Detail</Typography>
-              </StyledAccordionSummary>
-              <AccordionDetails>
+        <Tooltip title="Refresh Items List">
+          <Button color="secondary" variant="contained" onClick={RefreshList}>
+            <Refresh />
+          </Button>
+        </Tooltip>
+        <Tooltip title="Add New Item">
+          <Button color="secondary" variant="contained" onClick={ResetFields}>
+            <Add />
+          </Button>
+        </Tooltip>
+      </Stack>
+
+      <Accordion sx={{ mt: 1 }} expanded={expanded}>
+        <StyledAccordionSummary
+          onClick={ToggleAccordion}
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>Detail</Typography>
+        </StyledAccordionSummary>
+        <AccordionDetails>
+          <Formik
+            enableReinitialize={true}
+            initialValues={selectedClient as Client}
+            validationSchema={registerSchema}
+            onSubmit={(values, actions) => {
+              actions.setSubmitting(false);
+              dispatch(addClient(values));
+            }}
+          >
+            {(props: FormikProps<Client>) => (
+              <Form>
                 <Grid container spacing={2}>
                   <Grid item md={4} xs={12}>
                     <FormikTextField formikKey="displayName" label="Name" />
@@ -150,18 +182,17 @@ export const Clients = () => {
                   <Save />
                   Save Client
                 </Button>
-              </AccordionDetails>
-            </Accordion>
-          </Form>
-        )}
-      </Formik>
+              </Form>
+            )}
+          </Formik>
+        </AccordionDetails>
+      </Accordion>
 
-      <Divider variant="middle" sx={{ my: 2 }} />
-
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ mt: 1 }}>
         <Table size="small" aria-label="a simple table">
           <TableHead>
             <StyledTableRow>
+              <StyledTableCell>S.No</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Mobile</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
@@ -174,8 +205,11 @@ export const Clients = () => {
               <TableSkeleton numRows={10} numColumns={1} />
             ) : (
               clients &&
-              clients.map((row) => (
+              clients.map((row, index) => (
                 <StyledTableRow key={row.id}>
+                  <StyledTableCell component="th" scope="row">
+                    {currentPage * rowsPerPage + index + 1}
+                  </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {row.displayName}
                   </StyledTableCell>
@@ -222,9 +256,18 @@ export const Clients = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Typography variant="h4" component="div">
-        {clients.length} Clients
-      </Typography>
+      <Stack spacing={1}>
+        <Paging
+          total={total}
+          rowsPerPage={rowsPerPage}
+          currentPage={currentPage}
+          setRowsPerPage={setRowsPerPage}
+          setCurrentPage={setCurrentPage}
+        />
+        <Typography variant="h6" component="div">
+          Number of Clients: {total}
+        </Typography>
+      </Stack>
     </>
   );
 };

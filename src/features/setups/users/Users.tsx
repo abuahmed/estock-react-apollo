@@ -11,7 +11,10 @@ import TableHead from "@mui/material/TableHead";
 import Paper from "@mui/material/Paper";
 import { NavLink as RouterLink } from "react-router-dom";
 
-import { changePageTitle } from "../../preferences/preferencesSlice";
+import {
+  changePageTitle,
+  selectPreference,
+} from "../../preferences/preferencesSlice";
 import Avatar from "@mui/material/Avatar";
 import {
   Box,
@@ -20,8 +23,9 @@ import {
   Button,
   Typography,
   Divider,
+  Tooltip,
 } from "@mui/material";
-import { Add, Edit, Save, Delete } from "@mui/icons-material";
+import { Add, Edit, Save, Delete, Refresh } from "@mui/icons-material";
 
 import Accordion from "@mui/material/Accordion";
 import { StyledAccordionSummary } from "../../../styles/componentStyled";
@@ -34,6 +38,7 @@ import TableSkeleton from "../../../components/Layout/TableSkeleton";
 import { createUserSchema } from "../validation";
 import { CreateUser } from "../../auth/types/authType";
 import { selectAuth } from "../../auth/authSlice";
+import Paging from "../../../components/Layout/Paging";
 
 const defaultUser: CreateUser = {
   email: "",
@@ -47,11 +52,23 @@ export const Users = () => {
   const dispatch = useAppDispatch();
   const { users, loading } = useAppSelector(selectSetups);
   const { user } = useAppSelector(selectAuth);
+  const { searchText } = useAppSelector(selectPreference);
+  const [total, setTotal] = useState(3);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
+  const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
-    dispatch(fetchUsers("all"));
     dispatch(changePageTitle("Users List"));
-  }, [dispatch]);
+    const skipRows = currentPage * rowsPerPage;
+
+    dispatch(
+      fetchUsers({
+        searchText,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  }, [dispatch, currentPage, rowsPerPage, searchText]);
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);
@@ -64,48 +81,65 @@ export const Users = () => {
     setSelectedUser(defaultUser);
     setExpanded(true);
   };
+
+  const RefreshList = () => {
+    const skipRows = currentPage * rowsPerPage;
+    dispatch(
+      fetchUsers({
+        refreshList: "refresh",
+        searchText,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  };
   return (
     <>
       <Helmet>
         <title>Users | Pinna Stock</title>
       </Helmet>
-      <Box component="div">
-        <Button color="secondary" variant="contained" onClick={ResetFields}>
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
-          >
-            <Add /> Add New User
-          </Typography>
-        </Button>
-      </Box>
-      <Divider variant="middle" sx={{ my: 2 }} />
 
-      <Formik
-        enableReinitialize={true}
-        initialValues={selectedUser as CreateUser}
-        validationSchema={createUserSchema}
-        onSubmit={(values, actions) => {
-          actions.setSubmitting(false);
-          if (user && user.client) {
-            values = { ...values, clientId: user.client.id as number };
-          }
-          dispatch(createUser(values));
-        }}
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        justifyItems="center"
       >
-        {(props: FormikProps<CreateUser>) => (
-          <Form>
-            <Accordion sx={{ m: 1 }} expanded={expanded}>
-              <StyledAccordionSummary
-                onClick={ToggleAccordion}
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Detail</Typography>
-              </StyledAccordionSummary>
-              <AccordionDetails>
+        <Tooltip title="Refresh Items List">
+          <Button color="secondary" variant="contained" onClick={RefreshList}>
+            <Refresh />
+          </Button>
+        </Tooltip>
+        <Tooltip title="Add New Item">
+          <Button color="secondary" variant="contained" onClick={ResetFields}>
+            <Add />
+          </Button>
+        </Tooltip>
+      </Stack>
+
+      <Accordion sx={{ mt: 1 }} expanded={expanded}>
+        <StyledAccordionSummary
+          onClick={ToggleAccordion}
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>Detail</Typography>
+        </StyledAccordionSummary>
+        <AccordionDetails>
+          <Formik
+            enableReinitialize={true}
+            initialValues={selectedUser as CreateUser}
+            validationSchema={createUserSchema}
+            onSubmit={(values, actions) => {
+              actions.setSubmitting(false);
+              if (user && user.client) {
+                values = { ...values, clientId: user.client.id as number };
+              }
+              dispatch(createUser(values));
+            }}
+          >
+            {(props: FormikProps<CreateUser>) => (
+              <Form>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <FormikTextField formikKey="email" label="Email" />
@@ -125,18 +159,17 @@ export const Users = () => {
                   <Save />
                   Save User
                 </Button>
-              </AccordionDetails>
-            </Accordion>
-          </Form>
-        )}
-      </Formik>
-
-      <Divider variant="middle" sx={{ my: 2 }} />
-      <Grid container justifyContent="flex-start">
+              </Form>
+            )}
+          </Formik>
+        </AccordionDetails>
+      </Accordion>
+      <Grid container justifyContent="flex-start" sx={{ mt: 1 }}>
         <TableContainer component={Paper}>
           <Table aria-label="simple table">
             <TableHead>
               <StyledTableRow>
+                <StyledTableCell>S.No</StyledTableCell>
                 <StyledTableCell>Photo</StyledTableCell>
                 <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Email</StyledTableCell>
@@ -147,8 +180,11 @@ export const Users = () => {
               {loading === "pending" ? (
                 <TableSkeleton numRows={5} numColumns={3} />
               ) : (
-                users.map((row) => (
+                users.map((row, index) => (
                   <StyledTableRow key={row.id}>
+                    <StyledTableCell component="th" scope="row">
+                      {currentPage * rowsPerPage + index + 1}
+                    </StyledTableCell>
                     <StyledTableCell>
                       <Avatar
                         alt="avatar"
@@ -190,6 +226,19 @@ export const Users = () => {
           </Table>
         </TableContainer>
       </Grid>
+
+      <Stack spacing={1}>
+        <Paging
+          total={total}
+          rowsPerPage={rowsPerPage}
+          currentPage={currentPage}
+          setRowsPerPage={setRowsPerPage}
+          setCurrentPage={setCurrentPage}
+        />
+        <Typography variant="h6" component="div">
+          Number of Users: {total}
+        </Typography>
+      </Stack>
     </>
   );
 };

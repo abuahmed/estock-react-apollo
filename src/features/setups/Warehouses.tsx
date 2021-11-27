@@ -24,16 +24,20 @@ import Accordion from "@mui/material/Accordion";
 import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { changePageTitle } from "../preferences/preferencesSlice";
+import {
+  changePageTitle,
+  selectPreference,
+} from "../preferences/preferencesSlice";
 import {
   Box,
   Button,
   Divider,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import { Add, Backspace, Edit, Save } from "@mui/icons-material";
+import { Add, Backspace, Edit, Refresh, Save } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
@@ -42,6 +46,7 @@ import { Form, Formik, FormikProps } from "formik";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import { registerSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
+import Paging from "../../components/Layout/Paging";
 
 const defaultWarehouse: Warehouse = {
   displayName: "",
@@ -69,9 +74,12 @@ export const Warehouses = () => {
     error,
     loading,
   } = useAppSelector(selectSetups);
-
+  const { searchText } = useAppSelector(selectPreference);
+  const [total, setTotal] = useState(14);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
-    dispatch(changePageTitle(`Warehouse List`));
+    dispatch(changePageTitle(`Warehouses List`));
     dispatch(
       fetchWarehouses({
         parent: "Organization",
@@ -79,7 +87,19 @@ export const Warehouses = () => {
       })
     );
     dispatch(getOrganization(parseInt(organizationId)));
-  }, [dispatch, organizationId]);
+
+    const skipRows = currentPage * rowsPerPage;
+
+    dispatch(
+      fetchWarehouses({
+        parent: "Organization",
+        parentId: parseInt(organizationId),
+        searchText,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  }, [dispatch, organizationId, currentPage, rowsPerPage, searchText]);
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);
@@ -99,63 +119,81 @@ export const Warehouses = () => {
     dispatch(resetSelectedWarehouse(initializeWarehouse));
   };
 
+  const RefreshList = () => {
+    const skipRows = currentPage * rowsPerPage;
+    dispatch(
+      fetchWarehouses({
+        refreshList: "refresh",
+        parent: "Organization",
+        parentId: parseInt(organizationId),
+        searchText,
+        skip: skipRows,
+        take: rowsPerPage,
+      })
+    );
+  };
+
   return (
     <>
       <Helmet>
         <title>Warehouse List | Pinna Stock</title>
       </Helmet>
-      <Box
-        component="div"
-        sx={{ display: "flex", justifyContent: "space-between" }}
+
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        justifyItems="center"
       >
-        <Button
-          color="secondary"
-          variant="contained"
-          component={RouterLink}
-          to={`/app/organizations/${selectedOrganization.clientId}`}
+        <Stack
+          direction="row"
+          justifyContent="flex-start"
+          justifyItems="center"
         >
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
-          >
-            <Backspace />
-          </Typography>
-        </Button>
+          <Tooltip title="Back to clients">
+            <Button
+              color="secondary"
+              variant="contained"
+              component={RouterLink}
+              to={`/app/organizations/${selectedOrganization.clientId}`}
+              sx={{ mr: 1 }}
+            >
+              <Backspace />
+            </Button>
+          </Tooltip>
+          <Tooltip title="Refresh Items List">
+            <Button color="secondary" variant="contained" onClick={RefreshList}>
+              <Refresh />
+            </Button>
+          </Tooltip>
+        </Stack>
+        <Tooltip title="Add New Item">
+          <Button color="secondary" variant="contained" onClick={ResetFields}>
+            <Add />
+          </Button>
+        </Tooltip>
+      </Stack>
 
-        <Button color="secondary" variant="contained" onClick={ResetFields}>
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
+      <Accordion sx={{ mt: 1 }} expanded={expanded}>
+        <StyledAccordionSummary
+          onClick={ToggleAccordion}
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+        >
+          <Typography>Detail</Typography>
+        </StyledAccordionSummary>
+        <AccordionDetails>
+          <Formik
+            enableReinitialize={true}
+            initialValues={selectedWarehouse as Warehouse}
+            validationSchema={registerSchema}
+            onSubmit={(values, actions) => {
+              actions.setSubmitting(false);
+              dispatch(addWarehouse(values));
+            }}
           >
-            <Add /> Add New Warehouse
-          </Typography>
-        </Button>
-      </Box>
-      <Divider variant="middle" sx={{ my: 2 }} />
-
-      <Formik
-        enableReinitialize={true}
-        initialValues={selectedWarehouse as Warehouse}
-        validationSchema={registerSchema}
-        onSubmit={(values, actions) => {
-          actions.setSubmitting(false);
-          dispatch(addWarehouse(values));
-        }}
-      >
-        {(props: FormikProps<Warehouse>) => (
-          <Form>
-            <Accordion sx={{ m: 1 }} expanded={expanded}>
-              <StyledAccordionSummary
-                onClick={ToggleAccordion}
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Detail</Typography>
-              </StyledAccordionSummary>
-              <AccordionDetails>
+            {(props: FormikProps<Warehouse>) => (
+              <Form>
                 <Grid container spacing={2}>
                   <Grid item md={4} xs={12}>
                     <FormikTextField formikKey="displayName" label="Name" />
@@ -197,18 +235,17 @@ export const Warehouses = () => {
                   <Save />
                   Save Warehouse
                 </Button>
-              </AccordionDetails>
-            </Accordion>
-          </Form>
-        )}
-      </Formik>
+              </Form>
+            )}
+          </Formik>
+        </AccordionDetails>
+      </Accordion>
 
-      <Divider variant="middle" sx={{ my: 2 }} />
-
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ mt: 1 }}>
         <Table size="small" aria-label="a simple table">
           <TableHead>
             <StyledTableRow>
+              <StyledTableCell>S.No</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Mobile</StyledTableCell>
               <StyledTableCell>Email</StyledTableCell>
@@ -220,8 +257,11 @@ export const Warehouses = () => {
               <TableSkeleton numRows={10} numColumns={1} />
             ) : (
               warehouses &&
-              warehouses.map((row) => (
+              warehouses.map((row, index) => (
                 <StyledTableRow key={row.id}>
+                  <StyledTableCell component="th" scope="row">
+                    {currentPage * rowsPerPage + index + 1}
+                  </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {row.displayName}
                   </StyledTableCell>
@@ -260,9 +300,18 @@ export const Warehouses = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Typography variant="h4" component="div">
-        {warehouses.length} Warehouses
-      </Typography>
+      <Stack spacing={1}>
+        <Paging
+          total={total}
+          rowsPerPage={rowsPerPage}
+          currentPage={currentPage}
+          setRowsPerPage={setRowsPerPage}
+          setCurrentPage={setCurrentPage}
+        />
+        <Typography variant="h6" component="div">
+          Number of Warehouses: {total}
+        </Typography>
+      </Stack>
     </>
   );
 };

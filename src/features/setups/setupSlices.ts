@@ -64,6 +64,12 @@ import {
   Role,
   CreateUser,
 } from "../auth/types/authType";
+import {
+  ClientArgs,
+  OrganizationArgs,
+  UserArgs,
+  WarehouseArgs,
+} from "./types/setupTypes";
 
 export const fetchItems = createAsyncThunk<
   any,
@@ -414,14 +420,19 @@ export const removeBusinessPartner = createAsyncThunk<
 
 export const fetchClients = createAsyncThunk<
   any,
-  string,
+  ClientArgs,
   { rejectValue: RejectWithValueType }
->("setups/fetchClients", async (arg, thunkAPI) => {
+>("setups/fetchClients", async (clientArgs, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
+    const { refreshList } = clientArgs;
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
     const response = await apolloClient.query({
       query: GET_ALL_CLIENTS,
+      variables: { ...clientArgs },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.clients) {
@@ -528,15 +539,19 @@ export const removeClient = createAsyncThunk<
 
 export const fetchOrganizations = createAsyncThunk<
   any,
-  number,
+  OrganizationArgs,
   { rejectValue: RejectWithValueType }
->("setups/fetchOrganizations", async (clientId, thunkAPI) => {
+>("setups/fetchOrganizations", async (organizationArgs, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
+    const { refreshList } = organizationArgs;
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
     const response = await apolloClient.query({
       query: GET_ALL_ORGANIZATIONS,
-      variables: { clientId },
+      variables: { ...organizationArgs },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.organizations) {
@@ -650,15 +665,19 @@ export const removeOrganization = createAsyncThunk<
 
 export const fetchWarehouses = createAsyncThunk<
   any,
-  FetchWarehousesOptions,
+  WarehouseArgs,
   { rejectValue: RejectWithValueType }
->("setups/fetchWarehouses", async (fetchWarehousesOptions, thunkAPI) => {
+>("setups/fetchWarehouses", async (warehouseArgs, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
+    const { refreshList } = warehouseArgs;
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
     const response = await apolloClient.query({
       query: GET_ALL_WAREHOUSES,
-      variables: { ...fetchWarehousesOptions },
+      variables: { ...warehouseArgs },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.warehouses) {
@@ -772,14 +791,19 @@ export const removeWarehouse = createAsyncThunk<
 
 export const fetchUsers = createAsyncThunk<
   any,
-  string,
+  UserArgs,
   { rejectValue: RejectWithValueType }
->("users/fetchUsers", async (_arg, thunkAPI) => {
+>("users/fetchUsers", async (userArgs, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
+    const { refreshList } = userArgs;
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
     const response = await apolloClient.query({
       query: GET_ALL_USERS,
+      variables: { ...userArgs },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.Users) {

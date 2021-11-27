@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_ALL_CLIENTS = gql`
-  query GetClients {
-    clients {
+  query GetClients($searchText: String, $skip: Int, $take: Int) {
+    clients(skip: $skip, take: $take, searchText: $searchText) {
       id
       displayName
       description
@@ -33,8 +33,18 @@ export const GET_SELECTED_CLIENT = gql`
 `;
 
 export const GET_ALL_ORGANIZATIONS = gql`
-  query GetOrganizations($clientId: Int!) {
-    organizations(clientId: $clientId) {
+  query GetOrganizations(
+    $clientId: Int!
+    $searchText: String
+    $skip: Int
+    $take: Int
+  ) {
+    organizations(
+      clientId: $clientId
+      skip: $skip
+      take: $take
+      searchText: $searchText
+    ) {
       id
       displayName
       description
@@ -77,8 +87,20 @@ export const GET_SELECTED_ORGANIZATION = gql`
 `;
 
 export const GET_ALL_WAREHOUSES = gql`
-  query GetWarehouses($parent: String, $parentId: Int!) {
-    warehouses(parent: $parent, parentId: $parentId) {
+  query GetWarehouses(
+    $parent: String
+    $parentId: Int!
+    $searchText: String
+    $skip: Int
+    $take: Int
+  ) {
+    warehouses(
+      parent: $parent
+      parentId: $parentId
+      skip: $skip
+      take: $take
+      searchText: $searchText
+    ) {
       id
       displayName
       description
