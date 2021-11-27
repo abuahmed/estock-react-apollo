@@ -6,6 +6,8 @@ import {
   Category,
   CategoryArgs,
   CategoryType,
+  FinancialAccount,
+  FinancialAccountArgs,
   Item,
   ItemArgs,
   RemoveCategory,
@@ -40,6 +42,8 @@ import {
   ADD_USER_ROLES,
   ADD_USER_WAREHOUSES,
   CREATE_USER,
+  ADD_UPDATE_FINANCIAL_ACCOUNT,
+  REMOVE_FINANCIAL_ACCOUNT,
 } from "../../apollo/mutations";
 import {
   GET_ALL_CATEGORIES,
@@ -56,6 +60,8 @@ import {
   GET_ALL_ROLES,
   GET_ALL_USERS,
   GET_SELECTED_USER,
+  GET_ALL_FINANCIAL_ACCOUNTS,
+  GET_SELECTED_FINANCIAL_ACCOUNT,
 } from "../../apollo/queries";
 
 import {
@@ -94,6 +100,37 @@ export const fetchItems = createAsyncThunk<
 
     if (response && response.data && response.data.items) {
       return response.data.items as Item[];
+    }
+  } catch (error: any) {
+    const message = error.message;
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
+  }
+});
+
+export const fetchFinancialAccounts = createAsyncThunk<
+  any,
+  FinancialAccountArgs,
+  { rejectValue: RejectWithValueType }
+>("setups/fetchFinancialAccounts", async (financialAccountArg, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
+  const { refreshList } = financialAccountArg;
+
+  try {
+    const fetchPolicy =
+      refreshList === "refresh" ? "network-only" : "cache-first";
+
+    //await sleep(5000);
+    const response = await apolloClient.query({
+      query: GET_ALL_FINANCIAL_ACCOUNTS,
+      variables: {
+        ...financialAccountArg,
+      },
+      fetchPolicy,
+    });
+
+    if (response && response.data && response.data.items) {
+      return response.data.financialAccounts as FinancialAccount[];
     }
   } catch (error: any) {
     const message = error.message;
@@ -153,6 +190,27 @@ export const getItem = createAsyncThunk<
     return rejectWithValue({ message });
   }
 });
+export const getFinancialAccount = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: RejectWithValueType }
+>("setups/getFinancialAccount", async (_id, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.query({
+      query: GET_SELECTED_FINANCIAL_ACCOUNT,
+      variables: { id: _id },
+    });
+
+    if (response && response.data && response.data.getFinancialAccount) {
+      return response.data.getFinancialAccount as FinancialAccount;
+    }
+  } catch (error: any) {
+    const message = error.message;
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
+  }
+});
 export const addItem = createAsyncThunk<
   any,
   Item,
@@ -183,6 +241,42 @@ export const addItem = createAsyncThunk<
   } catch (error: any) {
     const message = error.message;
     dispatch(setSelectedItem(item));
+    await setErrorAction(dispatch, { message });
+    //error.graphQLErrors[0].extensions.exception.response.status;
+    return rejectWithValue({ message });
+  }
+});
+
+export const addFinancialAccount = createAsyncThunk<
+  any,
+  FinancialAccount,
+  { rejectValue: RejectWithValueType }
+>("setups/addFinancialAccount", async (financialAccount, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: ADD_UPDATE_FINANCIAL_ACCOUNT,
+      variables: {
+        ...financialAccount,
+        bankId: financialAccount.bank?.id,
+      },
+      refetchQueries: [{ query: GET_ALL_FINANCIAL_ACCOUNTS }],
+    });
+
+    if (response && response.data && response.data.createFinancialAccount) {
+      const addedFinancialAccount = (await response.data
+        .createFinancialAccount) as FinancialAccount;
+
+      await setSuccessAction(dispatch, {
+        message: "FinancialAccount Successfully Saved",
+        setupType: "FinancialAccount",
+      });
+
+      return addedFinancialAccount;
+    }
+  } catch (error: any) {
+    const message = error.message;
+    dispatch(setSelectedFinancialAccount(financialAccount));
     await setErrorAction(dispatch, { message });
     //error.graphQLErrors[0].extensions.exception.response.status;
     return rejectWithValue({ message });
@@ -246,6 +340,33 @@ export const removeItem = createAsyncThunk<
       await setSuccessAction(dispatch, {
         message: "Item Successfully Removed",
         setupType: "Item",
+      });
+      return id as number;
+    }
+  } catch (error: any) {
+    const message = error.message;
+    await setErrorAction(dispatch, { message });
+    return rejectWithValue({ message });
+  }
+});
+
+export const removeFinancialAccount = createAsyncThunk<
+  any,
+  number,
+  { rejectValue: RejectWithValueType }
+>("setups/removeFinancialAccount", async (id, thunkAPI) => {
+  const { rejectWithValue, dispatch } = thunkAPI;
+  try {
+    const response = await apolloClient.mutate({
+      mutation: REMOVE_FINANCIAL_ACCOUNT,
+      variables: { id },
+      refetchQueries: [{ query: GET_ALL_FINANCIAL_ACCOUNTS }],
+    });
+
+    if (response && response.data && response.data.removeFinancialAccount) {
+      await setSuccessAction(dispatch, {
+        message: "Financial Account Successfully Removed",
+        setupType: "FinancialAccount",
       });
       return id as number;
     }
@@ -938,6 +1059,9 @@ async function setSuccessAction(
       case "Item":
         dispatch(resetSelectedItem());
         break;
+      case "FinancialAccount":
+        dispatch(resetSelectedFinancialAccount());
+        break;
       case "Client":
         dispatch(resetSelectedClient());
         break;
@@ -986,6 +1110,11 @@ const defaultItem: Item = {
   sellingPrice: 0,
   safeQty: 0,
 };
+const defaultFinancialAccount: FinancialAccount = {
+  branch: "",
+  accountNumber: "",
+  bank: { id: 0, displayName: "select..." },
+};
 const defaultCategory: Category = {
   displayName: "",
   id: 0,
@@ -1027,8 +1156,11 @@ const initialSetupsState: SetupsState = {
   items: [],
   categories: [],
   uoms: [],
+  financialAccounts: [],
+  banks: [],
   selectedCategory: { ...defaultCategory },
   selectedItem: { ...defaultItem },
+  selectedFinancialAccount: { ...defaultFinancialAccount },
   businessPartners: [],
   selectedBusinessPartner: { ...defaultBusinessPartner },
   clients: [],
@@ -1077,6 +1209,17 @@ export const setupsSlice = createSlice({
 
     setItems: (state, { payload }) => {
       state.items = payload;
+    },
+
+    resetSelectedFinancialAccount: (state) => {
+      state.selectedFinancialAccount = { ...defaultFinancialAccount };
+    },
+    setSelectedFinancialAccount: (state, { payload }) => {
+      state.selectedFinancialAccount = payload;
+    },
+
+    setFinancialAccounts: (state, { payload }) => {
+      state.financialAccounts = payload;
     },
     resetSelectedBusinessPartner: (state, { payload }) => {
       state.selectedBusinessPartner = {
@@ -1141,6 +1284,17 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
     });
 
+    builder.addCase(fetchFinancialAccounts.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(fetchFinancialAccounts.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.financialAccounts = payload;
+    });
+    builder.addCase(fetchFinancialAccounts.rejected, (state) => {
+      state.loading = "idle";
+    });
+
     builder.addCase(fetchCategories.pending, (state) => {
       state.loading = "pending";
     });
@@ -1167,6 +1321,17 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
     });
 
+    builder.addCase(getFinancialAccount.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(getFinancialAccount.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedFinancialAccount = payload;
+    });
+    builder.addCase(getFinancialAccount.rejected, (state) => {
+      state.loading = "idle";
+    });
+
     builder.addCase(addItem.pending, (state) => {
       state.loading = "pending";
     });
@@ -1180,6 +1345,21 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
     });
 
+    builder.addCase(addFinancialAccount.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(addFinancialAccount.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.selectedFinancialAccount = payload;
+      state.financialAccounts = state.financialAccounts.filter(
+        (c) => c.id !== payload.id
+      );
+      state.financialAccounts.unshift(payload);
+    });
+    builder.addCase(addFinancialAccount.rejected, (state) => {
+      state.loading = "idle";
+    });
+
     builder.addCase(removeItem.pending, (state) => {
       state.loading = "pending";
     });
@@ -1188,6 +1368,19 @@ export const setupsSlice = createSlice({
       state.items = state.items.filter((c) => c.id !== payload);
     });
     builder.addCase(removeItem.rejected, (state) => {
+      state.loading = "idle";
+    });
+
+    builder.addCase(removeFinancialAccount.pending, (state) => {
+      state.loading = "pending";
+    });
+    builder.addCase(removeFinancialAccount.fulfilled, (state, { payload }) => {
+      state.loading = "idle";
+      state.financialAccounts = state.financialAccounts.filter(
+        (c) => c.id !== payload
+      );
+    });
+    builder.addCase(removeFinancialAccount.rejected, (state) => {
       state.loading = "idle";
     });
 
@@ -1491,9 +1684,12 @@ export const {
   setError,
   resetSelectedItem,
   setSelectedItem,
+  resetSelectedFinancialAccount,
+  setSelectedFinancialAccount,
   resetSelectedCategory,
   setSelectedCategory,
   setItems,
+  setFinancialAccounts,
   resetSelectedBusinessPartner,
   setSelectedBusinessPartner,
   setBusinessPartners,

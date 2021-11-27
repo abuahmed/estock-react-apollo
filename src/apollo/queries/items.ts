@@ -34,7 +34,7 @@ export const GET_ALL_FINANCIAL_ACCOUNTS = gql`
     $skip: Int
     $take: Int
   ) {
-    items(
+    financialAccounts(
       bankId: $bankId
       organizationId: $organizationId
       businessPartnerId: $businessPartnerId

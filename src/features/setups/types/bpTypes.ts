@@ -1,6 +1,6 @@
 import { AuthUser, Role } from "../../auth/types/authType";
 import { TransactionHeader } from "../../transactions/types/transactionTypes";
-import { Category, Item } from "./itemTypes";
+import { Category, FinancialAccount, Item } from "./itemTypes";
 import { Client, Organization, Warehouse } from "./warehouseTypes";
 
 export interface BusinessPartnerProps {
@@ -117,8 +117,11 @@ export type SetupsState = {
   items: Item[];
   categories: Category[];
   uoms: Category[];
+  financialAccounts: FinancialAccount[];
+  banks: Category[];
   selectedCategory: Category;
   selectedItem: Item;
+  selectedFinancialAccount: FinancialAccount;
   businessPartners: BusinessPartner[];
   selectedBusinessPartner: BusinessPartner;
   clients: Client[];

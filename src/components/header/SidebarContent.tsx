@@ -251,6 +251,16 @@ const getNavBarItems = (userRoles: string[]) => {
       title: RoleTypes.OnHandInventory,
     },
     {
+      href: "/app/itemsHistory",
+      icon: <ListIcon />,
+      title: RoleTypes.ItemHistory,
+    },
+    {
+      href: "/app/payments",
+      icon: <ListIcon />,
+      title: RoleTypes.OnHandInventory,
+    },
+    {
       href: "/app/sale",
       icon: <ShoppingCartOutlined />,
       title: RoleTypes.ViewSale,
