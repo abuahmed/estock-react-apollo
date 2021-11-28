@@ -11,19 +11,19 @@ import Accordion from "@mui/material/Accordion";
 import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { registerSchema } from "./validation";
+import { accountSchema } from "./validation";
 
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import Toast from "../../components/Layout/Toast";
 
 import {
-  addItem,
   selectSetups,
-  getItem,
-  resetSelectedItem,
   fetchCategories,
+  getFinancialAccount,
+  resetSelectedFinancialAccount,
+  addFinancialAccount,
 } from "./setupSlices";
-import { CategoryType, Item as ItemType } from "./types/itemTypes";
+import { CategoryType } from "./types/itemTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 
 import { changePageTitle } from "../preferences/preferencesSlice";
@@ -39,25 +39,23 @@ import {
 import Save from "@mui/icons-material/Save";
 import { CategoryEntry } from "./items/CategoryEntry";
 import CustomDialog from "../../components/modals/CustomDialog";
+import { FinancialAccount } from "../transactions/types/paymentTypes";
 
-export const ItemEntry = () => {
+export const FinancialAccountEntry = () => {
   const { id } = useParams() as {
     id: string;
   };
   const [open, setOpen] = useState(false);
-  const [categoryType, setCategoryType] = useState<CategoryType>(
-    CategoryType.ItemCategory
-  );
 
-  const { loading, error, success, selectedItem, categories, uoms } =
+  const { loading, error, success, selectedFinancialAccount, banks } =
     useAppSelector(selectSetups);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(changePageTitle(`Item Entry`));
+    dispatch(changePageTitle(`Financial Account Entry`));
 
     if (id && id !== "0") {
-      dispatch(getItem(parseInt(id)));
+      dispatch(getFinancialAccount(parseInt(id)));
     } else {
       resetFields();
     }
@@ -65,22 +63,16 @@ export const ItemEntry = () => {
   }, [dispatch]);
   useEffect(() => {
     if (!open) {
-      dispatch(
-        fetchCategories({ type: CategoryType.ItemCategory, skip: 0, take: -1 })
-      );
-      dispatch(
-        fetchCategories({ type: CategoryType.UnitOfMeasure, skip: 0, take: -1 })
-      );
+      dispatch(fetchCategories({ type: CategoryType.Bank, skip: 0, take: -1 }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   function resetFields() {
-    dispatch(resetSelectedItem());
+    dispatch(resetSelectedFinancialAccount());
   }
-  const openCategoryHandler = (catType: CategoryType) => {
+  const openCategoryHandler = () => {
     setOpen(true);
-    setCategoryType(catType);
   };
   const dialogClose = () => {
     setOpen(false);
@@ -88,7 +80,7 @@ export const ItemEntry = () => {
   return (
     <>
       <Helmet>
-        <title>Item Entry | Pinna Stock</title>
+        <title>Financial Account Entry | Pinna Stock</title>
       </Helmet>
       <Stack
         direction="row"
@@ -99,7 +91,7 @@ export const ItemEntry = () => {
           color="secondary"
           variant="contained"
           component={RouterLink}
-          to={"/app/items"}
+          to={"/app/fa"}
         >
           <Typography variant="h5" component="h5">
             <Backspace />
@@ -117,108 +109,63 @@ export const ItemEntry = () => {
         <>
           <Formik
             enableReinitialize={true}
-            initialValues={selectedItem as ItemType}
-            validationSchema={registerSchema}
+            initialValues={selectedFinancialAccount as FinancialAccount}
+            validationSchema={accountSchema}
             onSubmit={(values, actions) => {
               actions.setSubmitting(false);
-              dispatch(addItem(values));
+              dispatch(addFinancialAccount(values));
             }}
           >
-            {(props: FormikProps<ItemType>) => (
+            {(props: FormikProps<FinancialAccount>) => (
               <Form>
                 <Grid container spacing={2}>
                   <Grid item md={4} xs={12}>
-                    <FormikTextField formikKey="displayName" label="Name" />
-                  </Grid>
-                  <Grid item md={4} xs={12}>
-                    <Stack direction="row">
-                      <Autocomplete
-                        sx={{ width: "100%" }}
-                        id="itemCategoryId"
-                        options={categories}
-                        value={props.values?.itemCategory}
-                        getOptionLabel={(option) =>
-                          option.displayName as string
-                        }
-                        isOptionEqualToValue={(option, value) =>
-                          option.id === value.id
-                        }
-                        onChange={(e, value) => {
-                          props.setFieldValue(
-                            "itemCategory",
-                            value !== null ? value : null
-                          );
-                        }}
-                        renderInput={(params) => (
-                          <TextField
-                            sx={{ mt: 1, width: "100%" }}
-                            label="Item Category"
-                            name="itemCategoryId"
-                            {...params}
-                          />
-                        )}
-                      />
-
-                      <Button
-                        sx={{ mt: 1, p: 0 }}
-                        color="secondary"
-                        variant="outlined"
-                        onClick={() =>
-                          openCategoryHandler(CategoryType.ItemCategory)
-                        }
-                      >
-                        <Add />
-                      </Button>
-                    </Stack>
-                  </Grid>
-                  <Grid item md={4} xs={12}>
-                    <Stack direction="row">
-                      <Autocomplete
-                        sx={{ width: "100%" }}
-                        id="unitOfMeasureId"
-                        options={uoms}
-                        value={props.values?.unitOfMeasure}
-                        getOptionLabel={(option) =>
-                          option.displayName as string
-                        }
-                        isOptionEqualToValue={(option, value) =>
-                          option.id === value.id
-                        }
-                        onChange={(e, value) => {
-                          props.setFieldValue(
-                            "unitOfMeasure",
-                            value !== null ? value : null
-                          );
-                        }}
-                        renderInput={(params) => (
-                          <TextField
-                            sx={{ mt: 1, width: "100%" }}
-                            label="Unit Of Measure"
-                            name="unitOfMeasureId"
-                            {...params}
-                          />
-                        )}
-                      />
-                      <Button
-                        sx={{ mt: 1, p: 0 }}
-                        color="secondary"
-                        variant="outlined"
-                        onClick={() =>
-                          openCategoryHandler(CategoryType.UnitOfMeasure)
-                        }
-                      >
-                        <Add />
-                      </Button>
-                    </Stack>
-                  </Grid>
-                </Grid>
-
-                <Grid container spacing={2}>
-                  <Grid item xs={12}>
                     <FormikTextField
-                      formikKey="description"
-                      label="Description"
+                      formikKey="accountNumber"
+                      label="Account Number"
                     />
+                  </Grid>
+                  <Grid item md={4} xs={12}>
+                    <FormikTextField formikKey="branch" label="Branch" />
+                  </Grid>
+                  <Grid item md={4} xs={12}>
+                    <Stack direction="row">
+                      <Autocomplete
+                        sx={{ width: "100%" }}
+                        id="bankId"
+                        options={banks}
+                        value={props.values?.bank}
+                        getOptionLabel={(option) =>
+                          option.displayName as string
+                        }
+                        isOptionEqualToValue={(option, value) =>
+                          option.id === value.id
+                        }
+                        onChange={(e, value) => {
+                          props.setFieldValue(
+                            "bank",
+                            value !== null ? value : null
+                          );
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            sx={{ mt: 1, width: "100%" }}
+                            label="Bank"
+                            name="bankId"
+                            {...params}
+                          />
+                        )}
+                      />
+
+                      <Button
+                        sx={{ mt: 1, p: 0 }}
+                        color="secondary"
+                        variant="outlined"
+                        onClick={openCategoryHandler}
+                      >
+                        <Add />
+                      </Button>
+                    </Stack>
                   </Grid>
                 </Grid>
 
@@ -234,23 +181,17 @@ export const ItemEntry = () => {
                     <Grid container spacing={2}>
                       <Grid item md={4} xs={12}>
                         <FormikTextField
-                          formikKey="purchasePrice"
-                          label="Purchasing Price"
-                          type={"number"}
+                          formikKey="accountFormat"
+                          label="Account Format"
                         />
                       </Grid>
                       <Grid item md={4} xs={12}>
-                        <FormikTextField
-                          formikKey="sellingPrice"
-                          label="Selling Price"
-                          type={"number"}
-                        />
+                        <FormikTextField formikKey="iban" label="Iban" />
                       </Grid>
                       <Grid item md={4} xs={12}>
                         <FormikTextField
-                          formikKey="safeQty"
-                          label="Safe Qty."
-                          type={"number"}
+                          formikKey="swiftCode"
+                          label="Swift Code"
                         />
                       </Grid>
                     </Grid>
@@ -267,7 +208,7 @@ export const ItemEntry = () => {
                   disabled={!props.isValid}
                 >
                   <Save />
-                  Save Item
+                  Save Financial Account
                 </Button>
               </Form>
             )}
@@ -278,20 +219,8 @@ export const ItemEntry = () => {
       {/* <Divider variant="middle" sx={{ my: 2 }} /> */}
       {loading === "pending" && <LinearProgress color="secondary" />}
 
-      <CustomDialog
-        title={
-          categoryType === CategoryType.ItemCategory
-            ? "Item Categories"
-            : "Unit of Measures"
-        }
-        isOpen={open}
-        handleDialogClose={dialogClose}
-      >
-        {categoryType === CategoryType.ItemCategory ? (
-          <CategoryEntry categoryType={CategoryType.ItemCategory} />
-        ) : (
-          <CategoryEntry categoryType={CategoryType.UnitOfMeasure} />
-        )}
+      <CustomDialog title="Banks" isOpen={open} handleDialogClose={dialogClose}>
+        <CategoryEntry categoryType={CategoryType.Bank} />
       </CustomDialog>
     </>
   );

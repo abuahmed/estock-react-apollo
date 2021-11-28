@@ -8,13 +8,15 @@ import {
 import { Category, CategoryType } from "../../features/setups/types/itemTypes";
 
 interface Props {
-  setItemCategoryId: any;
-  setItemUomId: any;
+  setItemCategoryId?: any;
+  setItemUomId?: any;
+  setBankId?: any;
   bpType: CategoryType;
 }
 export const CategoryFilter = ({
   setItemCategoryId,
   setItemUomId,
+  setBankId,
   bpType,
 }: Props) => {
   const dispatch = useAppDispatch();
@@ -22,7 +24,7 @@ export const CategoryFilter = ({
     displayName: "select",
   });
   const [categoriesList, setCategoriesList] = useState<Category[]>([]);
-  const { categories, uoms } = useAppSelector(selectSetups);
+  const { categories, uoms, banks } = useAppSelector(selectSetups);
 
   useEffect(() => {
     dispatch(fetchCategories({ type: bpType, take: -1, skip: 0 }));
@@ -30,12 +32,13 @@ export const CategoryFilter = ({
   }, [dispatch]);
 
   useEffect(() => {
-    if (categories.length > 0 || uoms.length > 0) {
+    if (categories.length > 0 || uoms.length > 0 || banks.length > 0) {
       if (bpType === CategoryType.ItemCategory) setCategoriesList(categories);
-      else setCategoriesList(uoms);
+      else if (bpType === CategoryType.UnitOfMeasure) setCategoriesList(uoms);
+      else setCategoriesList(banks);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, uoms]);
+  }, [categories, uoms, banks]);
   return (
     <>
       <Autocomplete
@@ -48,14 +51,18 @@ export const CategoryFilter = ({
           setSelectedCategory(value as Category);
           if (bpType === CategoryType.ItemCategory)
             setItemCategoryId(value?.id as number);
-          else setItemUomId(value?.id as number);
+          else if (bpType === CategoryType.UnitOfMeasure)
+            setItemUomId(value?.id as number);
+          else setBankId(value?.id as number);
         }}
         renderInput={(params) => (
           <TextField
             label={
               bpType === CategoryType.ItemCategory
                 ? "Item Category"
-                : "Unit of Measure"
+                : bpType === CategoryType.UnitOfMeasure
+                ? "Unit of Measure"
+                : "Bank"
             }
             name="categoryId"
             {...params}

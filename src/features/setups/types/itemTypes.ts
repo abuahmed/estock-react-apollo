@@ -28,25 +28,7 @@ export enum CategoryType {
   UnitOfMeasure = "UnitOfMeasure",
   Bank = "Bank",
 }
-export type FinancialAccount = {
-  id?: number;
-  uuid?: string;
-  isEnabled?: boolean;
-  createdByUserId?: number;
-  modifiedByUserId?: number;
-  bankId?: number;
-  bank?: Category;
-  branch?: string;
-  accountNumber?: string;
-  accountFormat?: string;
-  iban?: string;
-  swiftCode?: string;
-  country?: string;
-  organizationId?: number;
-  organization?: Organization;
-  businessPartnerId?: number;
-  businessPartner?: BusinessPartner;
-};
+
 export type Item = {
   id?: number;
   uuid?: string;

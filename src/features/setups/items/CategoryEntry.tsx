@@ -42,7 +42,8 @@ interface Props {
 }
 export const CategoryEntry = ({ categoryType }: Props) => {
   defaultCategory = { ...defaultCategory, type: categoryType };
-  const { categories, uoms, selectedCategory } = useAppSelector(selectSetups);
+  const { categories, uoms, banks, selectedCategory } =
+    useAppSelector(selectSetups);
   const dispatch = useAppDispatch();
 
   const [categoriesList, setCategoriesList] = useState<Category[]>([]);
@@ -74,11 +75,12 @@ export const CategoryEntry = ({ categoryType }: Props) => {
   useEffect(() => {
     if (categoryType === CategoryType.ItemCategory) {
       setCategoriesList(categories);
-    } else {
+    } else if (categoryType === CategoryType.UnitOfMeasure) {
       setCategoriesList(uoms);
-    }
+    } else setCategoriesList(banks);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, uoms]);
+  }, [categories, uoms, banks]);
 
   const DeleteCategory = (id: number) => {
     dispatch(removeCategory({ type: categoryType, id }));
@@ -135,7 +137,7 @@ export const CategoryEntry = ({ categoryType }: Props) => {
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell>S.No</StyledTableCell>
-                <StyledTableCell>Category Name</StyledTableCell>
+                <StyledTableCell>Display Name</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
               </StyledTableRow>
             </TableHead>

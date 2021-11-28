@@ -1,6 +1,8 @@
 import { AuthUser, Role } from "../../auth/types/authType";
 import { TransactionHeader } from "../../transactions/types/transactionTypes";
-import { Category, FinancialAccount, Item } from "./itemTypes";
+import { Category, Item } from "./itemTypes";
+import { FinancialAccount } from "../../transactions/types/paymentTypes";
+
 import { Client, Organization, Warehouse } from "./warehouseTypes";
 
 export interface BusinessPartnerProps {

@@ -30,6 +30,8 @@ import DashboardLayout from "./DashboardLayout";
 import MainLayout from "./MainLayout";
 import { Payments } from "../features/transactions/Payments";
 import { ItemsHistory } from "../features/transactions/ItemsHistory";
+import { FinancialAccounts } from "../features/setups/FinancialAccounts";
+import { FinancialAccountEntry } from "../features/setups/FinancialAccountEntry";
 
 let PrivilegedRoles: Role[] = [];
 const routes = (isLoggedIn: Boolean, roles: Role[]) => {
@@ -122,6 +124,17 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         {
           path: "item/:id",
           element: isPrivileged(<ItemEntry />, RoleTypes.ManageItems),
+        },
+        {
+          path: "fa",
+          element: isPrivileged(<FinancialAccounts />, RoleTypes.ViewItems),
+        },
+        {
+          path: "fa/:id",
+          element: isPrivileged(
+            <FinancialAccountEntry />,
+            RoleTypes.ManageItems
+          ),
         },
         {
           path: "customers",

@@ -6,12 +6,12 @@ import {
   Category,
   CategoryArgs,
   CategoryType,
-  FinancialAccount,
   FinancialAccountArgs,
   Item,
   ItemArgs,
   RemoveCategory,
 } from "./types/itemTypes";
+import { FinancialAccount } from "../transactions/types/paymentTypes";
 import {
   BusinessPartnerType,
   BusinessPartner,
@@ -19,12 +19,7 @@ import {
   RemoveBusinessPartner,
   BusinessPartnerArgs,
 } from "./types/bpTypes";
-import {
-  Client,
-  FetchWarehousesOptions,
-  Organization,
-  Warehouse,
-} from "./types/warehouseTypes";
+import { Client, Organization, Warehouse } from "./types/warehouseTypes";
 
 import {
   ADD_UPDATE_ITEM,
@@ -112,10 +107,9 @@ export const fetchFinancialAccounts = createAsyncThunk<
   any,
   FinancialAccountArgs,
   { rejectValue: RejectWithValueType }
->("setups/fetchFinancialAccounts", async (financialAccountArg, thunkAPI) => {
+>("setups/fetchFinancialAccounts", async (faArg, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
-  const { refreshList } = financialAccountArg;
-
+  const { refreshList } = faArg;
   try {
     const fetchPolicy =
       refreshList === "refresh" ? "network-only" : "cache-first";
@@ -124,12 +118,12 @@ export const fetchFinancialAccounts = createAsyncThunk<
     const response = await apolloClient.query({
       query: GET_ALL_FINANCIAL_ACCOUNTS,
       variables: {
-        ...financialAccountArg,
+        ...faArg,
       },
       fetchPolicy,
     });
 
-    if (response && response.data && response.data.items) {
+    if (response && response.data && response.data.financialAccounts) {
       return response.data.financialAccounts as FinancialAccount[];
     }
   } catch (error: any) {
@@ -251,14 +245,14 @@ export const addFinancialAccount = createAsyncThunk<
   any,
   FinancialAccount,
   { rejectValue: RejectWithValueType }
->("setups/addFinancialAccount", async (financialAccount, thunkAPI) => {
+>("setups/addFinancialAccount", async (fa, thunkAPI) => {
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_FINANCIAL_ACCOUNT,
       variables: {
-        ...financialAccount,
-        bankId: financialAccount.bank?.id,
+        ...fa,
+        bankId: fa.bank?.id,
       },
       refetchQueries: [{ query: GET_ALL_FINANCIAL_ACCOUNTS }],
     });
@@ -276,7 +270,7 @@ export const addFinancialAccount = createAsyncThunk<
     }
   } catch (error: any) {
     const message = error.message;
-    dispatch(setSelectedFinancialAccount(financialAccount));
+    dispatch(setSelectedFinancialAccount(fa));
     await setErrorAction(dispatch, { message });
     //error.graphQLErrors[0].extensions.exception.response.status;
     return rejectWithValue({ message });
@@ -309,10 +303,14 @@ export const addCategory = createAsyncThunk<
         const addedCategory = (await response.data
           .createItemCategory) as Category;
         return { type: category.type, data: addedCategory };
-      } else {
+      } else if (category.type === CategoryType.UnitOfMeasure) {
         const addedUom = (await response.data.createItemCategory) as Category;
 
         return { type: category.type, data: addedUom };
+      } else {
+        const addedBank = (await response.data.createItemCategory) as Category;
+
+        return { type: category.type, data: addedBank };
       }
     }
   } catch (error: any) {
@@ -461,7 +459,6 @@ export const addBusinessPartner = createAsyncThunk<
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
     let bp = { ...arg };
-    //console.log({ ...businessPartner });
     const { address, contact } = bp;
 
     const response = await apolloClient.mutate({
@@ -714,7 +711,6 @@ export const addOrganization = createAsyncThunk<
   const { rejectWithValue, dispatch } = thunkAPI;
   try {
     let org = { ...arg };
-    //console.log(org);
     const { address } = org;
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_ORGANIZATION,
@@ -841,7 +837,6 @@ export const addWarehouse = createAsyncThunk<
   try {
     let ware = { ...arg };
     const { address } = ware;
-    //console.log(ware);
     const response = await apolloClient.mutate({
       mutation: ADD_UPDATE_WAREHOUSE,
       variables: {
@@ -1304,6 +1299,7 @@ export const setupsSlice = createSlice({
         state.categories = payload.data;
       else if (payload.type === CategoryType.UnitOfMeasure)
         state.uoms = payload.data;
+      else state.banks = payload.data;
     });
     builder.addCase(fetchCategories.rejected, (state, { payload }) => {
       state.loading = "idle";
@@ -1394,9 +1390,12 @@ export const setupsSlice = createSlice({
           (c) => c.id !== payload.data.id
         );
         state.categories.unshift(payload.data);
-      } else {
+      } else if (payload.type === CategoryType.UnitOfMeasure) {
         state.uoms = state.uoms.filter((c) => c.id !== payload.data.id);
         state.uoms.unshift(payload.data);
+      } else {
+        state.banks = state.banks.filter((c) => c.id !== payload.data.id);
+        state.banks.unshift(payload.data);
       }
     });
     builder.addCase(addCategory.rejected, (state, { payload }) => {
@@ -1411,8 +1410,10 @@ export const setupsSlice = createSlice({
       state.loading = "idle";
       if (payload.type === CategoryType.ItemCategory) {
         state.categories = state.categories.filter((c) => c.id !== payload.id);
-      } else {
+      } else if (payload.type === CategoryType.UnitOfMeasure) {
         state.uoms = state.uoms.filter((c) => c.id !== payload.id);
+      } else {
+        state.banks = state.banks.filter((c) => c.id !== payload.id);
       }
     });
     builder.addCase(removeCategory.rejected, (state, { payload }) => {

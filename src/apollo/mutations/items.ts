@@ -62,6 +62,7 @@ export const ADD_UPDATE_FINANCIAL_ACCOUNT = gql`
       input: {
         id: $id
         accountNumber: $accountNumber
+        branch: $branch
         bank: { id: $bankId }
         organizationId: $organizationId
         businessPartnerId: $businessPartnerId
