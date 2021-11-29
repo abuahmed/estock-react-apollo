@@ -89,19 +89,14 @@ export const fetchHeaders = createAsyncThunk<
   const { rejectWithValue, dispatch } = thunkAPI;
 
   try {
-    let lastUpdated = startOfDay(new Date());
-    if (headerArg.refreshList === "refresh") lastUpdated = new Date();
-
+    const fetchPolicy =
+      headerArg.refreshList === "refresh" ? "network-only" : "cache-first";
     const response = await apolloClient.query({
       query: GET_ALL_TRANSACTIONS,
       variables: {
         ...headerArg,
-        lastUpdated,
-        durationBegin: startOfDay(
-          headerArg.durationBegin as Date
-        ).toISOString(),
-        durationEnd: endOfDay(headerArg.durationEnd as Date).toISOString(),
       },
+      fetchPolicy,
     });
 
     if (response && response.data && response.data.transactions) {
@@ -602,26 +597,29 @@ const defaultPayment: Payment = {
   amountRequired: 0,
   type: PaymentTypes.Sale,
 };
+const defaultHeader: TransactionHeader = {
+  type: TransactionType.Purchase,
+  status: TransactionStatus.Draft,
+  transactionDate: new Date(),
+  businessPartner: { displayName: "select customer/vendor", id: 0 },
+  warehouse: { displayName: "Warehouse", id: 0 },
+  toWarehouse: { displayName: "Destination", id: 0 },
+};
 
 const initialState: TransactionsState = {
-  inventories: [],
   inventorySummary: { totalItems: 0, totalPurchases: 0, totalSales: 0 },
   topPurchasesItems: [],
   topSalesItems: [],
   dailyPurchasesSummary: [],
   dailySalesSummary: [],
+  inventories: [],
   selectedInventory: { id: 0 },
   headers: [],
   headersWithSummary: {},
   lines: [],
   payments: [],
   selectedHeader: {
-    type: TransactionType.Purchase,
-    status: TransactionStatus.Draft,
-    transactionDate: new Date(),
-    businessPartner: { displayName: "select customer/vendor", id: 0 },
-    warehouse: { displayName: "Warehouse", id: 0 },
-    toWarehouse: { displayName: "Destination", id: 0 },
+    ...defaultHeader,
   },
   selectedLine: { ...defaultLine },
   selectedPayment: { ...defaultPayment },
