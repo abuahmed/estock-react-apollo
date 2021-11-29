@@ -91,6 +91,7 @@ export const fetchHeaders = createAsyncThunk<
   try {
     const fetchPolicy =
       headerArg.refreshList === "refresh" ? "network-only" : "cache-first";
+
     const response = await apolloClient.query({
       query: GET_ALL_TRANSACTIONS,
       variables: {
@@ -119,21 +120,11 @@ export const fetchLines = createAsyncThunk<
     const { refreshList } = lineArgs;
     const fetchPolicy =
       refreshList === "refresh" ? "network-only" : "cache-first";
-    let tranArgs;
-    if (lineArgs.headerId) {
-      tranArgs = { ...lineArgs };
-    } else {
-      tranArgs = {
-        ...lineArgs,
-        durationBegin: lineArgs.durationBegin as Date,
-        durationEnd: lineArgs.durationEnd as Date,
-      };
-    }
 
     const response = await apolloClient.query({
       query: GET_TRANSACTION_LINES,
       variables: {
-        ...tranArgs,
+        ...lineArgs,
       },
       fetchPolicy,
     });
