@@ -47,6 +47,10 @@ export type Item = {
   sellingPrice?: number;
   safeQty?: number | null;
 };
+export type ItemsWithCount = {
+  totalCount: number;
+  items: Item[];
+};
 
 enum ItemType {
   Purchased,

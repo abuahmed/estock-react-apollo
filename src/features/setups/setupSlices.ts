@@ -9,6 +9,7 @@ import {
   FinancialAccountArgs,
   Item,
   ItemArgs,
+  ItemsWithCount,
   RemoveCategory,
 } from "./types/itemTypes";
 import { FinancialAccount } from "../transactions/types/paymentTypes";
@@ -41,8 +42,7 @@ import {
   REMOVE_FINANCIAL_ACCOUNT,
 } from "../../apollo/mutations";
 import {
-  GET_ALL_CATEGORIES,
-  GET_ALL_ITEMS,
+  GET_CATEGORIES,
   GET_SELECTED_ITEM,
   GET_ALL_BUSINESS_PARTNERS,
   GET_SELECTED_BUSINESS_PARTNER,
@@ -55,10 +55,16 @@ import {
   GET_ALL_ROLES,
   GET_ALL_USERS,
   GET_SELECTED_USER,
-  GET_ALL_FINANCIAL_ACCOUNTS,
   GET_SELECTED_FINANCIAL_ACCOUNT,
+  GET_ITEMS,
+  GET_FINANCIAL_ACCOUNTS,
 } from "../../apollo/queries";
 
+import {
+  GET_ALL_CATEGORIES,
+  GET_ALL_ITEMS,
+  GET_ALL_FINANCIAL_ACCOUNTS,
+} from "../../apollo/queries";
 import {
   RejectWithValueType,
   AuthUser,
@@ -86,7 +92,7 @@ export const fetchItems = createAsyncThunk<
 
     //await sleep(5000);
     const response = await apolloClient.query({
-      query: GET_ALL_ITEMS,
+      query: GET_ITEMS,
       variables: {
         ...itemArg,
       },
@@ -94,7 +100,7 @@ export const fetchItems = createAsyncThunk<
     });
 
     if (response && response.data && response.data.items) {
-      return response.data.items as Item[];
+      return response.data.items as ItemsWithCount;
     }
   } catch (error: any) {
     const message = error.message;
@@ -116,7 +122,7 @@ export const fetchFinancialAccounts = createAsyncThunk<
 
     //await sleep(5000);
     const response = await apolloClient.query({
-      query: GET_ALL_FINANCIAL_ACCOUNTS,
+      query: GET_FINANCIAL_ACCOUNTS,
       variables: {
         ...faArg,
       },
@@ -145,7 +151,7 @@ export const fetchCategories = createAsyncThunk<
       categoryArg.refreshList === "refresh" ? "network-only" : "cache-first";
 
     const response = await apolloClient.query({
-      query: GET_ALL_CATEGORIES,
+      query: GET_CATEGORIES,
       variables: { ...categoryArg },
       fetchPolicy,
     });
@@ -219,7 +225,7 @@ export const addItem = createAsyncThunk<
         itemCategoryId: item.itemCategory?.id,
         unitOfMeasureId: item.unitOfMeasure?.id,
       },
-      refetchQueries: [{ query: GET_ALL_ITEMS }],
+      refetchQueries: [{ query: GET_ITEMS }, { query: GET_ALL_ITEMS }],
     });
 
     if (response && response.data && response.data.createItem) {
@@ -292,7 +298,11 @@ export const addCategory = createAsyncThunk<
       refetchQueries: [
         {
           query: GET_ALL_CATEGORIES,
-          variables: { type: category.type, skip: 0, take: -1 },
+          variables: { type: category.type },
+        },
+        {
+          query: GET_CATEGORIES,
+          variables: { type: category.type },
         },
       ],
     });
@@ -331,7 +341,7 @@ export const removeItem = createAsyncThunk<
     const response = await apolloClient.mutate({
       mutation: REMOVE_ITEM,
       variables: { id },
-      refetchQueries: [{ query: GET_ALL_ITEMS }],
+      refetchQueries: [{ query: GET_ITEMS }, { query: GET_ALL_ITEMS }],
     });
 
     if (response && response.data && response.data.removeItem) {
@@ -358,7 +368,10 @@ export const removeFinancialAccount = createAsyncThunk<
     const response = await apolloClient.mutate({
       mutation: REMOVE_FINANCIAL_ACCOUNT,
       variables: { id },
-      refetchQueries: [{ query: GET_ALL_FINANCIAL_ACCOUNTS }],
+      refetchQueries: [
+        { query: GET_ALL_FINANCIAL_ACCOUNTS },
+        { query: GET_FINANCIAL_ACCOUNTS },
+      ],
     });
 
     if (response && response.data && response.data.removeFinancialAccount) {
@@ -388,7 +401,11 @@ export const removeCategory = createAsyncThunk<
       refetchQueries: [
         {
           query: GET_ALL_CATEGORIES,
-          variables: { type: category.type, skip: 0, take: -1 },
+          variables: { type: category.type },
+        },
+        {
+          query: GET_CATEGORIES,
+          variables: { type: category.type },
         },
       ],
     });
@@ -1148,12 +1165,12 @@ const defaultUser: AuthUser = {
 };
 
 const initialSetupsState: SetupsState = {
-  items: [],
   categories: [],
   uoms: [],
   financialAccounts: [],
   banks: [],
   selectedCategory: { ...defaultCategory },
+  itemsWithCount: { totalCount: 0, items: [] },
   selectedItem: { ...defaultItem },
   selectedFinancialAccount: { ...defaultFinancialAccount },
   businessPartners: [],
@@ -1165,8 +1182,8 @@ const initialSetupsState: SetupsState = {
   warehouses: [],
   selectedWarehouse: { ...defaultWarehouse },
   users: [],
-  roles: [],
   selectedUser: { ...defaultUser },
+  roles: [],
   loading: "idle",
   currentRequestId: undefined,
   success: null,
@@ -1203,7 +1220,7 @@ export const setupsSlice = createSlice({
     },
 
     setItems: (state, { payload }) => {
-      state.items = payload;
+      state.itemsWithCount = payload;
     },
 
     resetSelectedFinancialAccount: (state) => {
@@ -1273,7 +1290,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchItems.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.items = payload;
+      state.itemsWithCount = payload;
     });
     builder.addCase(fetchItems.rejected, (state) => {
       state.loading = "idle";
@@ -1334,8 +1351,14 @@ export const setupsSlice = createSlice({
     builder.addCase(addItem.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedItem = payload;
-      state.items = state.items.filter((c) => c.id !== payload.id);
-      state.items.unshift(payload);
+
+      state.itemsWithCount.totalCount =
+        (state.itemsWithCount.totalCount as number) + 1;
+
+      state.itemsWithCount.items = state.itemsWithCount.items?.filter(
+        (h) => h.id !== payload.id
+      );
+      state.itemsWithCount.items.unshift(payload);
     });
     builder.addCase(addItem.rejected, (state) => {
       state.loading = "idle";
@@ -1361,7 +1384,13 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeItem.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.items = state.items.filter((c) => c.id !== payload);
+
+      state.itemsWithCount.totalCount =
+        (state.itemsWithCount.totalCount as number) - 1;
+
+      state.itemsWithCount.items = state.itemsWithCount.items?.filter(
+        (h) => h.id !== payload.id
+      );
     });
     builder.addCase(removeItem.rejected, (state) => {
       state.loading = "idle";

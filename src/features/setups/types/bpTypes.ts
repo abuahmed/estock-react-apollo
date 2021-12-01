@@ -1,6 +1,6 @@
 import { AuthUser, Role } from "../../auth/types/authType";
 import { TransactionHeader } from "../../transactions/types/transactionTypes";
-import { Category, Item } from "./itemTypes";
+import { Category, Item, ItemsWithCount } from "./itemTypes";
 import { FinancialAccount } from "../../transactions/types/paymentTypes";
 
 import { Client, Organization, Warehouse } from "./warehouseTypes";
@@ -116,7 +116,7 @@ export type BusinessPartnerArgs = {
 };
 
 export type SetupsState = {
-  items: Item[];
+  itemsWithCount: ItemsWithCount;
   categories: Category[];
   uoms: Category[];
   financialAccounts: FinancialAccount[];

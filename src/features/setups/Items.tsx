@@ -34,9 +34,12 @@ import { CategoryType } from "./types/itemTypes";
 import { CategoryFilter } from "../../components/filter/CategoryFilter";
 export const Items = () => {
   const dispatch = useAppDispatch();
-  const { items, loading } = useAppSelector(selectSetups);
+  const {
+    itemsWithCount: { items, totalCount },
+    loading,
+  } = useAppSelector(selectSetups);
   const { searchText } = useAppSelector(selectPreference);
-  const [total, setTotal] = useState(14);
+  const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [itemCategoryId, setItemCategoryId] = useState<number>(0);
@@ -80,6 +83,10 @@ export const Items = () => {
   const DeleteItem = (id: number) => {
     dispatch(removeItem(id));
   };
+  useEffect(() => {
+    setTotal(totalCount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalCount]);
 
   return (
     <>

@@ -12,7 +12,9 @@ export const ItemFilter = ({ setItemId }: Props) => {
   const [selectedItem, setSelectedItem] = useState<Item>({
     displayName: "select",
   });
-  const { items } = useAppSelector(selectSetups);
+  const {
+    itemsWithCount: { items },
+  } = useAppSelector(selectSetups);
 
   useEffect(() => {
     dispatch(fetchItems({ skip: 0 }));

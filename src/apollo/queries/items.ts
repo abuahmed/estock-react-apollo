@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { GET_FINANCIAL_ACCOUNT, GET_ITEM } from "../fragments/items";
 
-export const GET_ALL_ITEMS = gql`
+export const GET_ITEMS = gql`
   ${GET_ITEM}
   query GetItems(
     $itemId: Int
@@ -19,12 +19,15 @@ export const GET_ALL_ITEMS = gql`
       take: $take
       searchText: $searchText
     ) {
-      ...getItem
+      totalCount
+      items {
+        ...getItem
+      }
     }
   }
 `;
 
-export const GET_ALL_FINANCIAL_ACCOUNTS = gql`
+export const GET_FINANCIAL_ACCOUNTS = gql`
   ${GET_FINANCIAL_ACCOUNT}
   query GetFinancialAccounts(
     $bankId: Int
@@ -47,7 +50,7 @@ export const GET_ALL_FINANCIAL_ACCOUNTS = gql`
   }
 `;
 
-export const GET_ALL_CATEGORIES = gql`
+export const GET_CATEGORIES = gql`
   query GetCategories(
     $type: CategoryType!
     $searchText: String
