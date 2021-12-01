@@ -22,7 +22,7 @@ export const GET_DAILY_TRANSACTIONS_SUMMARY = gql`
       groupByDate: true
     ) {
       transactionDate
-      totalTransactions
+      totalCount
       totalAmount
     }
   }
@@ -38,7 +38,7 @@ export const GET_TOP_ITEMS = gql`
     ) {
       itemId
       itemName
-      totalTransactions
+      totalCount
       totalAmount
     }
   }
@@ -67,8 +67,7 @@ export const GET_ALL_TRANSACTIONS = gql`
       durationEnd: $durationEnd
       lastUpdated: $lastUpdated
     ) {
-      totalTransactions
-      totalAmount
+      totalCount
       headers {
         ...getHeader
       }

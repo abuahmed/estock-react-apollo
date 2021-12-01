@@ -69,12 +69,11 @@ export const Headers = ({ type }: HeaderProps) => {
   const { user } = useAppSelector(selectAuth);
   const { searchText } = useAppSelector(selectPreference);
   const {
-    headersWithSummary: { headers, totalTransactions, totalAmount },
+    headersWithCount: { headers, totalCount },
     loading,
   } = useAppSelector(selectTransactions);
 
   const [total, setTotal] = useState(0);
-  const [summaryAmount, setSummaryAmount] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [warehouseId, setWarehouseId] = useState<number>(0);
@@ -132,10 +131,9 @@ export const Headers = ({ type }: HeaderProps) => {
   }, [dispatch, searchText]);
 
   useEffect(() => {
-    setTotal(totalTransactions as number);
-    setSummaryAmount(totalAmount as number);
+    setTotal(totalCount as number);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalTransactions, totalAmount]);
+  }, [totalCount]);
   const DeleteHeader = (id: number, totalAmount: number) => {
     dispatch(removeHeader({ id, totalAmount }));
   };
@@ -401,10 +399,7 @@ export const Headers = ({ type }: HeaderProps) => {
             setCurrentPage={setCurrentPage}
           />
           <Typography variant="h6" component="div">
-            Number of {type}s: {totalTransactions}
-          </Typography>
-          <Typography variant="h6" component="div">
-            Total Amount: {summaryAmount}
+            Number of {type}s: {totalCount}
           </Typography>
         </Stack>
       </>

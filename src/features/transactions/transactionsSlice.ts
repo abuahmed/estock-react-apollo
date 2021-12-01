@@ -25,7 +25,7 @@ import {
   TransactionsState,
   TransactionStatus,
   TransactionSummary,
-  TransactionsWithSummary,
+  HeadersWithCount,
   TransactionType,
 } from "./types/transactionTypes";
 import {
@@ -101,7 +101,7 @@ export const fetchHeaders = createAsyncThunk<
     });
 
     if (response && response.data && response.data.transactions) {
-      return response.data.transactions as TransactionsWithSummary[];
+      return response.data.transactions as HeadersWithCount[];
     }
   } catch (error: any) {
     const message = error.message;
@@ -605,14 +605,14 @@ const initialState: TransactionsState = {
   dailySalesSummary: [],
   inventories: [],
   selectedInventory: { id: 0 },
-  headers: [],
-  headersWithSummary: {},
-  lines: [],
-  payments: [],
+  // headers: [],
+  headersWithCount: {},
   selectedHeader: {
     ...defaultHeader,
   },
+  lines: [],
   selectedLine: { ...defaultLine },
+  payments: [],
   selectedPayment: { ...defaultPayment },
   loading: "idle",
   currentRequestId: undefined,
@@ -659,10 +659,10 @@ export const transactionsSlice = createSlice({
       state.selectedHeader = payload;
     },
     resetHeaders: (state) => {
-      state.headers = [];
+      state.headersWithCount = {};
     },
     setHeaders: (state, { payload }) => {
-      state.headers = payload;
+      state.headersWithCount = payload;
     },
     resetLines: (state) => {
       state.lines = [];
@@ -677,7 +677,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(fetchHeaders.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.headersWithSummary = payload;
+      state.headersWithCount = payload;
       // if (payload.length > 0) state.selectedHeader = payload[0];
     });
     builder.addCase(fetchHeaders.rejected, (state) => {
@@ -794,12 +794,12 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(removeHeader.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.headersWithSummary.totalTransactions =
-        (state.headersWithSummary.totalTransactions as number) - 1;
-      state.headersWithSummary.totalAmount =
-        (state.headersWithSummary.totalAmount as number) - payload.totalAmount;
-      state.headersWithSummary.headers =
-        state.headersWithSummary.headers?.filter((h) => h.id !== payload.id);
+      state.headersWithCount.totalCount =
+        (state.headersWithCount.totalCount as number) - 1;
+
+      state.headersWithCount.headers = state.headersWithCount.headers?.filter(
+        (h) => h.id !== payload.id
+      );
     });
     builder.addCase(removeHeader.rejected, (state) => {
       state.loading = "idle";

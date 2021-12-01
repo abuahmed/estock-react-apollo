@@ -130,7 +130,11 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectAuth);
   const { searchText } = useAppSelector(selectPreference);
-  const { items, businessPartners, warehouses } = useAppSelector(selectSetups);
+  const {
+    itemsWithCount: { items },
+    businessPartners,
+    warehouses,
+  } = useAppSelector(selectSetups);
 
   const {
     lines,

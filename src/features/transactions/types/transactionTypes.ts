@@ -28,9 +28,8 @@ export type TransactionLine = {
   linePrice?: number;
 };
 
-export type TransactionsWithSummary = {
-  totalTransactions?: number;
-  totalAmount?: number;
+export type HeadersWithCount = {
+  totalCount?: number;
   headers?: TransactionHeader[];
 };
 export type TransactionSummary = {
@@ -115,8 +114,8 @@ export type TransactionsState = {
   dailyPurchasesSummary: DailySummary[];
   dailySalesSummary: DailySummary[];
   selectedInventory?: Inventory;
-  headers: TransactionHeader[];
-  headersWithSummary: TransactionsWithSummary;
+  // headers: TransactionHeader[];
+  headersWithCount: HeadersWithCount;
   lines: TransactionLine[];
   payments: Payment[];
   selectedHeader: TransactionHeader;
