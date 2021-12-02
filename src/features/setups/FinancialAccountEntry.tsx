@@ -22,6 +22,7 @@ import {
   getFinancialAccount,
   resetSelectedFinancialAccount,
   addFinancialAccount,
+  selectBanks,
 } from "./setupSlices";
 import { CategoryType } from "./types/itemTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
@@ -47,10 +48,10 @@ export const FinancialAccountEntry = () => {
   };
   const [open, setOpen] = useState(false);
 
-  const { loading, error, success, selectedFinancialAccount, banks } =
+  const { loading, error, success, selectedFinancialAccount } =
     useAppSelector(selectSetups);
   const dispatch = useAppDispatch();
-
+  const banks = useAppSelector(selectBanks);
   useEffect(() => {
     dispatch(changePageTitle(`Financial Account Entry`));
 
@@ -63,7 +64,7 @@ export const FinancialAccountEntry = () => {
   }, [dispatch]);
   useEffect(() => {
     if (!open) {
-      dispatch(fetchCategories({ type: CategoryType.Bank, skip: 0, take: -1 }));
+      dispatch(fetchCategories({ skip: 0, take: -1 }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);

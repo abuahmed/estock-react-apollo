@@ -36,9 +36,12 @@ import { CategoryType } from "./types/itemTypes";
 import { CategoryFilter } from "../../components/filter/CategoryFilter";
 export const FinancialAccounts = () => {
   const dispatch = useAppDispatch();
-  const { financialAccounts, loading } = useAppSelector(selectSetups);
+  const {
+    financialAccountsWithCount: { financialAccounts, totalCount },
+    loading,
+  } = useAppSelector(selectSetups);
   const { searchText } = useAppSelector(selectPreference);
-  const [total, setTotal] = useState(14);
+  const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [bankId, setBankId] = useState<number>(0);
@@ -72,7 +75,10 @@ export const FinancialAccounts = () => {
   const DeleteFinancialAccount = (id: number) => {
     dispatch(removeFinancialAccount(id));
   };
-
+  useEffect(() => {
+    setTotal(totalCount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalCount]);
   return (
     <>
       <Helmet>
