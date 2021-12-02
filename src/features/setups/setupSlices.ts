@@ -1,4 +1,8 @@
-import { createAsyncThunk, ThunkDispatch } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  ThunkDispatch,
+} from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { apolloClient } from "../../apollo/graphql";
@@ -12,7 +16,10 @@ import {
   ItemsWithCount,
   RemoveCategory,
 } from "./types/itemTypes";
-import { FinancialAccount } from "../transactions/types/paymentTypes";
+import {
+  FinancialAccount,
+  FinancialAccountsWithCount,
+} from "../transactions/types/paymentTypes";
 import {
   BusinessPartnerType,
   BusinessPartner,
@@ -130,7 +137,7 @@ export const fetchFinancialAccounts = createAsyncThunk<
     });
 
     if (response && response.data && response.data.financialAccounts) {
-      return response.data.financialAccounts as FinancialAccount[];
+      return response.data.financialAccounts as FinancialAccountsWithCount;
     }
   } catch (error: any) {
     const message = error.message;
@@ -157,10 +164,11 @@ export const fetchCategories = createAsyncThunk<
     });
 
     if (response && response.data && response.data.getCategories) {
-      return {
-        type: categoryArg.type,
-        data: response.data.getCategories as Category[],
-      };
+      return response.data.getCategories as Category[];
+      // return {
+      //   type: categoryArg.type,
+      //   data: response.data.getCategories as Category[],
+      // };
     }
   } catch (error: any) {
     const message = error.message;
@@ -309,19 +317,20 @@ export const addCategory = createAsyncThunk<
 
     if (response && response.data && response.data.createItemCategory) {
       dispatch(setSelectedCategory({ ...category, id: 0, displayName: "" }));
-      if (category.type === CategoryType.ItemCategory) {
-        const addedCategory = (await response.data
-          .createItemCategory) as Category;
-        return { type: category.type, data: addedCategory };
-      } else if (category.type === CategoryType.UnitOfMeasure) {
-        const addedUom = (await response.data.createItemCategory) as Category;
+      return (await response.data.createItemCategory) as Category;
+      // if (category.type === CategoryType.ItemCategory) {
+      //   const addedCategory = (await response.data
+      //     .createItemCategory) as Category;
+      //   return { type: category.type, data: addedCategory };
+      // } else if (category.type === CategoryType.UnitOfMeasure) {
+      //   const addedUom = (await response.data.createItemCategory) as Category;
 
-        return { type: category.type, data: addedUom };
-      } else {
-        const addedBank = (await response.data.createItemCategory) as Category;
+      //   return { type: category.type, data: addedUom };
+      // } else {
+      //   const addedBank = (await response.data.createItemCategory) as Category;
 
-        return { type: category.type, data: addedBank };
-      }
+      //   return { type: category.type, data: addedBank };
+      // }
     }
   } catch (error: any) {
     const message = error.message;
@@ -1166,9 +1175,10 @@ const defaultUser: AuthUser = {
 
 const initialSetupsState: SetupsState = {
   categories: [],
-  uoms: [],
-  financialAccounts: [],
-  banks: [],
+  // categoriesWithCount: { totalCount: 0, categories: [] },
+  // uomsWithCount: { totalCount: 0, uoms: [] },
+  // banksWithCount: { totalCount: 0, banks: [] },
+  financialAccountsWithCount: { totalCount: 0, financialAccounts: [] },
   selectedCategory: { ...defaultCategory },
   itemsWithCount: { totalCount: 0, items: [] },
   selectedItem: { ...defaultItem },
@@ -1231,7 +1241,7 @@ export const setupsSlice = createSlice({
     },
 
     setFinancialAccounts: (state, { payload }) => {
-      state.financialAccounts = payload;
+      state.financialAccountsWithCount = payload;
     },
     resetSelectedBusinessPartner: (state, { payload }) => {
       state.selectedBusinessPartner = {
@@ -1301,7 +1311,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchFinancialAccounts.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.financialAccounts = payload;
+      state.financialAccountsWithCount = payload;
     });
     builder.addCase(fetchFinancialAccounts.rejected, (state) => {
       state.loading = "idle";
@@ -1312,11 +1322,12 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchCategories.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      if (payload.type === CategoryType.ItemCategory)
-        state.categories = payload.data;
-      else if (payload.type === CategoryType.UnitOfMeasure)
-        state.uoms = payload.data;
-      else state.banks = payload.data;
+      state.categories = payload;
+      // if (payload.type === CategoryType.ItemCategory)
+      //   state.categoriesWithCount = payload.data;
+      // else if (payload.type === CategoryType.UnitOfMeasure)
+      //   state.uomsWithCount = payload.data;
+      // else state.banksWithCount = payload.data;
     });
     builder.addCase(fetchCategories.rejected, (state, { payload }) => {
       state.loading = "idle";
@@ -1370,10 +1381,11 @@ export const setupsSlice = createSlice({
     builder.addCase(addFinancialAccount.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedFinancialAccount = payload;
-      state.financialAccounts = state.financialAccounts.filter(
-        (c) => c.id !== payload.id
-      );
-      state.financialAccounts.unshift(payload);
+      state.financialAccountsWithCount.financialAccounts =
+        state.financialAccountsWithCount.financialAccounts.filter(
+          (c) => c.id !== payload.id
+        );
+      state.financialAccountsWithCount.financialAccounts.unshift(payload);
     });
     builder.addCase(addFinancialAccount.rejected, (state) => {
       state.loading = "idle";
@@ -1401,9 +1413,10 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeFinancialAccount.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.financialAccounts = state.financialAccounts.filter(
-        (c) => c.id !== payload
-      );
+      state.financialAccountsWithCount.financialAccounts =
+        state.financialAccountsWithCount.financialAccounts.filter(
+          (c) => c.id !== payload
+        );
     });
     builder.addCase(removeFinancialAccount.rejected, (state) => {
       state.loading = "idle";
@@ -1414,18 +1427,25 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(addCategory.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      if (payload.type === CategoryType.ItemCategory) {
-        state.categories = state.categories.filter(
-          (c) => c.id !== payload.data.id
-        );
-        state.categories.unshift(payload.data);
-      } else if (payload.type === CategoryType.UnitOfMeasure) {
-        state.uoms = state.uoms.filter((c) => c.id !== payload.data.id);
-        state.uoms.unshift(payload.data);
-      } else {
-        state.banks = state.banks.filter((c) => c.id !== payload.data.id);
-        state.banks.unshift(payload.data);
-      }
+      state.categories = state.categories.filter((c) => c.id !== payload.id);
+      state.categories.unshift(payload);
+      // if (payload.type === CategoryType.ItemCategory) {
+      //   state.categoriesWithCount.categories =
+      //     state.categoriesWithCount.categories.filter(
+      //       (c) => c.id !== payload.data.id
+      //     );
+      //   state.categoriesWithCount.categories.unshift(payload.data);
+      // } else if (payload.type === CategoryType.UnitOfMeasure) {
+      //   state.uomsWithCount.uoms = state.uomsWithCount.uoms.filter(
+      //     (c) => c.id !== payload.data.id
+      //   );
+      //   state.uomsWithCount.uoms.unshift(payload.data);
+      // } else {
+      //   state.banksWithCount.banks = state.banksWithCount.banks.filter(
+      //     (c) => c.id !== payload.data.id
+      //   );
+      //   state.banksWithCount.banks.unshift(payload.data);
+      // }
     });
     builder.addCase(addCategory.rejected, (state, { payload }) => {
       state.loading = "idle";
@@ -1437,13 +1457,21 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeCategory.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      if (payload.type === CategoryType.ItemCategory) {
-        state.categories = state.categories.filter((c) => c.id !== payload.id);
-      } else if (payload.type === CategoryType.UnitOfMeasure) {
-        state.uoms = state.uoms.filter((c) => c.id !== payload.id);
-      } else {
-        state.banks = state.banks.filter((c) => c.id !== payload.id);
-      }
+      state.categories = state.categories.filter((c) => c.id !== payload.id);
+      // if (payload.type === CategoryType.ItemCategory) {
+      //   state.categoriesWithCount.categories =
+      //     state.categoriesWithCount.categories.filter(
+      //       (c) => c.id !== payload.id
+      //     );
+      // } else if (payload.type === CategoryType.UnitOfMeasure) {
+      //   state.uomsWithCount.uoms = state.uomsWithCount.uoms.filter(
+      //     (c) => c.id !== payload.id
+      //   );
+      // } else {
+      //   state.banksWithCount.banks = state.banksWithCount.banks.filter(
+      //     (c) => c.id !== payload.id
+      //   );
+      // }
     });
     builder.addCase(removeCategory.rejected, (state, { payload }) => {
       state.loading = "idle";
@@ -1741,3 +1769,51 @@ export default reducer;
 
 // Selectors
 export const selectSetups = (state: RootState) => state.setups as SetupsState;
+
+export const selectItemCategories = createSelector(selectSetups, (setups) =>
+  setups.categories.filter(
+    (cat: Category) => cat.type === CategoryType.ItemCategory
+  )
+);
+export const selectItemCategoriesCount = createSelector(
+  selectItemCategories,
+  (cats) => cats.length
+);
+
+export const selectUoms = createSelector(selectSetups, (setups) =>
+  setups.categories.filter(
+    (uom: Category) => uom.type === CategoryType.UnitOfMeasure
+  )
+);
+export const selectUomsCount = createSelector(
+  selectUoms,
+  (uoms) => uoms.length
+);
+
+export const selectBanks = createSelector(selectSetups, (setups) =>
+  setups.categories.filter((bank: Category) => bank.type === CategoryType.Bank)
+);
+export const selectBanksCount = createSelector(
+  selectBanks,
+  (banks) => banks.length
+);
+
+// export const selectCategories = createSelector(
+//   [(state) => state.categories, (state, category: Category) => category],
+//   (categories, category) =>
+//     categories.filter((cat: Category) => cat.type === category)
+// );
+
+// State selectors
+// export const selectTodos = (state: RootState) => state.firestore.ordered.todos
+// export const selectTodosCount = createSelector(selectTodos, (todos) => todos.length)
+// export const selectActiveTodosCount = createSelector(
+//   selectTodos,
+//   (todos: Todo[]) => todos && todos.filter((todo) => !todo.isCompleted).length
+// )
+
+//State Selectors with Argument
+// const selectItemsByCategory = createSelector(
+//   [(state) => state.items, (state, category) => category],
+//   (items, category) => items.filter((item) => item.category === category)
+// );

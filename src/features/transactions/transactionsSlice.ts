@@ -874,17 +874,3 @@ export const selectTransactions = (state: RootState) =>
   state.transactions as TransactionsState;
 
 export default transactionsSlice.reducer;
-
-// State selectors
-// export const selectTodos = (state: RootState) => state.firestore.ordered.todos
-// export const selectTodosCount = createSelector(selectTodos, (todos) => todos.length)
-// export const selectActiveTodosCount = createSelector(
-//   selectTodos,
-//   (todos: Todo[]) => todos && todos.filter((todo) => !todo.isCompleted).length
-// )
-
-//State Selectors with Argument
-// const selectItemsByCategory = createSelector(
-//   [(state) => state.items, (state, category) => category],
-//   (items, category) => items.filter((item) => item.category === category)
-// );

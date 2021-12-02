@@ -23,7 +23,10 @@ export type FinancialAccount = {
   businessPartnerId?: number;
   businessPartner?: BusinessPartner;
 };
-
+export type FinancialAccountsWithCount = {
+  totalCount: number;
+  financialAccounts: FinancialAccount[];
+};
 export type Check = {
   id?: number;
   uuid?: string;

@@ -1,6 +1,3 @@
-import { BusinessPartner } from "./bpTypes";
-import { Organization } from "./warehouseTypes";
-
 export type Category = {
   id?: number;
   uuid?: string;
@@ -13,10 +10,17 @@ export type Category = {
   parentCategory?: Category;
   childCategories?: [Category];
 };
-export type itemsWithSummary = {
-  totalCount?: number;
-  totalAmount?: number;
-  items?: Item[];
+export type CategoriesWithCount = {
+  totalCount: number;
+  categories: Category[];
+};
+export type UomsWithCount = {
+  totalCount: number;
+  uoms: Category[];
+};
+export type BanksWithCount = {
+  totalCount: number;
+  banks: Category[];
 };
 export type RemoveCategory = {
   type?: CategoryType;

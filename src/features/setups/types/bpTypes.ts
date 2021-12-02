@@ -1,7 +1,10 @@
 import { AuthUser, Role } from "../../auth/types/authType";
 import { TransactionHeader } from "../../transactions/types/transactionTypes";
 import { Category, Item, ItemsWithCount } from "./itemTypes";
-import { FinancialAccount } from "../../transactions/types/paymentTypes";
+import {
+  FinancialAccount,
+  FinancialAccountsWithCount,
+} from "../../transactions/types/paymentTypes";
 
 import { Client, Organization, Warehouse } from "./warehouseTypes";
 
@@ -74,7 +77,10 @@ export type BusinessPartner = {
   salesPerson?: SalesPerson;
   transactions?: [TransactionHeader];
 };
-
+export type BusinessPartnersWithCount = {
+  totalCount: number;
+  businessPartners: BusinessPartner[];
+};
 export type SalesPerson = {
   id?: number;
   uuid?: string;
@@ -88,7 +94,10 @@ export type SalesPerson = {
   contact?: Contact;
   businessPartners?: [BusinessPartner];
 };
-
+export type SalesPersonsWithCount = {
+  totalCount: number;
+  salesPersons: SalesPerson[];
+};
 export enum BusinessPartnerType {
   Customer = "Customer",
   Vendor = "Vendor",
@@ -116,11 +125,12 @@ export type BusinessPartnerArgs = {
 };
 
 export type SetupsState = {
-  itemsWithCount: ItemsWithCount;
   categories: Category[];
-  uoms: Category[];
-  financialAccounts: FinancialAccount[];
-  banks: Category[];
+  // categoriesWithCount: CategoriesWithCount;
+  // uomsWithCount: UomsWithCount;
+  // banksWithCount: BanksWithCount;
+  financialAccountsWithCount: FinancialAccountsWithCount;
+  itemsWithCount: ItemsWithCount;
   selectedCategory: Category;
   selectedItem: Item;
   selectedFinancialAccount: FinancialAccount;

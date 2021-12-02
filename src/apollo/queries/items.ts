@@ -45,30 +45,42 @@ export const GET_FINANCIAL_ACCOUNTS = gql`
       take: $take
       searchText: $searchText
     ) {
-      ...getFinancialAccount
+      totalCount
+      financialAccounts {
+        ...getFinancialAccount
+      }
     }
   }
 `;
 
 export const GET_CATEGORIES = gql`
-  query GetCategories(
-    $type: CategoryType!
-    $searchText: String
-    $skip: Int
-    $take: Int
-  ) {
-    getCategories(
-      type: $type
-      skip: $skip
-      take: $take
-      searchText: $searchText
-    ) {
+  query GetCategories($searchText: String, $skip: Int, $take: Int) {
+    getCategories(skip: $skip, take: $take, searchText: $searchText) {
       id
       type
       displayName
     }
   }
 `;
+// export const GET_CATEGORIES = gql`
+//   query GetCategories(
+//     $type: CategoryType!
+//     $searchText: String
+//     $skip: Int
+//     $take: Int
+//   ) {
+//     getCategories(
+//       type: $type
+//       skip: $skip
+//       take: $take
+//       searchText: $searchText
+//     ) {
+//       id
+//       type
+//       displayName
+//     }
+//   }
+// `;
 
 export const GET_SELECTED_ITEM = gql`
   ${GET_ITEM}

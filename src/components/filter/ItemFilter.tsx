@@ -25,7 +25,11 @@ export const ItemFilter = ({ setItemId }: Props) => {
         id="itemId"
         options={items}
         value={selectedItem}
-        getOptionLabel={(option) => option.displayName as string}
+        getOptionLabel={(option) =>
+          (option.id ? (option.id as number) : "") +
+          " " +
+          (option.displayName as string)
+        }
         sx={{ mt: 1 }}
         onChange={(e, value) => {
           setSelectedItem(value as Item);

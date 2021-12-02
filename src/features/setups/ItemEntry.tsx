@@ -22,6 +22,8 @@ import {
   getItem,
   resetSelectedItem,
   fetchCategories,
+  selectItemCategories,
+  selectUoms,
 } from "./setupSlices";
 import { CategoryType, Item as ItemType } from "./types/itemTypes";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
@@ -49,8 +51,10 @@ export const ItemEntry = () => {
     CategoryType.ItemCategory
   );
 
-  const { loading, error, success, selectedItem, categories, uoms } =
+  const { loading, error, success, selectedItem } =
     useAppSelector(selectSetups);
+  const categories = useAppSelector(selectItemCategories);
+  const uoms = useAppSelector(selectUoms);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

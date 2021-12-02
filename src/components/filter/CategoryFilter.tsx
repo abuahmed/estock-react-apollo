@@ -3,7 +3,10 @@ import { Autocomplete, TextField } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   fetchCategories,
+  selectBanks,
+  selectItemCategories,
   selectSetups,
+  selectUoms,
 } from "../../features/setups/setupSlices";
 import { Category, CategoryType } from "../../features/setups/types/itemTypes";
 
@@ -24,8 +27,10 @@ export const CategoryFilter = ({
     displayName: "select",
   });
   const [categoriesList, setCategoriesList] = useState<Category[]>([]);
-  const { categories, uoms, banks } = useAppSelector(selectSetups);
-
+  const {} = useAppSelector(selectSetups);
+  const categories = useAppSelector(selectItemCategories);
+  const uoms = useAppSelector(selectUoms);
+  const banks = useAppSelector(selectBanks);
   useEffect(() => {
     dispatch(fetchCategories({ type: bpType, take: -1, skip: 0 }));
     // eslint-disable-next-line react-hooks/exhaustive-deps

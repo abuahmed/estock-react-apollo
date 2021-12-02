@@ -13,6 +13,12 @@ import {
   removeCategory,
   fetchCategories,
   setSelectedCategory,
+  selectItemCategories,
+  selectUoms,
+  selectBanks,
+  selectItemCategoriesCount,
+  selectUomsCount,
+  selectBanksCount,
 } from "../setupSlices";
 import { Category, CategoryType } from "../types/itemTypes";
 import { FormikTextField } from "../../../components/Layout/FormikTextField";
@@ -42,45 +48,53 @@ interface Props {
 }
 export const CategoryEntry = ({ categoryType }: Props) => {
   defaultCategory = { ...defaultCategory, type: categoryType };
-  const { categories, uoms, banks, selectedCategory } =
-    useAppSelector(selectSetups);
+  const { selectedCategory } = useAppSelector(selectSetups);
+  const categories = useAppSelector(selectItemCategories);
+  const uoms = useAppSelector(selectUoms);
+  const banks = useAppSelector(selectBanks);
+  const catCount = useAppSelector(selectItemCategoriesCount);
+  const uomCount = useAppSelector(selectUomsCount);
+  const banksCount = useAppSelector(selectBanksCount);
   const dispatch = useAppDispatch();
 
   const [categoriesList, setCategoriesList] = useState<Category[]>([]);
 
-  const [total, setTotal] = useState(10);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [total, setTotal] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
-    const skipRows = currentPage * rowsPerPage;
     dispatch(setSelectedCategory(defaultCategory));
-    dispatch(
-      fetchCategories({ type: categoryType, skip: skipRows, take: rowsPerPage })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, currentPage, rowsPerPage]);
-  const RefreshList = () => {
-    const skipRows = currentPage * rowsPerPage;
+    dispatch(fetchCategories({ skip: 0, take: -1 }));
+  }, [dispatch]);
 
+  const RefreshList = () => {
     dispatch(
       fetchCategories({
-        type: categoryType,
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
         refreshList: "refresh",
       })
     );
   };
   useEffect(() => {
-    if (categoryType === CategoryType.ItemCategory) {
-      setCategoriesList(categories);
-    } else if (categoryType === CategoryType.UnitOfMeasure) {
-      setCategoriesList(uoms);
-    } else setCategoriesList(banks);
+    dispatch(setSelectedCategory(defaultCategory));
+    dispatch(fetchCategories({ skip: 0, take: -1 }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
+
+  useEffect(() => {
+    const skipRows = currentPage * rowsPerPage;
+    if (categories && categoryType === CategoryType.ItemCategory) {
+      setCategoriesList(categories.slice(skipRows, skipRows + rowsPerPage));
+    } else if (uoms && categoryType === CategoryType.UnitOfMeasure) {
+      setCategoriesList(uoms.slice(skipRows, skipRows + rowsPerPage));
+    } else if (banks && categoryType === CategoryType.Bank) {
+      setCategoriesList(banks.slice(skipRows, skipRows + rowsPerPage));
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [categories, uoms, banks]);
+  }, [categories, uoms, banks, currentPage, rowsPerPage]);
 
   const DeleteCategory = (id: number) => {
     dispatch(removeCategory({ type: categoryType, id }));
@@ -92,6 +106,15 @@ export const CategoryEntry = ({ categoryType }: Props) => {
       )
     );
   };
+
+  useEffect(() => {
+    if (categoryType === CategoryType.ItemCategory) {
+      setTotal(catCount as number);
+    } else if (categoryType === CategoryType.UnitOfMeasure) {
+      setTotal(uomCount as number);
+    } else setTotal(banksCount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catCount, uomCount, banksCount]);
 
   return (
     <>
