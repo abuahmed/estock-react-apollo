@@ -1,10 +1,4 @@
-import {
-  createAsyncThunk,
-  createSlice,
-  ThunkDispatch,
-  createSelector,
-} from "@reduxjs/toolkit";
-//import { store } from "../../app/store";
+import { createAsyncThunk, createSlice, ThunkDispatch } from "@reduxjs/toolkit";
 import { addMonths, endOfDay, startOfDay } from "date-fns";
 
 import { apolloClient } from "../../apollo/graphql";
@@ -60,9 +54,6 @@ export const fetchInventories = createAsyncThunk<
   const { rejectWithValue, dispatch } = thunkAPI;
   const { refreshList } = inventoryArg;
   try {
-    //let lastUpdated = startOfDay(new Date());
-    //if (_arg === "refresh") lastUpdated = new Date();
-
     const fetchPolicy =
       refreshList === "refresh" ? "network-only" : "cache-first";
     const response = await apolloClient.query({
@@ -603,10 +594,9 @@ const initialState: TransactionsState = {
   topSalesItems: [],
   dailyPurchasesSummary: [],
   dailySalesSummary: [],
-  inventories: [],
+  inventoriesWithCount: { totalCount: 0, inventories: [] },
   selectedInventory: { id: 0 },
-  // headers: [],
-  headersWithCount: {},
+  headersWithCount: { totalCount: 0, headers: [] },
   selectedHeader: {
     ...defaultHeader,
   },
@@ -659,7 +649,7 @@ export const transactionsSlice = createSlice({
       state.selectedHeader = payload;
     },
     resetHeaders: (state) => {
-      state.headersWithCount = {};
+      state.headersWithCount = { totalCount: 0, headers: [] };
     },
     setHeaders: (state, { payload }) => {
       state.headersWithCount = payload;
@@ -726,7 +716,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(fetchInventories.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.inventories = payload;
+      state.inventoriesWithCount = payload;
     });
     builder.addCase(fetchInventories.rejected, (state) => {
       state.loading = "idle";

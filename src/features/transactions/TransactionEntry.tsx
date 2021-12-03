@@ -141,7 +141,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     payments,
     selectedHeader,
     selectedLine,
-    inventories,
+    inventoriesWithCount: { inventories },
     loading,
     success,
     error,

@@ -28,8 +28,11 @@ import { ItemFilter } from "../../components/filter/ItemFilter";
 
 export const Inventories = () => {
   const dispatch = useAppDispatch();
-  const { inventories, loading } = useAppSelector(selectTransactions);
-  const [total, setTotal] = useState(14);
+  const {
+    inventoriesWithCount: { inventories, totalCount },
+    loading,
+  } = useAppSelector(selectTransactions);
+  const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [warehouseId, setWarehouseId] = useState<number>(0);
@@ -71,7 +74,10 @@ export const Inventories = () => {
       })
     );
   };
-
+  useEffect(() => {
+    setTotal(totalCount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalCount]);
   return (
     <>
       <Helmet>

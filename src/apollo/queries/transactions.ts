@@ -94,18 +94,21 @@ export const GET_INVENTORIES = gql`
       take: $take
       searchText: $searchText
     ) {
-      id
-      item {
-        ...getItem
-      }
-      warehouse {
+      totalCount
+      inventories {
         id
-        displayName
+        item {
+          ...getItem
+        }
+        warehouse {
+          id
+          displayName
+        }
+        qtyOnHand
+        totalPurchaseValue
+        totalSaleValue
+        totalProfitValue
       }
-      qtyOnHand
-      totalPurchaseValue
-      totalSaleValue
-      totalProfitValue
     }
   }
 `;
