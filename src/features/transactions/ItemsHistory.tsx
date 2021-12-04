@@ -69,10 +69,13 @@ export const ItemsHistory = () => {
   const [endDate, setEndDate] = useState<Date | null>(new Date());
 
   const dispatch = useAppDispatch();
-  const { loading, lines } = useAppSelector(selectTransactions);
+  const {
+    loading,
+    linesWithCount: { lines, totalCount },
+  } = useAppSelector(selectTransactions);
 
   const { user } = useAppSelector(selectAuth);
-  const [total, setTotal] = useState(40);
+  const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [itemId, setItemId] = useState<number>(0);
@@ -134,6 +137,11 @@ export const ItemsHistory = () => {
       })
     );
   };
+
+  useEffect(() => {
+    setTotal(totalCount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalCount]);
 
   return (
     <>

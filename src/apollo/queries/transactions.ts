@@ -165,9 +165,12 @@ export const GET_TRANSACTION_LINES = gql`
       status: $status
       lastUpdated: $lastUpdated
     ) {
-      ...getLine
-      header {
-        ...getHeader
+      totalCount
+      lines {
+        ...getLine
+        header {
+          ...getHeader
+        }
       }
     }
   }

@@ -21,6 +21,7 @@ import {
   TransactionSummary,
   HeadersWithCount,
   TransactionType,
+  LinesWithCount,
 } from "./types/transactionTypes";
 import {
   CREATE_UPDATE_HEADER,
@@ -121,7 +122,7 @@ export const fetchLines = createAsyncThunk<
     });
 
     if (response && response.data && response.data.lines) {
-      return response.data.lines as TransactionLine[];
+      return response.data.lines as LinesWithCount;
     }
   } catch (error: any) {
     const message = error.message;
@@ -438,7 +439,9 @@ export const removeLine = createAsyncThunk<
 
     if (response && response.data && response.data.removeLine) {
       const {
-        transactions: { lines },
+        transactions: {
+          linesWithCount: { lines },
+        },
       } = getState() as { transactions: TransactionsState };
       let restItems = [...lines];
       restItems = restItems.filter((item) => item.id !== id);
@@ -600,7 +603,7 @@ const initialState: TransactionsState = {
   selectedHeader: {
     ...defaultHeader,
   },
-  lines: [],
+  linesWithCount: { totalCount: 0, lines: [] },
   selectedLine: { ...defaultLine },
   payments: [],
   selectedPayment: { ...defaultPayment },
@@ -655,10 +658,10 @@ export const transactionsSlice = createSlice({
       state.headersWithCount = payload;
     },
     resetLines: (state) => {
-      state.lines = [];
+      state.linesWithCount = { totalCount: 0, lines: [] };
     },
     setLines: (state, { payload }) => {
-      state.lines = payload;
+      state.linesWithCount = payload;
     },
   },
   extraReducers: (builder) => {
@@ -727,7 +730,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(fetchLines.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.lines = payload;
+      state.linesWithCount = payload;
     });
     builder.addCase(fetchLines.rejected, (state) => {
       state.loading = "idle";
@@ -772,8 +775,10 @@ export const transactionsSlice = createSlice({
     builder.addCase(addLine.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedHeader = payload.header;
-      state.lines = state.lines.filter((c) => c.id !== payload.id);
-      state.lines.unshift(payload);
+      state.linesWithCount.lines = state.linesWithCount.lines.filter(
+        (c) => c.id !== payload.id
+      );
+      state.linesWithCount.lines.unshift(payload);
     });
     builder.addCase(addLine.rejected, (state) => {
       state.loading = "idle";
@@ -833,7 +838,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(removeLine.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.lines = payload;
+      state.linesWithCount.lines = payload;
     });
     builder.addCase(removeLine.rejected, (state) => {
       state.loading = "idle";

@@ -137,7 +137,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   } = useAppSelector(selectSetups);
 
   const {
-    lines,
+    linesWithCount: { lines },
     payments,
     selectedHeader,
     selectedLine,
