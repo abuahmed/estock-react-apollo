@@ -22,6 +22,7 @@ import {
   HeadersWithCount,
   TransactionType,
   LinesWithCount,
+  PaymentsWithCount,
 } from "./types/transactionTypes";
 import {
   CREATE_UPDATE_HEADER,
@@ -144,14 +145,12 @@ export const fetchPayments = createAsyncThunk<
       query: GET_TRANSACTION_PAYMENTS,
       variables: {
         ...paymentArgs,
-        durationBegin: paymentArgs.durationBegin as Date,
-        durationEnd: paymentArgs.durationEnd as Date,
       },
       fetchPolicy,
     });
 
     if (response && response.data && response.data.payments) {
-      return response.data.payments as Payment[];
+      return response.data.payments as PaymentsWithCount;
     }
   } catch (error: any) {
     const message = error.message;
@@ -605,7 +604,7 @@ const initialState: TransactionsState = {
   },
   linesWithCount: { totalCount: 0, lines: [] },
   selectedLine: { ...defaultLine },
-  payments: [],
+  paymentsWithCount: { totalCount: 0, payments: [] },
   selectedPayment: { ...defaultPayment },
   loading: "idle",
   currentRequestId: undefined,
@@ -643,7 +642,7 @@ export const transactionsSlice = createSlice({
       state.selectedPayment = payload;
     },
     resetPayments: (state) => {
-      state.payments = [];
+      state.paymentsWithCount = { totalCount: 0, payments: [] };
     },
     resetSelectedHeader: (state) => {
       state.selectedHeader = { type: TransactionType.Purchase };
@@ -741,7 +740,7 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(fetchPayments.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.payments = payload;
+      state.paymentsWithCount = payload;
     });
     builder.addCase(fetchPayments.rejected, (state) => {
       state.loading = "idle";

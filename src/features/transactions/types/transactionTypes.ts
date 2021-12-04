@@ -40,6 +40,10 @@ export type InventoriesWithCount = {
   totalCount: number;
   inventories: Inventory[];
 };
+export type PaymentsWithCount = {
+  totalCount: number;
+  payments: Payment[];
+};
 export type TransactionSummary = {
   id?: number;
   totalAmount?: number;
@@ -124,7 +128,7 @@ export type TransactionsState = {
   inventoriesWithCount: InventoriesWithCount;
   headersWithCount: HeadersWithCount;
   linesWithCount: LinesWithCount;
-  payments: Payment[];
+  paymentsWithCount: PaymentsWithCount;
   selectedHeader: TransactionHeader;
   selectedLine: TransactionLine;
   selectedPayment: Payment;

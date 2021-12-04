@@ -138,7 +138,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
 
   const {
     linesWithCount: { lines },
-    payments,
+    paymentsWithCount: { payments },
     selectedHeader,
     selectedLine,
     inventoriesWithCount: { inventories },

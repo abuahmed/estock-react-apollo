@@ -199,14 +199,17 @@ export const GET_TRANSACTION_PAYMENTS = gql`
       take: $take
       searchText: $searchText
     ) {
-      id
-      amount
-      method
-      type
-      status
-      paymentDate
-      header {
-        ...getHeader
+      totalCount
+      payments {
+        id
+        amount
+        method
+        type
+        status
+        paymentDate
+        header {
+          ...getHeader
+        }
       }
     }
   }

@@ -39,10 +39,13 @@ export const Payments = () => {
   const [endDate, setEndDate] = useState<Date | null>(new Date());
 
   const dispatch = useAppDispatch();
-  const { payments, loading } = useAppSelector(selectTransactions);
+  const {
+    paymentsWithCount: { payments, totalCount },
+    loading,
+  } = useAppSelector(selectTransactions);
   //  const { user } = useAppSelector(selectAuth);
 
-  const [total, setTotal] = useState(18);
+  const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -59,14 +62,14 @@ export const Payments = () => {
 
   const fetchPaymentLines = (refresh: string) => {
     //const userRoles = user?.roles as Role[];
-    let startDateHeader = startDate as Date;
-    let endDateHeader = endDate as Date;
+    //let startDateHeader = startDate as Date;
+    //let endDateHeader = endDate as Date;
     const skipRows = currentPage * rowsPerPage;
 
-    if (refresh !== "refresh") {
-      startDateHeader = startOfDay(startDateHeader);
-      endDateHeader = endOfDay(endDateHeader);
-    }
+    // if (refresh !== "refresh") {
+    //   startDateHeader = startOfDay(startDateHeader);
+    //   endDateHeader = endOfDay(endDateHeader);
+    // }
     // includeSale &&
     //       isPrivilegedTransaction(userRoles, TransactionType.Sale, "View"),
     //     includePurchases:
@@ -74,8 +77,6 @@ export const Payments = () => {
     //       isPrivilegedTransaction(userRoles, TransactionType.Purchase, "View"),
     dispatch(
       fetchPayments({
-        durationBegin: startDateHeader,
-        durationEnd: endDateHeader,
         refreshList: refresh,
         skip: skipRows,
         take: rowsPerPage,
@@ -85,7 +86,10 @@ export const Payments = () => {
     // type: PaymentTypes.Sale,
     //     method: PaymentMethods.Cash,
   };
-
+  useEffect(() => {
+    setTotal(totalCount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalCount]);
   return (
     <>
       <Helmet>
