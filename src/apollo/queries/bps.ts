@@ -13,28 +13,31 @@ export const GET_ALL_BUSINESS_PARTNERS = gql`
       take: $take
       searchText: $searchText
     ) {
-      id
-      displayName
-      description
-      type
-      initialOutstandingCredit
-      totalOutstandingCredit
-      creditLimit
-      creditTransactionsLimit
-      address {
+      totalCount
+      businessPartners {
         id
-        mobile
-        telephone
-        email
-      }
-      contact {
-        id
-        fullName
+        displayName
+        description
+        type
+        initialOutstandingCredit
+        totalOutstandingCredit
+        creditLimit
+        creditTransactionsLimit
         address {
           id
           mobile
           telephone
           email
+        }
+        contact {
+          id
+          fullName
+          address {
+            id
+            mobile
+            telephone
+            email
+          }
         }
       }
     }

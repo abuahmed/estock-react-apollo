@@ -23,7 +23,9 @@ export const BusinessPartnerFilter = ({
     useState<BusinessPartner>({
       displayName: "select",
     });
-  const { businessPartners } = useAppSelector(selectSetups);
+  const {
+    businessPartnersWithCount: { businessPartners },
+  } = useAppSelector(selectSetups);
 
   useEffect(() => {
     dispatch(fetchBusinessPartners({ type: bpType, skip: 0, take: -1 }));

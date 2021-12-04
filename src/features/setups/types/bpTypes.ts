@@ -134,7 +134,7 @@ export type SetupsState = {
   selectedCategory: Category;
   selectedItem: Item;
   selectedFinancialAccount: FinancialAccount;
-  businessPartners: BusinessPartner[];
+  businessPartnersWithCount: BusinessPartnersWithCount;
   selectedBusinessPartner: BusinessPartner;
   clients: Client[];
   selectedClient: Client;

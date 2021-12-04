@@ -38,9 +38,12 @@ import Paging from "../../components/Layout/Paging";
 
 export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
   const dispatch = useAppDispatch();
-  const { businessPartners, loading } = useAppSelector(selectSetups);
+  const {
+    businessPartnersWithCount: { businessPartners, totalCount },
+    loading,
+  } = useAppSelector(selectSetups);
   const { searchText } = useAppSelector(selectPreference);
-  const [total, setTotal] = useState(4);
+  const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
@@ -72,7 +75,10 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
   const DeleteBusinessPartner = (id: number) => {
     dispatch(removeBusinessPartner({ id, type }));
   };
-
+  useEffect(() => {
+    setTotal(totalCount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalCount]);
   return (
     <>
       <Helmet>

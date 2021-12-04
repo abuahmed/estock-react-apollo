@@ -132,7 +132,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   const { searchText } = useAppSelector(selectPreference);
   const {
     itemsWithCount: { items },
-    businessPartners,
+    businessPartnersWithCount: { businessPartners },
     warehouses,
   } = useAppSelector(selectSetups);
 

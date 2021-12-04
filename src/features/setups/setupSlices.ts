@@ -26,6 +26,7 @@ import {
   SetupsState,
   RemoveBusinessPartner,
   BusinessPartnerArgs,
+  BusinessPartnersWithCount,
 } from "./types/bpTypes";
 import { Client, Organization, Warehouse } from "./types/warehouseTypes";
 
@@ -447,7 +448,7 @@ export const fetchBusinessPartners = createAsyncThunk<
     });
 
     if (response && response.data && response.data.businessPartners) {
-      return response.data.businessPartners as BusinessPartner[];
+      return response.data.businessPartners as BusinessPartnersWithCount;
     }
   } catch (error: any) {
     const message = error.message;
@@ -1183,7 +1184,7 @@ const initialSetupsState: SetupsState = {
   itemsWithCount: { totalCount: 0, items: [] },
   selectedItem: { ...defaultItem },
   selectedFinancialAccount: { ...defaultFinancialAccount },
-  businessPartners: [],
+  businessPartnersWithCount: { totalCount: 0, businessPartners: [] },
   selectedBusinessPartner: { ...defaultBusinessPartner },
   clients: [],
   selectedClient: { ...defaultClient },
@@ -1253,7 +1254,7 @@ export const setupsSlice = createSlice({
       state.selectedBusinessPartner = payload;
     },
     setBusinessPartners: (state, { payload }) => {
-      state.businessPartners = payload;
+      state.businessPartnersWithCount = payload;
     },
     setSelectedClient: (state, { payload }) => {
       state.selectedClient = payload;
@@ -1482,7 +1483,7 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(fetchBusinessPartners.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = payload;
+      state.businessPartnersWithCount = payload;
     });
     builder.addCase(fetchBusinessPartners.rejected, (state) => {
       state.loading = "idle";
@@ -1505,10 +1506,11 @@ export const setupsSlice = createSlice({
     builder.addCase(addBusinessPartner.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedBusinessPartner = payload;
-      state.businessPartners = state.businessPartners.filter(
-        (c) => c.id !== payload.id
-      );
-      state.businessPartners.unshift(payload);
+      state.businessPartnersWithCount.businessPartners =
+        state.businessPartnersWithCount.businessPartners.filter(
+          (c) => c.id !== payload.id
+        );
+      state.businessPartnersWithCount.businessPartners.unshift(payload);
     });
     builder.addCase(addBusinessPartner.rejected, (state) => {
       state.loading = "idle";
@@ -1519,9 +1521,10 @@ export const setupsSlice = createSlice({
     });
     builder.addCase(removeBusinessPartner.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.businessPartners = state.businessPartners.filter(
-        (c) => c.id !== payload
-      );
+      state.businessPartnersWithCount.businessPartners =
+        state.businessPartnersWithCount.businessPartners.filter(
+          (c) => c.id !== payload
+        );
     });
     builder.addCase(removeBusinessPartner.rejected, (state) => {
       state.loading = "idle";
