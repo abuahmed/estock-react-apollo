@@ -16,15 +16,7 @@ import {
   selectPreference,
 } from "../../preferences/preferencesSlice";
 import Avatar from "@mui/material/Avatar";
-import {
-  Box,
-  IconButton,
-  Stack,
-  Button,
-  Typography,
-  Divider,
-  Tooltip,
-} from "@mui/material";
+import { IconButton, Stack, Button, Typography, Tooltip } from "@mui/material";
 import { Add, Edit, Save, Delete, Refresh } from "@mui/icons-material";
 
 import Accordion from "@mui/material/Accordion";
@@ -38,7 +30,6 @@ import TableSkeleton from "../../../components/Layout/TableSkeleton";
 import { createUserSchema } from "../validation";
 import { CreateUser } from "../../auth/types/authType";
 import { selectAuth } from "../../auth/authSlice";
-import Paging from "../../../components/Layout/Paging";
 
 const defaultUser: CreateUser = {
   email: "",
@@ -53,22 +44,22 @@ export const Users = () => {
   const { users, loading } = useAppSelector(selectSetups);
   const { user } = useAppSelector(selectAuth);
   const { searchText } = useAppSelector(selectPreference);
-  const [total, setTotal] = useState(3);
-  const [rowsPerPage, setRowsPerPage] = useState(2);
-  const [currentPage, setCurrentPage] = useState(0);
+  // const [total, setTotal] = useState(3);
+  // const [rowsPerPage, setRowsPerPage] = useState(2);
+  // const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     dispatch(changePageTitle("Users List"));
-    const skipRows = currentPage * rowsPerPage;
+    //const skipRows = currentPage * rowsPerPage;
 
     dispatch(
       fetchUsers({
         searchText,
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
       })
     );
-  }, [dispatch, currentPage, rowsPerPage, searchText]);
+  }, [dispatch, searchText]); //currentPage, rowsPerPage
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);
@@ -83,13 +74,13 @@ export const Users = () => {
   };
 
   const RefreshList = () => {
-    const skipRows = currentPage * rowsPerPage;
+    //const skipRows = currentPage * rowsPerPage;
     dispatch(
       fetchUsers({
         refreshList: "refresh",
         searchText,
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
       })
     );
   };
@@ -183,7 +174,7 @@ export const Users = () => {
                 users.map((row, index) => (
                   <StyledTableRow key={row.id}>
                     <StyledTableCell component="th" scope="row">
-                      {currentPage * rowsPerPage + index + 1}
+                      {index + 1}
                     </StyledTableCell>
                     <StyledTableCell>
                       <Avatar
@@ -227,7 +218,7 @@ export const Users = () => {
         </TableContainer>
       </Grid>
 
-      <Stack spacing={1}>
+      {/* <Stack spacing={1}>
         <Paging
           total={total}
           rowsPerPage={rowsPerPage}
@@ -238,7 +229,7 @@ export const Users = () => {
         <Typography variant="h6" component="div">
           Number of Users: {total}
         </Typography>
-      </Stack>
+      </Stack> */}
     </>
   );
 };

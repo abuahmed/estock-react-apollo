@@ -5,7 +5,6 @@ import {
   fetchCategories,
   selectBanks,
   selectItemCategories,
-  selectSetups,
   selectUoms,
 } from "../../features/setups/setupSlices";
 import { Category, CategoryType } from "../../features/setups/types/itemTypes";
@@ -27,7 +26,6 @@ export const CategoryFilter = ({
     displayName: "select",
   });
   const [categoriesList, setCategoriesList] = useState<Category[]>([]);
-  const {} = useAppSelector(selectSetups);
   const categories = useAppSelector(selectItemCategories);
   const uoms = useAppSelector(selectUoms);
   const banks = useAppSelector(selectBanks);

@@ -161,6 +161,7 @@ export type TransactionArgs = {
   durationBegin?: Date;
   durationEnd?: Date;
   warehouseId?: number;
+  toWarehouseId?: number;
   businessPartnerId?: number;
   includeLines?: boolean;
   groupByDate?: boolean;

@@ -11,7 +11,6 @@ import { NavLink as RouterLink } from "react-router-dom";
 
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -35,7 +34,6 @@ import {
   fetchInventories,
   addHeader,
   getHeader,
-  fetchHeaders,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -57,8 +55,6 @@ import {
   CancelScheduleSend,
   Delete,
   Edit,
-  PostAddSharp,
-  ScheduleSend,
   Send,
 } from "@mui/icons-material";
 import {
@@ -94,7 +90,7 @@ import { Warehouse } from "../setups/types/warehouseTypes";
 import CustomDialog from "../../components/modals/CustomDialog";
 import Post from "../../components/transaction/Post";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
-import { addMonths, format } from "date-fns";
+import { format } from "date-fns";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
@@ -105,10 +101,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     type === TransactionType.Sale
       ? BusinessPartnerType.Customer
       : BusinessPartnerType.Vendor;
-  const [startDate, setStartDate] = useState<Date | null>(
-    addMonths(new Date(), -3)
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
+
   const [open, setOpen] = useState(false);
   const [transactionId, setTransactionId] = useState("0");
   const [selectedItemId, setSelectedItemId] = useState(0);
@@ -240,23 +233,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       else setSelectedInventory({ qtyOnHand: 0 });
     }
   }, [inventories, selectedItemId]);
-  useEffect(() => {
-    if (searchText && searchText.length > 0) {
-      //dispatch(resetLines());
 
-      dispatch(
-        fetchHeaders({
-          type,
-          durationBegin: startDate as Date,
-          durationEnd: endDate as Date,
-          refreshList: "All",
-          searchText,
-        })
-      );
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, searchText]);
   const DeleteLine = (id: number) => {
     dispatch(removeLine(id));
   };

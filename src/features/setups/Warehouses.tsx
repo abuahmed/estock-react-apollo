@@ -28,15 +28,7 @@ import {
   changePageTitle,
   selectPreference,
 } from "../preferences/preferencesSlice";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { Add, Backspace, Edit, Refresh, Save } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
@@ -46,7 +38,6 @@ import { Form, Formik, FormikProps } from "formik";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import { registerSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
-import Paging from "../../components/Layout/Paging";
 
 const defaultWarehouse: Warehouse = {
   displayName: "",
@@ -75,9 +66,9 @@ export const Warehouses = () => {
     loading,
   } = useAppSelector(selectSetups);
   const { searchText } = useAppSelector(selectPreference);
-  const [total, setTotal] = useState(14);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(0);
+  // const [total, setTotal] = useState(14);
+  // const [rowsPerPage, setRowsPerPage] = useState(10);
+  // const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     dispatch(changePageTitle(`Warehouses List`));
     dispatch(
@@ -88,18 +79,18 @@ export const Warehouses = () => {
     );
     dispatch(getOrganization(parseInt(organizationId)));
 
-    const skipRows = currentPage * rowsPerPage;
+    //const skipRows = currentPage * rowsPerPage;
 
     dispatch(
       fetchWarehouses({
         parent: "Organization",
         parentId: parseInt(organizationId),
         searchText,
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
       })
     );
-  }, [dispatch, organizationId, currentPage, rowsPerPage, searchText]);
+  }, [dispatch, organizationId, searchText]); //currentPage, rowsPerPage,
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);
@@ -120,15 +111,15 @@ export const Warehouses = () => {
   };
 
   const RefreshList = () => {
-    const skipRows = currentPage * rowsPerPage;
+    //const skipRows = currentPage * rowsPerPage;
     dispatch(
       fetchWarehouses({
         refreshList: "refresh",
         parent: "Organization",
         parentId: parseInt(organizationId),
         searchText,
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
       })
     );
   };
@@ -260,7 +251,7 @@ export const Warehouses = () => {
               warehouses.map((row, index) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
-                    {currentPage * rowsPerPage + index + 1}
+                    {index + 1}
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {row.displayName}
@@ -300,7 +291,7 @@ export const Warehouses = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Stack spacing={1}>
+      {/* <Stack spacing={1}>
         <Paging
           total={total}
           rowsPerPage={rowsPerPage}
@@ -311,7 +302,7 @@ export const Warehouses = () => {
         <Typography variant="h6" component="div">
           Number of Warehouses: {total}
         </Typography>
-      </Stack>
+      </Stack> */}
     </>
   );
 };

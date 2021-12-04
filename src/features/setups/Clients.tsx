@@ -27,15 +27,7 @@ import {
   changePageTitle,
   selectPreference,
 } from "../preferences/preferencesSlice";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { Add, Edit, ListAltSharp, Refresh, Save } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
@@ -45,7 +37,6 @@ import { Form, Formik, FormikProps } from "formik";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import { registerSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
-import Paging from "../../components/Layout/Paging";
 
 export const Clients = () => {
   const [expanded, setExpanded] = useState(false);
@@ -55,22 +46,22 @@ export const Clients = () => {
     useAppSelector(selectSetups);
 
   const { searchText } = useAppSelector(selectPreference);
-  const [total, setTotal] = useState(5);
-  const [rowsPerPage, setRowsPerPage] = useState(2);
-  const [currentPage, setCurrentPage] = useState(0);
+  // const [total, setTotal] = useState(5);
+  // const [rowsPerPage, setRowsPerPage] = useState(2);
+  // const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
     dispatch(changePageTitle(`Client List`));
-    const skipRows = currentPage * rowsPerPage;
+    //const skipRows = currentPage * rowsPerPage;
 
     dispatch(
       fetchClients({
         searchText,
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
       })
     );
-  }, [dispatch, currentPage, rowsPerPage, searchText]);
+  }, [dispatch, searchText]); //currentPage, rowsPerPage,
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);
@@ -88,13 +79,13 @@ export const Clients = () => {
     setExpanded(true);
   };
   const RefreshList = () => {
-    const skipRows = currentPage * rowsPerPage;
+    //const skipRows = currentPage * rowsPerPage;
     dispatch(
       fetchClients({
         refreshList: "refresh",
         searchText,
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
       })
     );
   };
@@ -208,7 +199,7 @@ export const Clients = () => {
               clients.map((row, index) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
-                    {currentPage * rowsPerPage + index + 1}
+                    {index + 1}
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {row.displayName}
@@ -256,7 +247,7 @@ export const Clients = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Stack spacing={1}>
+      {/* <Stack spacing={1}>
         <Paging
           total={total}
           rowsPerPage={rowsPerPage}
@@ -267,7 +258,7 @@ export const Clients = () => {
         <Typography variant="h6" component="div">
           Number of Clients: {total}
         </Typography>
-      </Stack>
+      </Stack> */}
     </>
   );
 };

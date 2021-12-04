@@ -27,15 +27,7 @@ import {
   changePageTitle,
   selectPreference,
 } from "../preferences/preferencesSlice";
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import {
   Add,
   Backspace,
@@ -52,7 +44,6 @@ import { Form, Formik, FormikProps } from "formik";
 import { FormikTextField } from "../../components/Layout/FormikTextField";
 import { registerSchema } from "./validation";
 import Toast from "../../components/Layout/Toast";
-import Paging from "../../components/Layout/Paging";
 
 const defaultOrganization: Organization = {
   displayName: "",
@@ -76,23 +67,23 @@ export const Organizations = () => {
   const { organizations, selectedOrganization, success, error, loading } =
     useAppSelector(selectSetups);
   const { searchText } = useAppSelector(selectPreference);
-  const [total, setTotal] = useState(2);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(0);
+  // const [total, setTotal] = useState(2);
+  // const [rowsPerPage, setRowsPerPage] = useState(10);
+  // const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     dispatch(changePageTitle(`Organization List`));
     //dispatch(fetchOrganizations(parseInt(clientId)));
-    const skipRows = currentPage * rowsPerPage;
+    //const skipRows = currentPage * rowsPerPage;
 
     dispatch(
       fetchOrganizations({
         searchText,
         clientId: parseInt(clientId),
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
       })
     );
-  }, [clientId, dispatch, currentPage, rowsPerPage, searchText]);
+  }, [clientId, dispatch, searchText]); //currentPage, rowsPerPage
 
   const ToggleAccordion = () => {
     setExpanded(!expanded);
@@ -119,14 +110,14 @@ export const Organizations = () => {
   //   console.log(selectedOrganization);
   // }, [selectedOrganization]);
   const RefreshList = () => {
-    const skipRows = currentPage * rowsPerPage;
+    //const skipRows = currentPage * rowsPerPage;
     dispatch(
       fetchOrganizations({
         refreshList: "refresh",
         searchText,
         clientId: parseInt(clientId),
-        skip: skipRows,
-        take: rowsPerPage,
+        skip: 0,
+        take: -1,
       })
     );
   };
@@ -258,7 +249,7 @@ export const Organizations = () => {
               organizations.map((row, index) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
-                    {currentPage * rowsPerPage + index + 1}
+                    {index + 1}
                   </StyledTableCell>
                   <StyledTableCell component="th" scope="row">
                     {row.displayName}
@@ -306,7 +297,7 @@ export const Organizations = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Stack spacing={1}>
+      {/* <Stack spacing={1}>
         <Paging
           total={total}
           rowsPerPage={rowsPerPage}
@@ -317,7 +308,7 @@ export const Organizations = () => {
         <Typography variant="h6" component="div">
           Number of Organizations: {total}
         </Typography>
-      </Stack>
+      </Stack> */}
     </>
   );
 };

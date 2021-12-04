@@ -27,7 +27,6 @@ import {
   selectPreference,
 } from "../preferences/preferencesSlice";
 import {
-  Box,
   Button,
   Divider,
   IconButton,
@@ -89,6 +88,7 @@ export const Headers = ({ type }: HeaderProps) => {
         fetchHeaders({
           type,
           warehouseId: warehouseId !== 0 ? warehouseId : undefined,
+          toWarehouseId: toWarehouseId !== 0 ? toWarehouseId : undefined,
           businessPartnerId:
             businessPartnerId !== 0 ? businessPartnerId : undefined,
           durationBegin: startDate as Date,
