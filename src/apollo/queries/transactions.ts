@@ -22,7 +22,7 @@ export const GET_DAILY_TRANSACTIONS_SUMMARY = gql`
       groupByDate: true
     ) {
       transactionDate
-      totalCount
+      totalTransactions
       totalAmount
     }
   }
@@ -33,12 +33,12 @@ export const GET_TOP_ITEMS = gql`
       includeSales: $includeSales
       includePurchases: $includePurchases
       durationBegin: "2021-08-11"
-      durationEnd: "2021-10-11"
+      durationEnd: "2021-12-11"
       status: Posted
     ) {
       itemId
       itemName
-      totalCount
+      totalTransactions
       totalAmount
     }
   }
@@ -133,6 +133,33 @@ export const GET_ITEM_INVENTORY = gql`
   }
 `;
 export const GET_TRANSACTION_LINES = gql`
+  ${HEADER}
+  ${LINE}
+  query GetLines(
+    $headerId: Int
+    $searchText: String
+    $skip: Int
+    $take: Int
+    $status: TransactionStatus
+  ) {
+    lines(
+      headerId: $headerId
+      skip: $skip
+      take: $take
+      searchText: $searchText
+      status: $status
+    ) {
+      totalCount
+      lines {
+        ...getLine
+        header {
+          ...getHeader
+        }
+      }
+    }
+  }
+`;
+export const GET_LINES = gql`
   ${HEADER}
   ${LINE}
   query GetLines(
