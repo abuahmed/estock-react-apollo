@@ -42,7 +42,7 @@ import { Refresh } from "@mui/icons-material";
 import { fetchItems } from "../setups/setupSlices";
 import { ItemFilter } from "../../components/filter/ItemFilter";
 
-export const ItemsHistory = () => {
+export const InventoryHistory = () => {
   const { id } = useParams() as {
     id: string;
   };
@@ -86,12 +86,14 @@ export const ItemsHistory = () => {
   }, [id]);
 
   useEffect(() => {
-    dispatch(changePageTitle("Items History List"));
+    dispatch(changePageTitle("Inventory History"));
     dispatch(fetchItems({ skip: 0 }));
+  }, [dispatch]);
+
+  useEffect(() => {
     fetchInventoryLines("All");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    dispatch,
     itemId,
     includeSale,
     includePurchase,
@@ -146,17 +148,11 @@ export const ItemsHistory = () => {
   return (
     <>
       <Helmet>
-        <title>Items History List | Pinna Stock</title>
+        <title>Inventory History | Pinna Stock</title>
       </Helmet>
       <Box component="div">
         <Button color="secondary" variant="contained" onClick={RefreshList}>
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
-          >
-            <Refresh />
-          </Typography>
+          <Refresh />
         </Button>
       </Box>
       <Accordion sx={{ mt: 1 }}>
@@ -398,7 +394,7 @@ export const ItemsHistory = () => {
           setCurrentPage={setCurrentPage}
         />
         <Typography variant="h6" component="div">
-          Number of Items History: {total}
+          Number of Inventory History: {total}
         </Typography>
       </Stack>
     </>

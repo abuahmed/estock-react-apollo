@@ -29,7 +29,7 @@ import { Users, User } from "../features/setups/users";
 import DashboardLayout from "./DashboardLayout";
 import MainLayout from "./MainLayout";
 import { Payments } from "../features/transactions/Payments";
-import { ItemsHistory } from "../features/transactions/ItemsHistory";
+import { InventoryHistory } from "../features/transactions/InventoryHistory";
 import { FinancialAccounts } from "../features/setups/FinancialAccounts";
 import { FinancialAccountEntry } from "../features/setups/FinancialAccountEntry";
 
@@ -51,11 +51,17 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
         },
         {
           path: "itemsHistory",
-          element: isPrivileged(<ItemsHistory />, RoleTypes.OnHandInventory),
+          element: isPrivileged(
+            <InventoryHistory />,
+            RoleTypes.OnHandInventory
+          ),
         },
         {
           path: "itemsHistory/:id",
-          element: isPrivileged(<ItemsHistory />, RoleTypes.OnHandInventory),
+          element: isPrivileged(
+            <InventoryHistory />,
+            RoleTypes.OnHandInventory
+          ),
         },
         {
           path: "payments",
