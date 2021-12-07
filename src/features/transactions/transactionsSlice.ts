@@ -39,6 +39,7 @@ import {
   GET_INVENTORIES,
   GET_INVENTORY_SUMMARY,
   GET_ITEM_INVENTORY,
+  GET_LINES,
   GET_SELECTED_HEADER,
   GET_TOP_ITEMS,
   GET_TRANSACTION_LINES,
@@ -113,9 +114,8 @@ export const fetchLines = createAsyncThunk<
     const { refreshList } = lineArgs;
     const fetchPolicy =
       refreshList === "refresh" ? "network-only" : "cache-first";
-
     const response = await apolloClient.query({
-      query: GET_TRANSACTION_LINES,
+      query: lineArgs.headerId ? GET_TRANSACTION_LINES : GET_LINES,
       variables: {
         ...lineArgs,
       },
@@ -123,7 +123,10 @@ export const fetchLines = createAsyncThunk<
     });
 
     if (response && response.data && response.data.lines) {
-      return response.data.lines as LinesWithCount;
+      return {
+        headerId: lineArgs.headerId,
+        data: response.data.lines as LinesWithCount,
+      };
     }
   } catch (error: any) {
     const message = error.message;
@@ -584,6 +587,7 @@ const defaultPayment: Payment = {
 const defaultHeader: TransactionHeader = {
   type: TransactionType.Purchase,
   status: TransactionStatus.Draft,
+  number: "",
   transactionDate: new Date(),
   businessPartner: { displayName: "select customer/vendor", id: 0 },
   warehouse: { displayName: "Warehouse", id: 0 },
@@ -603,6 +607,7 @@ const initialState: TransactionsState = {
     ...defaultHeader,
   },
   linesWithCount: { totalCount: 0, lines: [] },
+  headerLinesWithCount: { totalCount: 0, lines: [] },
   selectedLine: { ...defaultLine },
   paymentsWithCount: { totalCount: 0, payments: [] },
   selectedPayment: { ...defaultPayment },
@@ -657,10 +662,10 @@ export const transactionsSlice = createSlice({
       state.headersWithCount = payload;
     },
     resetLines: (state) => {
-      state.linesWithCount = { totalCount: 0, lines: [] };
+      state.headerLinesWithCount = { totalCount: 0, lines: [] };
     },
     setLines: (state, { payload }) => {
-      state.linesWithCount = payload;
+      state.headerLinesWithCount = payload;
     },
   },
   extraReducers: (builder) => {
@@ -729,7 +734,8 @@ export const transactionsSlice = createSlice({
     });
     builder.addCase(fetchLines.fulfilled, (state, { payload }) => {
       state.loading = "idle";
-      state.linesWithCount = payload;
+      if (payload.headerId) state.headerLinesWithCount = payload.data;
+      else state.linesWithCount = payload.data;
     });
     builder.addCase(fetchLines.rejected, (state) => {
       state.loading = "idle";
@@ -774,10 +780,9 @@ export const transactionsSlice = createSlice({
     builder.addCase(addLine.fulfilled, (state, { payload }) => {
       state.loading = "idle";
       state.selectedHeader = payload.header;
-      state.linesWithCount.lines = state.linesWithCount.lines.filter(
-        (c) => c.id !== payload.id
-      );
-      state.linesWithCount.lines.unshift(payload);
+      state.headerLinesWithCount.lines =
+        state.headerLinesWithCount.lines.filter((c) => c.id !== payload.id);
+      state.headerLinesWithCount.lines.unshift(payload);
     });
     builder.addCase(addLine.rejected, (state) => {
       state.loading = "idle";

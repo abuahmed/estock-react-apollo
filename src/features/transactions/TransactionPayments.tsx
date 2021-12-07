@@ -1,13 +1,11 @@
-import { useEffect } from "react";
-
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useAppSelector, useAppDispatch } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 
-import { fetchPayments, selectTransactions } from "./transactionsSlice";
+import { selectTransactions } from "./transactionsSlice";
 import { TransactionStatus, TransactionType } from "./types/transactionTypes";
 
 import {
@@ -22,23 +20,10 @@ import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { format } from "date-fns";
 
 export const TransactionPayments = () => {
-  const dispatch = useAppDispatch();
-
   const {
     paymentsWithCount: { payments },
     selectedHeader,
   } = useAppSelector(selectTransactions);
-
-  useEffect(() => {
-    if (
-      selectedHeader &&
-      selectedHeader.id &&
-      selectedHeader.status === TransactionStatus.Posted
-    ) {
-      dispatch(fetchPayments({ headerId: selectedHeader.id }));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, selectedHeader]);
 
   return (
     <>

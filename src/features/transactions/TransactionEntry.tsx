@@ -20,20 +20,16 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import Toast from "../../components/Layout/Toast";
 
 import {
-  fetchLines,
-  fetchPayments,
   selectTransactions,
   setSelectedLine,
   resetLines,
   resetPayments,
   setSelectedHeader,
-  addLine,
-  removeLine,
   postHeader,
   unPostHeader,
-  fetchInventories,
   addHeader,
   getHeader,
+  fetchPayments,
 } from "./transactionsSlice";
 import {
   TransactionLine,
@@ -41,41 +37,23 @@ import {
   HeaderProps,
   TransactionStatus,
   TransactionType,
-  Inventory,
 } from "./types/transactionTypes";
-import { FormikTextField } from "../../components/Layout/FormikTextField";
 
 import {
   changePageTitle,
-  selectPreference,
+  // selectPreference,
 } from "../preferences/preferencesSlice";
-import {
-  Add,
-  Backspace,
-  CancelScheduleSend,
-  Delete,
-  Edit,
-  Send,
-} from "@mui/icons-material";
+import { Add, Backspace, CancelScheduleSend, Send } from "@mui/icons-material";
 import {
   Grid,
   TextField,
   Divider,
-  TableContainer,
-  Table,
-  TableHead,
-  Paper,
-  TableBody,
   Stack,
-  IconButton,
   Autocomplete,
   LinearProgress,
   Tooltip,
 } from "@mui/material";
 import Save from "@mui/icons-material/Save";
-import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
-import { Item } from "../setups/types/itemTypes";
-import { lineSchema } from "./validation";
 import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
 import { Role } from "../auth/types/authType";
@@ -91,6 +69,8 @@ import CustomDialog from "../../components/modals/CustomDialog";
 import Post from "../../components/transaction/Post";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { format } from "date-fns";
+import { TransactionPayments } from "./TransactionPayments";
+import { TransactionLines } from "./TransactionLines";
 
 export const TransactionEntry = ({ type }: HeaderProps) => {
   const { id } = useParams() as {
@@ -104,14 +84,11 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
 
   const [open, setOpen] = useState(false);
   const [transactionId, setTransactionId] = useState("0");
-  const [selectedItemId, setSelectedItemId] = useState(0);
-  const [selectedInventory, setSelectedInventory] = useState<Inventory>({
-    qtyOnHand: 0,
-  });
-  const [tranLine, setTranLine] = useState<TransactionLine>({});
-  const [leftItems, setLeftItems] = useState<Item[]>([]);
+
   const [tranHeader, setTranHeader] = useState<TransactionHeader>({
     type,
+    status: TransactionStatus.Draft,
+    number: "",
     businessPartner: { displayName: `select ${bpType}`, id: 0 },
     warehouse: {
       displayName: type === TransactionType.Transfer ? `Origin` : `Warehouse`,
@@ -122,23 +99,20 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
 
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectAuth);
-  const { searchText } = useAppSelector(selectPreference);
   const {
     itemsWithCount: { items },
     businessPartnersWithCount: { businessPartners },
     warehouses,
   } = useAppSelector(selectSetups);
 
-  const {
-    linesWithCount: { lines },
-    paymentsWithCount: { payments },
-    selectedHeader,
-    selectedLine,
-    inventoriesWithCount: { inventories },
-    loading,
-    success,
-    error,
-  } = useAppSelector(selectTransactions);
+  const { selectedHeader, loading, success, error } =
+    useAppSelector(selectTransactions);
+
+  useEffect(() => {
+    console.log(id);
+    setTransactionId(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   useEffect(() => {
     dispatch(changePageTitle(`${type} Entry`));
@@ -147,17 +121,6 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     dispatch(fetchItems({ skip: 0 }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, type]); //bpType
-
-  useEffect(() => {
-    if (selectedHeader && selectedHeader.status === TransactionStatus.Draft)
-      dispatch(fetchInventories({ warehouseId: tranHeader.warehouse?.id }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, tranHeader.warehouse]);
-
-  useEffect(() => {
-    setTransactionId(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
 
   useEffect(() => {
     if (
@@ -175,16 +138,13 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   }, [dispatch, transactionId, items, businessPartners, warehouses]);
 
   useEffect(() => {
-    if (selectedHeader) {
-      if (selectedHeader.id) {
-        if (lines.length === 0 || searchText)
-          dispatch(fetchLines({ headerId: selectedHeader.id }));
-
-        if (selectedHeader.status === TransactionStatus.Posted) {
-          setOpen(false);
-          dispatch(fetchPayments({ headerId: parseInt(transactionId) }));
-        }
+    if (selectedHeader && selectedHeader.id) {
+      if (selectedHeader.status === TransactionStatus.Posted) {
+        setOpen(false);
+        dispatch(fetchPayments({ headerId: parseInt(transactionId) }));
       }
+    }
+    if (selectedHeader.status === TransactionStatus.Draft) {
       setTranHeader(selectedHeader);
       let ln: TransactionLine = {
         header: selectedHeader,
@@ -204,6 +164,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
       type,
       transactionDate: new Date(),
       status: TransactionStatus.Draft,
+      number: "",
       businessPartner: { ...businessPartners[0] },
       warehouse: {
         ...warehouses[0],
@@ -218,31 +179,6 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     setTransactionId("0");
   };
 
-  useEffect(() => {
-    setLeftItems(items.filter((i) => !lines.some((l) => l.item?.id === i.id)));
-  }, [lines, items]);
-
-  useEffect(() => {
-    setTranLine(selectedLine);
-  }, [selectedLine]);
-
-  useEffect(() => {
-    if (selectedItemId !== 0) {
-      const inv = inventories.find((i) => i.item?.id === selectedItemId);
-      if (inv) setSelectedInventory(inv as Inventory);
-      else setSelectedInventory({ qtyOnHand: 0 });
-    }
-  }, [inventories, selectedItemId]);
-
-  const DeleteLine = (id: number) => {
-    dispatch(removeLine(id));
-  };
-  const SetSelectedLine = (id: number) => {
-    // setLeftItems(leftItems.concat(lines.filter((l) => l.item.id === id)));
-    dispatch(
-      setSelectedLine(lines.find((cat) => cat.id === id) as TransactionLine)
-    );
-  };
   const postTransactionHandler = () => {
     setOpen(true);
   };
@@ -260,6 +196,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
   function unPostTransaction() {
     dispatch(unPostHeader(selectedHeader.id as number));
   }
+
   return (
     <>
       <Helmet>
@@ -296,7 +233,6 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
             isPrivilegedTransaction(user?.roles as Role[], type, "Post") && (
               <Tooltip title={`Post This ${type}`}>
                 <Button
-                  // sx={{ display: { xs: "none", sm: "block" } }}
                   color="secondary"
                   variant="contained"
                   onClick={postTransaction}
@@ -576,329 +512,13 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
             </Stack>
           )}
         </Box>
-        <Accordion sx={{ my: 1 }} expanded={true}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Typography>Items</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            {selectedHeader?.status === TransactionStatus.Draft &&
-              isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
-                <Box sx={{ mb: 3 }}>
-                  <>
-                    <Formik
-                      enableReinitialize={true}
-                      validationSchema={lineSchema}
-                      initialValues={tranLine as TransactionLine}
-                      onSubmit={(values, actions) => {
-                        actions.setSubmitting(false);
-                        if (type === TransactionType.PI) {
-                          values = {
-                            ...values,
-                            diff:
-                              (values.qty as number) -
-                              (selectedInventory?.qtyOnHand as number),
-                          };
-                        }
-                        values = {
-                          ...values,
-                          header: { ...tranHeader, type },
-                        };
-                        dispatch(addLine(values));
-                      }}
-                    >
-                      {(props: FormikProps<TransactionLine>) => (
-                        <Form>
-                          <Grid container spacing={1} alignItems="center">
-                            <Grid item md={4} xs={12}>
-                              <Autocomplete
-                                id="itemId"
-                                options={leftItems}
-                                value={props.values?.item}
-                                getOptionLabel={(option) =>
-                                  option.displayName as string
-                                }
-                                sx={{ mt: 1 }}
-                                onChange={(e, value) => {
-                                  props.setFieldValue(
-                                    "item",
-                                    value !== null ? value : null
-                                  );
-                                  props.setFieldValue(
-                                    "eachPrice",
-                                    value !== null
-                                      ? type === TransactionType.Purchase
-                                        ? value.purchasePrice
-                                        : value.sellingPrice
-                                      : null
-                                  );
-                                  setSelectedItemId(value?.id as number);
-                                }}
-                                renderInput={(params) => (
-                                  <TextField
-                                    label="Items"
-                                    name="itemId"
-                                    {...params}
-                                  />
-                                )}
-                              />
-                            </Grid>
-                            <Grid item md={2} xs={12}>
-                              <TextField
-                                id="outlined-basic"
-                                label="OnHand"
-                                value={
-                                  selectedInventory
-                                    ? selectedInventory.qtyOnHand
-                                    : 0
-                                }
-                                variant="outlined"
-                                fullWidth
-                                disabled
-                                sx={{ mt: 1 }}
-                              />
-                            </Grid>
-                            <Grid item md={2} xs={12}>
-                              <FormikTextField
-                                formikKey="qty"
-                                label="Qty."
-                                type={"number"}
-                              />
-                            </Grid>
-                            <Grid item md={2} xs={12}>
-                              <FormikTextField
-                                formikKey="eachPrice"
-                                label="Each Price"
-                                type={"number"}
-                              />
-                            </Grid>
 
-                            <Grid item md={2} xs={12}>
-                              <Button
-                                sx={{ width: "100%", mt: 1, p: 1.5 }}
-                                type="submit"
-                                color="secondary"
-                                variant="contained"
-                                disabled={!props.isValid}
-                              >
-                                <Save /> Add
-                              </Button>
-                            </Grid>
-                          </Grid>
-                        </Form>
-                      )}
-                    </Formik>
-                  </>
-                </Box>
-              )}
-            <TableContainer component={Paper}>
-              <Table size="small" aria-label="a dense table">
-                <TableHead>
-                  <StyledTableRow>
-                    <StyledTableCell>S.No</StyledTableCell>
-                    <StyledTableCell>Item Name</StyledTableCell>
-                    <StyledTableCell align="right">Qty</StyledTableCell>
-                    {type === TransactionType.PI && (
-                      <StyledTableCell align="right">
-                        Difference
-                      </StyledTableCell>
-                    )}
-                    <StyledTableCell align="right">Each Price</StyledTableCell>
-                    <StyledTableCell align="right">Total Price</StyledTableCell>
-                    <StyledTableCell>Actions</StyledTableCell>
-                  </StyledTableRow>
-                </TableHead>
-                <TableBody>
-                  {lines &&
-                    lines.map((row, index) => (
-                      <StyledTableRow key={row.id}>
-                        <StyledTableCell
-                          scope="row"
-                          sx={{ padding: "0px 16px" }}
-                        >
-                          {index + 1}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          scope="row"
-                          sx={{ padding: "0px 16px" }}
-                        >
-                          {row.item?.displayName}
-                        </StyledTableCell>
-                        <StyledTableCell
-                          scope="row"
-                          sx={{ padding: "0px 16px" }}
-                          align="right"
-                        >
-                          {row.qty?.toLocaleString()}
-                        </StyledTableCell>
-
-                        {type === TransactionType.PI && (
-                          <StyledTableCell
-                            scope="row"
-                            sx={{ padding: "0px 16px" }}
-                            align="right"
-                          >
-                            {row.diff?.toLocaleString()}
-                          </StyledTableCell>
-                        )}
-
-                        <StyledTableCell
-                          scope="row"
-                          sx={{ padding: "0px 16px" }}
-                          align="right"
-                        >
-                          {row.eachPrice?.toLocaleString()}
-                        </StyledTableCell>
-
-                        <StyledTableCell
-                          scope="row"
-                          sx={{ padding: "0px 16px" }}
-                          align="right"
-                        >
-                          {row.linePrice?.toLocaleString()}
-                        </StyledTableCell>
-                        <StyledTableCell sx={{ padding: "0px 16px" }}>
-                          {selectedHeader?.status === TransactionStatus.Draft &&
-                            isPrivilegedTransaction(
-                              user?.roles as Role[],
-                              type,
-                              "Add"
-                            ) && (
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
-                                <IconButton
-                                  color="primary"
-                                  onClick={() =>
-                                    SetSelectedLine(
-                                      row ? (row.id as number) : 0
-                                    )
-                                  }
-                                  size="large"
-                                >
-                                  <Edit />
-                                </IconButton>
-                                <IconButton
-                                  color="secondary"
-                                  onClick={() =>
-                                    DeleteLine(row ? (row.id as number) : 0)
-                                  }
-                                  size="large"
-                                >
-                                  <Delete />
-                                </IconButton>
-                              </Stack>
-                            )}
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    ))}
-                  <StyledTableRow>
-                    <StyledTableCell
-                      sx={{ fontWeight: "900" }}
-                      scope="row"
-                      align="left"
-                    >
-                      {selectedHeader?.numberOfItems} Items
-                    </StyledTableCell>
-                    <StyledTableCell></StyledTableCell>
-                    <StyledTableCell
-                      sx={{ fontWeight: "900" }}
-                      scope="row"
-                      align="right"
-                    >
-                      Total Qty: {selectedHeader?.totalQty}
-                    </StyledTableCell>
-                    <StyledTableCell></StyledTableCell>
-
-                    <StyledTableCell
-                      sx={{ fontWeight: "900", fontSize: "24px" }}
-                      scope="row"
-                      align="right"
-                    >
-                      Total Amount : {selectedHeader?.totalAmount}
-                    </StyledTableCell>
-
-                    <StyledTableCell></StyledTableCell>
-                  </StyledTableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </AccordionDetails>
-        </Accordion>
-        {selectedHeader?.status !== TransactionStatus.Draft &&
-          (selectedHeader?.type === TransactionType.Sale ||
-            selectedHeader?.type === TransactionType.Purchase) && (
-            <Accordion sx={{ my: 1 }} expanded={true}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Payments</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <TableContainer component={Paper}>
-                  <Table size="small" aria-label="a dense table">
-                    <TableHead>
-                      <StyledTableRow>
-                        <StyledTableCell>S.No</StyledTableCell>
-                        <StyledTableCell>Payment Date</StyledTableCell>
-                        <StyledTableCell>Method</StyledTableCell>
-                        <StyledTableCell align="right">Amount</StyledTableCell>
-                        <StyledTableCell>Status</StyledTableCell>
-                      </StyledTableRow>
-                    </TableHead>
-                    <TableBody>
-                      {payments &&
-                        payments.map((row, index) => (
-                          <StyledTableRow key={row.id}>
-                            <StyledTableCell
-                              scope="row"
-                              sx={{ padding: "0px 16px" }}
-                            >
-                              {index + 1}
-                            </StyledTableCell>
-                            <StyledTableCell component="th" scope="row">
-                              {format(
-                                new Date((row.paymentDate as Date).toString()),
-                                "MMM-dd-yyyy"
-                              )}
-                              (
-                              {getAmharicCalendarFormatted(
-                                row.paymentDate as Date,
-                                "-"
-                              )}
-                              )
-                            </StyledTableCell>
-                            <StyledTableCell
-                              scope="row"
-                              sx={{ padding: "0px 16px" }}
-                            >
-                              {row.method}
-                            </StyledTableCell>
-                            <StyledTableCell
-                              scope="row"
-                              sx={{ padding: "0px 16px" }}
-                              align="right"
-                            >
-                              {row.amount?.toLocaleString()}
-                            </StyledTableCell>
-                            <StyledTableCell component="th" scope="row">
-                              {row.status}
-                            </StyledTableCell>
-                          </StyledTableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </AccordionDetails>
-            </Accordion>
-          )}
+        <TransactionLines
+          type={type}
+          tranHeader={tranHeader}
+          headerId={transactionId}
+        />
+        <TransactionPayments />
       </Box>
 
       <CustomDialog title="Post" isOpen={open} handleDialogClose={dialogClose}>

@@ -11,6 +11,11 @@ import {
 export interface HeaderProps {
   type: TransactionType;
 }
+export interface HeaderLineProps {
+  type: TransactionType;
+  tranHeader: TransactionHeader;
+  headerId: string;
+}
 
 export type TransactionLine = {
   id?: number;
@@ -128,6 +133,7 @@ export type TransactionsState = {
   inventoriesWithCount: InventoriesWithCount;
   headersWithCount: HeadersWithCount;
   linesWithCount: LinesWithCount;
+  headerLinesWithCount: LinesWithCount;
   paymentsWithCount: PaymentsWithCount;
   selectedHeader: TransactionHeader;
   selectedLine: TransactionLine;
@@ -188,6 +194,7 @@ export type LineArgs = {
   includeTransfers?: boolean;
   durationBegin?: Date;
   durationEnd?: Date;
+  searchText?: string;
   refreshList?: string;
   lastUpdated?: Date;
 };

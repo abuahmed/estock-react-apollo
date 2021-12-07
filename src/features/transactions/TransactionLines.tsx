@@ -13,11 +13,11 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 
 import {
-  fetchLines,
   selectTransactions,
   setSelectedLine,
   addLine,
   removeLine,
+  fetchLines,
   fetchInventories,
 } from "./transactionsSlice";
 import {
@@ -50,15 +50,24 @@ import { selectAuth } from "../auth/authSlice";
 import { isPrivilegedTransaction } from "../../utils/authUtils";
 import { Role } from "../auth/types/authType";
 import { selectSetups } from "../setups/setupSlices";
+import { selectPreference } from "../preferences/preferencesSlice";
+import Paging from "../../components/Layout/Paging";
 
-export const TransactionLines = ({ tranHeader, type }: HeaderLineProps) => {
+export const TransactionLines = ({
+  tranHeader,
+  type,
+  headerId,
+}: HeaderLineProps) => {
   const [selectedItemId, setSelectedItemId] = useState(0);
   const [selectedInventory, setSelectedInventory] = useState<Inventory>({
     qtyOnHand: 0,
   });
   const [tranLine, setTranLine] = useState<TransactionLine>({});
   const [leftItems, setLeftItems] = useState<Item[]>([]);
-
+  const [total, setTotal] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(0);
+  const { searchText } = useAppSelector(selectPreference);
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectAuth);
   //const { searchText } = useAppSelector(selectPreference);
@@ -67,19 +76,32 @@ export const TransactionLines = ({ tranHeader, type }: HeaderLineProps) => {
   } = useAppSelector(selectSetups);
 
   const {
-    headerLinesWithCount: { lines },
+    headerLinesWithCount: { lines, totalCount },
     selectedHeader,
     selectedLine,
     inventoriesWithCount: { inventories },
   } = useAppSelector(selectTransactions);
 
   useEffect(() => {
+    setTotal(totalCount as number);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalCount]);
+
+  useEffect(() => {
     if (selectedHeader && selectedHeader.id && selectedHeader.id !== 0) {
-      //console.log(selectedHeader);
-      dispatch(fetchLines({ headerId: selectedHeader.id }));
+      const skipRows = currentPage * rowsPerPage;
+      dispatch(
+        fetchLines({
+          headerId: parseInt(headerId),
+          searchText:
+            searchText && searchText.length > 0 ? searchText : undefined,
+          skip: skipRows,
+          take: rowsPerPage,
+        })
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, selectedHeader]);
+  }, [dispatch, selectedHeader, searchText, currentPage, rowsPerPage]);
 
   useEffect(() => {
     setLeftItems(items.filter((i) => !lines.some((l) => l.item?.id === i.id)));
@@ -91,11 +113,22 @@ export const TransactionLines = ({ tranHeader, type }: HeaderLineProps) => {
 
   useEffect(() => {
     if (selectedItemId !== 0) {
-      const inv = inventories.find((i) => i.item?.id === selectedItemId);
-      if (inv) setSelectedInventory(inv as Inventory);
-      else setSelectedInventory({ qtyOnHand: 0 });
+      dispatch(
+        fetchInventories({
+          warehouseId: tranHeader.warehouse?.id,
+          itemId: selectedItemId,
+          refreshList: "refresh",
+        })
+      );
     }
-  }, [inventories, selectedItemId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedItemId]);
+
+  useEffect(() => {
+    if (inventories.length > 0) {
+      setSelectedInventory(inventories[0] as Inventory);
+    } else setSelectedInventory({ qtyOnHand: 0 });
+  }, [inventories]);
 
   const DeleteLine = (id: number) => {
     dispatch(removeLine(id));
@@ -246,7 +279,7 @@ export const TransactionLines = ({ tranHeader, type }: HeaderLineProps) => {
                   lines.map((row, index) => (
                     <StyledTableRow key={row.id}>
                       <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
-                        {index + 1}
+                        {currentPage * rowsPerPage + index + 1}
                       </StyledTableCell>
                       <StyledTableCell scope="row" sx={{ padding: "0px 16px" }}>
                         {row.item?.displayName}
@@ -351,6 +384,15 @@ export const TransactionLines = ({ tranHeader, type }: HeaderLineProps) => {
               </TableBody>
             </Table>
           </TableContainer>
+          <Stack spacing={1}>
+            <Paging
+              total={total}
+              rowsPerPage={rowsPerPage}
+              currentPage={currentPage}
+              setRowsPerPage={setRowsPerPage}
+              setCurrentPage={setCurrentPage}
+            />
+          </Stack>
         </AccordionDetails>
       </Accordion>
     </>

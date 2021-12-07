@@ -105,14 +105,10 @@ export const ItemEntry = () => {
           component={RouterLink}
           to={"/app/items"}
         >
-          <Typography variant="h5" component="h5">
-            <Backspace />
-          </Typography>
+          <Backspace />
         </Button>
         <Button color="secondary" variant="contained" onClick={resetFields}>
-          <Typography variant="h5" component="h5">
-            <Add />
-          </Typography>
+          <Add />
         </Button>
       </Stack>
       <Divider variant="middle" sx={{ my: 2 }} />

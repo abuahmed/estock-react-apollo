@@ -164,6 +164,7 @@ export const GET_LINES = gql`
   ${LINE}
   query GetLines(
     $headerId: Int
+    $warehouseId: Int
     $itemId: Int
     $includeSales: Boolean
     $includePurchases: Boolean
@@ -179,6 +180,7 @@ export const GET_LINES = gql`
   ) {
     lines(
       headerId: $headerId
+      warehouseId: $warehouseId
       itemId: $itemId
       includeSales: $includeSales
       includePurchases: $includePurchases
