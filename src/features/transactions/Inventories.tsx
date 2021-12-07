@@ -194,7 +194,7 @@ export const Inventories = () => {
                           <IconButton
                             color="primary"
                             component={RouterLink}
-                            to={`/app/itemsHistory/${row.item?.id}`}
+                            to={`/app/inventoryHistory/${row.warehouse?.id}/${row.item?.id}`}
                             size="large"
                           >
                             <History />

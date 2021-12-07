@@ -50,14 +50,14 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
           element: isPrivileged(<Inventories />, RoleTypes.OnHandInventory),
         },
         {
-          path: "itemsHistory",
+          path: "inventoryHistory",
           element: isPrivileged(
             <InventoryHistory />,
             RoleTypes.OnHandInventory
           ),
         },
         {
-          path: "itemsHistory/:id",
+          path: "inventoryHistory/:warehouse/:item",
           element: isPrivileged(
             <InventoryHistory />,
             RoleTypes.OnHandInventory

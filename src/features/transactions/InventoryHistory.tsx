@@ -37,14 +37,19 @@ import { isPrivilegedTransaction } from "../../utils/authUtils";
 import TableSkeleton from "../../components/Layout/TableSkeleton";
 import Paging from "../../components/Layout/Paging";
 import { Helmet } from "react-helmet";
-import { changePageTitle } from "../preferences/preferencesSlice";
+import {
+  changePageTitle,
+  selectPreference,
+} from "../preferences/preferencesSlice";
 import { Refresh } from "@mui/icons-material";
 import { fetchItems } from "../setups/setupSlices";
 import { ItemFilter } from "../../components/filter/ItemFilter";
+import { WarehouseFilter } from "../../components/filter/WarehouseFilter";
 
 export const InventoryHistory = () => {
-  const { id } = useParams() as {
-    id: string;
+  const { item, warehouse } = useParams() as {
+    item: string;
+    warehouse: string;
   };
 
   const [state, setState] = useState({
@@ -79,11 +84,15 @@ export const InventoryHistory = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [itemId, setItemId] = useState<number>(0);
+  const [warehouseId, setWarehouseId] = useState<number>(0);
+
+  const { searchText } = useAppSelector(selectPreference);
 
   useEffect(() => {
-    if (id) setItemId(parseInt(id));
+    if (item) setItemId(parseInt(item));
+    if (warehouse) setWarehouseId(parseInt(warehouse));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [item, warehouse]);
 
   useEffect(() => {
     dispatch(changePageTitle("Inventory History"));
@@ -95,12 +104,14 @@ export const InventoryHistory = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     itemId,
+    warehouseId,
     includeSale,
     includePurchase,
     includePI,
     includeTransfer,
     startDate,
     endDate,
+    searchText,
     currentPage,
     rowsPerPage,
   ]);
@@ -117,6 +128,7 @@ export const InventoryHistory = () => {
 
     dispatch(
       fetchLines({
+        warehouseId: warehouseId !== 0 ? warehouseId : undefined,
         itemId: itemId !== 0 ? itemId : undefined,
         includeSales:
           includeSale &&
@@ -134,6 +146,8 @@ export const InventoryHistory = () => {
         durationEnd: endDateHeader,
         status: TransactionStatus.Posted,
         refreshList: refresh,
+        searchText:
+          searchText && searchText.length > 0 ? searchText : undefined,
         skip: skipRows,
         take: rowsPerPage,
       })
@@ -283,6 +297,10 @@ export const InventoryHistory = () => {
             alignItems="center"
             justifyContent="center"
           >
+            <Grid item sm={4} xs={12}>
+              <WarehouseFilter setWarehouseId={setWarehouseId} />
+            </Grid>
+
             <Grid item sm={4} xs={12}>
               <ItemFilter setItemId={setItemId} />
             </Grid>

@@ -251,9 +251,9 @@ const getNavBarItems = (userRoles: string[]) => {
       title: RoleTypes.OnHandInventory,
     },
     {
-      href: "/app/itemsHistory",
+      href: "/app/inventoryHistory",
       icon: <ListIcon />,
-      title: RoleTypes.ItemHistory,
+      title: RoleTypes.InventoryHistory,
     },
     {
       href: "/app/payments",

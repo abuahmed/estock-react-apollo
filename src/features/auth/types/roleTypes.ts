@@ -21,7 +21,7 @@ export enum RoleTypes {
 
   ViewItems = "View Items",
   ManageItems = "Manage Items",
-  ItemHistory = "Item History",
+  InventoryHistory = "Inventory History",
 
   OnHandInventory = "OnHand Inventory",
 
