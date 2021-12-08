@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
-// Slices
 import {
   selectSetups,
   removeBusinessPartner,
@@ -46,26 +45,24 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
   const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(0);
+
   useEffect(() => {
     dispatch(changePageTitle(`${type} List`));
-    const skipRows = currentPage * rowsPerPage;
-
-    dispatch(
-      fetchBusinessPartners({
-        type,
-        searchText,
-        skip: skipRows,
-        take: rowsPerPage,
-      })
-    );
+    getBusinessPartners("all");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, type, searchText, currentPage, rowsPerPage]);
+
   const RefreshList = () => {
+    getBusinessPartners("refresh");
+  };
+
+  const getBusinessPartners = (refresh: string) => {
     const skipRows = currentPage * rowsPerPage;
 
     dispatch(
       fetchBusinessPartners({
         type,
-        refreshList: "refresh",
+        refreshList: refresh,
         searchText,
         skip: skipRows,
         take: rowsPerPage,
@@ -79,6 +76,7 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
     setTotal(totalCount as number);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalCount]);
+
   return (
     <>
       <Helmet>
@@ -106,15 +104,14 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
         </Tooltip>
       </Stack>
 
-      <Divider variant="middle" sx={{ my: 2 }} />
-
-      <Grid container justifyContent="flex-start">
+      <Grid container justifyContent="flex-start" sx={{ mt: 1 }}>
         <TableContainer component={Paper}>
           <Table size="small" aria-label="a simple table">
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell>S.No</StyledTableCell>
                 <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Mobile</StyledTableCell>
                 <StyledTableCell>Credit(Birr)</StyledTableCell>
                 <StyledTableCell>Actions</StyledTableCell>
               </StyledTableRow>
@@ -137,6 +134,9 @@ export const BusinessPartners = ({ type }: BusinessPartnerProps) => {
                       >
                         {row.displayName}
                       </Button>
+                    </StyledTableCell>
+                    <StyledTableCell component="th" scope="row">
+                      {row.address?.mobile}
                     </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       ${row.totalOutstandingCredit?.toLocaleString()}
