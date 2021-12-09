@@ -32,6 +32,7 @@ import { Payments } from "../features/transactions/Payments";
 import { InventoryHistory } from "../features/transactions/InventoryHistory";
 import { FinancialAccounts } from "../features/setups/FinancialAccounts";
 import { FinancialAccountEntry } from "../features/setups/FinancialAccountEntry";
+import { PaymentTypes } from "../features/transactions/types/paymentTypes";
 
 let PrivilegedRoles: Role[] = [];
 const routes = (isLoggedIn: Boolean, roles: Role[]) => {
@@ -64,8 +65,18 @@ const routes = (isLoggedIn: Boolean, roles: Role[]) => {
           ),
         },
         {
-          path: "payments",
-          element: isPrivileged(<Payments />, RoleTypes.OnHandInventory),
+          path: "salesPayments",
+          element: isPrivileged(
+            <Payments type={PaymentTypes.Sale} />,
+            RoleTypes.SalesPayments
+          ),
+        },
+        {
+          path: "purchasePayments",
+          element: isPrivileged(
+            <Payments type={PaymentTypes.Purchase} />,
+            RoleTypes.PurchasePayments
+          ),
         },
         {
           path: "sale",

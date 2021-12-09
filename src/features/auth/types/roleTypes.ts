@@ -50,6 +50,7 @@ export enum RoleTypes {
   DeleteTransfer = "Delete Transfer",
 
   ReserveItems = "Reserve Items",
+  ViewFinancialAccounts = "View Financial Accounts",
   ManageFinancialAccounts = "Manage Financial Accounts",
   SalesPayments = "Sales Payments",
   PurchasePayments = "Purchase Payments",

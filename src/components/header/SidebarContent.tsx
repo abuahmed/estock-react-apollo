@@ -1,26 +1,11 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { useEffect } from "react";
 import { NavLink as RouterLink } from "react-router-dom";
 import { Avatar, Box, Divider, List, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Link from "@mui/material/Link";
 
-import NavItem from "../NavItem";
-import {
-  BarChart as BarChartIcon,
-  Lock as LockIcon,
-  ExitToApp as ExitToAppIcon,
-  AccountCircle as UserIcon,
-  People as UsersIcon,
-  List as ListIcon,
-  ShoppingCartOutlined,
-  ShoppingBagOutlined,
-  DescriptionOutlined,
-  BusinessOutlined,
-  PeopleOutline,
-  CompareArrowsOutlined,
-  CreditCardOutlined,
-  CorporateFareSharp,
-} from "@mui/icons-material";
+import NavItem from "./NavItem";
+
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -34,8 +19,7 @@ import { DrawerHeader } from "../DashboardSidebar";
 import CustomDialog from "../modals/CustomDialog";
 import ChangePassword from "../account/ChangePassword";
 import { logout } from "../../features/auth/authSlice";
-
-import { RoleTypes } from "../../features/auth/types/roleTypes";
+import { SideBarItems } from "./SideBarItems";
 
 const SidebarContent = () => {
   const dispatch = useAppDispatch();
@@ -162,15 +146,17 @@ const SidebarContent = () => {
       <Divider />
       <Box sx={{ px: 1, py: 0 }}>
         <List onClick={handleDrawerToggle}>
-          {getNavBarItems(roles).map((item) => (
+          {SideBarItems(roles).map((item) => (
             <NavItem
               href={item.href}
               key={item.title}
               title={item.title}
+              role={item.role}
               icon={item.icon}
-              onClick={
+              children={item.children}
+              click={
                 !item.href
-                  ? item.click === "changePassword"
+                  ? item.clickedText === "changePassword"
                     ? changePasswordHandler
                     : signOut
                   : voidFunction
@@ -230,140 +216,6 @@ const SidebarContent = () => {
       </CustomDialog>
     </Box>
   );
-};
-
-const getNavBarItems = (userRoles: string[]) => {
-  interface Props {
-    href: string;
-    title: string;
-    icon: ReactNode;
-    click?: string | undefined;
-  }
-  let menuItems = [
-    {
-      href: "/app/dashboard",
-      icon: <BarChartIcon />,
-      title: RoleTypes.ViewDashboard,
-    },
-    {
-      href: "/app/onHand",
-      icon: <ListIcon />,
-      title: RoleTypes.OnHandInventory,
-    },
-    {
-      href: "/app/inventoryHistory",
-      icon: <ListIcon />,
-      title: RoleTypes.InventoryHistory,
-    },
-    {
-      href: "/app/payments",
-      icon: <ListIcon />,
-      title: RoleTypes.OnHandInventory,
-    },
-    {
-      href: "/app/sale",
-      icon: <ShoppingCartOutlined />,
-      title: RoleTypes.ViewSale,
-    },
-    {
-      href: "/app/purchase",
-      icon: <ShoppingBagOutlined />,
-      title: RoleTypes.ViewPurchase,
-    },
-    {
-      href: "/app/transfer",
-      icon: <CompareArrowsOutlined />,
-      title: RoleTypes.ViewTransfer,
-    },
-    {
-      href: "/app/pi",
-      icon: <CreditCardOutlined />,
-      title: RoleTypes.ViewPI,
-    },
-    {
-      href: "/app/items",
-      icon: <DescriptionOutlined />,
-      title: RoleTypes.ViewItems,
-    },
-    {
-      href: "/app/customers",
-      icon: <PeopleOutline />,
-      title: RoleTypes.ViewCustomers,
-    },
-    {
-      href: "/app/vendors",
-      icon: <BusinessOutlined />,
-      title: RoleTypes.ViewVendors,
-    },
-    {
-      href: "/app/users",
-      icon: <UsersIcon />,
-      title: RoleTypes.ViewUsers,
-      click: "",
-    },
-    // {
-    //   href: "/app/warehouses",
-    //   icon: <UsersIcon />,
-    //   title: RoleTypes.ViewWarehouses,
-    //   click: "",
-    // },
-    // {
-    //   href: "/app/organizations",
-    //   icon: <UsersIcon />,
-    //   title: RoleTypes.ViewOrganizations,
-    //   click: "",
-    // },
-    {
-      href: "/app/clients",
-      icon: <CorporateFareSharp />,
-      title: RoleTypes.ViewClients,
-      click: "",
-    },
-  ];
-
-  let privilegedMenuItems: Props[] = [];
-
-  menuItems.forEach((item) => {
-    if (
-      userRoles.some((userRole) => userRole === item.title) ||
-      userRoles.some(
-        (userRole) => userRole === item.title.replace("View", "Add")
-      ) ||
-      userRoles.some(
-        (userRole) => userRole === item.title.replace("View", "Manage")
-      )
-    ) {
-      privilegedMenuItems.push(item);
-    }
-  });
-
-  privilegedMenuItems = privilegedMenuItems.concat([
-    {
-      href: "/app/profile",
-      icon: <UserIcon />,
-      title: "My Account",
-    },
-
-    {
-      href: "",
-      icon: <LockIcon />,
-      title: "Change Password",
-      click: "changePassword",
-    },
-    {
-      href: "",
-      icon: <ExitToAppIcon />,
-      title: "Logout",
-      click: "logout",
-    },
-  ]);
-  return privilegedMenuItems;
-
-  // {
-  //     href: "/app/settings",
-  //     icon: <SettingsIcon />,
-  //     title: "Settings",
-  //   },
 };
 
 export default SidebarContent;
