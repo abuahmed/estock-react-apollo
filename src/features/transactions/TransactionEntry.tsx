@@ -439,6 +439,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       )})`}
                       variant="outlined"
                       fullWidth
+                      disabled
                     />
                   </Grid>
                   <Grid item md={4} xs={12}>
@@ -452,6 +453,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                       value={selectedHeader?.warehouse?.displayName}
                       variant="outlined"
                       fullWidth
+                      disabled
                     />
                   </Grid>
                   <Grid item md={4} xs={12}>
@@ -464,6 +466,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                             value={selectedHeader?.toWarehouse?.displayName}
                             variant="outlined"
                             fullWidth
+                            disabled
                           />
                         ) : (
                           <TextField
@@ -472,6 +475,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                             value={selectedHeader?.businessPartner?.displayName}
                             variant="outlined"
                             fullWidth
+                            disabled
                           />
                         )}
                       </>
@@ -488,6 +492,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                     value={selectedHeader.number}
                     variant="outlined"
                     fullWidth
+                    disabled
                   />
                 </Grid>
                 <Grid item md={4} xs={12}>
@@ -497,6 +502,7 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
                     value={selectedHeader.status}
                     variant="outlined"
                     fullWidth
+                    disabled
                   />
                 </Grid>
               </Grid>
