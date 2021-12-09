@@ -20,14 +20,7 @@ import {
   changePageTitle,
   selectPreference,
 } from "../preferences/preferencesSlice";
-import {
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { Add, Edit, Refresh } from "@mui/icons-material";
 import Delete from "@mui/icons-material/Delete";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";

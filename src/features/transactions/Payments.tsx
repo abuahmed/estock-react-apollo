@@ -16,7 +16,7 @@ import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { Refresh } from "@mui/icons-material";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
 import { fetchPayments, selectTransactions } from "./transactionsSlice";
-import { addMonths, endOfDay, format, startOfDay } from "date-fns";
+import { addMonths, format } from "date-fns";
 import { getAmharicCalendarFormatted } from "../../utils/calendarUtility";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -31,8 +31,13 @@ import { changePageTitle } from "../preferences/preferencesSlice";
 import { NavLink } from "react-router-dom";
 import { StyledAccordionSummary } from "../../styles/componentStyled";
 import Paging from "../../components/Layout/Paging";
-
-export const Payments = () => {
+//import { selectAuth } from "../auth/authSlice";
+//import { Role } from "../auth/types/authType";
+import { PaymentTypes } from "./types/paymentTypes";
+interface PaymentProps {
+  type: PaymentTypes;
+}
+export const Payments = ({ type }: PaymentProps) => {
   const [startDate, setStartDate] = useState<Date | null>(
     addMonths(new Date(), -1)
   );
@@ -43,18 +48,18 @@ export const Payments = () => {
     paymentsWithCount: { payments, totalCount },
     loading,
   } = useAppSelector(selectTransactions);
-  //  const { user } = useAppSelector(selectAuth);
+  //const { user } = useAppSelector(selectAuth);
 
   const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
 
   useEffect(() => {
-    dispatch(changePageTitle("Payments List"));
+    dispatch(changePageTitle(`${type}s Payments List`));
 
     fetchPaymentLines("All");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, startDate, endDate, currentPage, rowsPerPage]);
+  }, [dispatch, type, startDate, endDate, currentPage, rowsPerPage]);
 
   const RefreshList = () => {
     fetchPaymentLines("refresh");
@@ -62,21 +67,15 @@ export const Payments = () => {
 
   const fetchPaymentLines = (refresh: string) => {
     //const userRoles = user?.roles as Role[];
-    //let startDateHeader = startDate as Date;
-    //let endDateHeader = endDate as Date;
+    let startDateHeader = startDate as Date;
+    let endDateHeader = endDate as Date;
     const skipRows = currentPage * rowsPerPage;
 
-    // if (refresh !== "refresh") {
-    //   startDateHeader = startOfDay(startDateHeader);
-    //   endDateHeader = endOfDay(endDateHeader);
-    // }
-    // includeSale &&
-    //       isPrivilegedTransaction(userRoles, TransactionType.Sale, "View"),
-    //     includePurchases:
-    //       includePurchase &&
-    //       isPrivilegedTransaction(userRoles, TransactionType.Purchase, "View"),
     dispatch(
       fetchPayments({
+        type,
+        durationBegin: startDateHeader,
+        durationEnd: endDateHeader,
         refreshList: refresh,
         skip: skipRows,
         take: rowsPerPage,
@@ -93,7 +92,7 @@ export const Payments = () => {
   return (
     <>
       <Helmet>
-        <title>Payments List | Pinna Stock</title>
+        <title>{type}s Payments List | Pinna Stock</title>
       </Helmet>
 
       <>
@@ -164,7 +163,6 @@ export const Payments = () => {
             <TableHead>
               <StyledTableRow>
                 <StyledTableCell>S.No</StyledTableCell>
-                <StyledTableCell>Type</StyledTableCell>
                 <StyledTableCell>Transaction No.</StyledTableCell>
                 <StyledTableCell>Date</StyledTableCell>
                 <StyledTableCell>Method</StyledTableCell>
@@ -183,9 +181,6 @@ export const Payments = () => {
                       {currentPage * rowsPerPage + index + 1}
                     </StyledTableCell>
 
-                    <StyledTableCell component="th" scope="row">
-                      {row.type}
-                    </StyledTableCell>
                     <StyledTableCell component="th" scope="row">
                       <Button
                         color="primary"
