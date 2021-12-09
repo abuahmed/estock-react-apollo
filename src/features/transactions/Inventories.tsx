@@ -14,7 +14,10 @@ import Accordion from "@mui/material/Accordion";
 import { StyledAccordionSummary } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { changePageTitle } from "../preferences/preferencesSlice";
+import {
+  changePageTitle,
+  selectPreference,
+} from "../preferences/preferencesSlice";
 import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
 import { History, Refresh } from "@mui/icons-material";
 import { StyledTableCell, StyledTableRow } from "../../styles/tableStyles";
@@ -32,6 +35,7 @@ export const Inventories = () => {
     inventoriesWithCount: { inventories, totalCount },
     loading,
   } = useAppSelector(selectTransactions);
+  const { searchText } = useAppSelector(selectPreference);
   const [total, setTotal] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
@@ -49,6 +53,7 @@ export const Inventories = () => {
         warehouseId: warehouseId !== 0 ? warehouseId : undefined,
         categoryId: itemCategoryId !== 0 ? itemCategoryId : undefined,
         uomId: itemUomId !== 0 ? itemUomId : undefined,
+        searchText,
         skip: skipRows,
         take: rowsPerPage,
       })
@@ -61,6 +66,7 @@ export const Inventories = () => {
     warehouseId,
     itemCategoryId,
     itemUomId,
+    searchText,
   ]);
 
   const RefreshList = () => {
