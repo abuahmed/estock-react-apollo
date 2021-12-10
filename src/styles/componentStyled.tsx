@@ -14,6 +14,16 @@ export const StyledAccordionSummary = styled(
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.common.white,
   borderRadius: "4px",
+  "&.MuiButtonBase-root": {
+    "&.MuiAccordionSummary-root": {
+      "&.Mui-expanded": {
+        minHeight: 0,
+      },
+    },
+  },
+  "&.Mui-expanded": {
+    margin: 0,
+  },
 }));
 
 export const StyledCard = styled(Card)<CardProps>(({ theme }) => ({
@@ -44,11 +54,11 @@ export const ImageMargin = styled("div")(({ theme }) => ({
 
 export const StyledButton = styled(Button)(({ theme }) => ({
   //color: 'white',
-  color: theme.palette.getContrastText(theme.palette.secondary.light),
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.getContrastText(theme.palette.primary.main),
   fontSize: "1rem",
   [theme.breakpoints.up("sm")]: {
     fontSize: "1rem",
-    color: theme.palette.getContrastText(theme.palette.primary.light),
   },
   [theme.breakpoints.up("md")]: {
     fontSize: "1.2rem",
