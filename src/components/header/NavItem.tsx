@@ -53,40 +53,16 @@ const NavItem = ({
     return (
       <Tooltip title={title}>
         <StyledListItemButton
-          sx={{
-            ...(active && {
-              color: "primary.main",
-            }),
-          }}
+          active={active}
           onClick={!href ? click : () => redirectRoute(href)}
           {...rest}
           disableGutters
         >
-          <StyledListItemIcon
-            sx={{
-              ...(active && {
-                color: "primary.main",
-              }),
-            }}
-          >
-            {nested ? (
-              <Dot
-                sx={{
-                  ...(active && {
-                    backgroundColor: "primary.main",
-                  }),
-                }}
-              />
-            ) : (
-              icon
-            )}
+          <StyledListItemIcon active={active}>
+            {nested ? <Dot active={active} /> : icon}
           </StyledListItemIcon>
           <StyledListItemText
-            sx={{
-              ...(active && {
-                color: "text.primary",
-              }),
-            }}
+            active={active}
             primary={title
               .replace("View", "")
               .replace("Manage", "")
@@ -99,24 +75,13 @@ const NavItem = ({
   return (
     <Tooltip title={title}>
       <>
-        <StyledListItemButton disableGutters onClick={handleClick}>
-          <StyledListItemIcon
-            sx={{
-              ...(active && {
-                color: "primary.main",
-              }),
-            }}
-          >
-            {icon}
-          </StyledListItemIcon>
-          <StyledListItemText
-            primary={title}
-            sx={{
-              ...(active && {
-                color: "text.primary",
-              }),
-            }}
-          />
+        <StyledListItemButton
+          disableGutters
+          onClick={handleClick}
+          active={active}
+        >
+          <StyledListItemIcon active={active}>{icon}</StyledListItemIcon>
+          <StyledListItemText primary={title} active={active} />
           {open ? <ExpandLess /> : <ExpandMore />}
         </StyledListItemButton>
         {children && (

@@ -4,30 +4,52 @@ import { ListItemButton, ListItemButtonProps } from "@mui/material";
 import { ListItemIcon, ListItemIconProps } from "@mui/material";
 import { ListItemText, ListItemTextProps } from "@mui/material";
 
-export const StyledListItemButton = styled(ListItemButton)<ListItemButtonProps>(
-  ({ theme }) => ({
-    textDecoration: "none",
-    "&:hover, &:focus": {
-      backgroundColor: theme.palette.background.default,
-    },
-    "& svg": {
-      mr: 1,
-    },
-    color: theme.palette.text.secondary,
-    justifyContent: "flex-start",
-    letterSpacing: 0,
-    py: 1.25,
-    textTransform: "none",
-    width: "100%",
-  })
-);
-export const StyledListItemIcon = styled(ListItemIcon)<ListItemIconProps>(
-  ({ theme }) => ({
+interface InputListItemButtonProps extends ListItemButtonProps {
+  active?: boolean;
+}
+
+interface InputListItemIconProps extends ListItemIconProps {
+  active?: boolean;
+}
+
+interface InputListItemTextProps extends ListItemTextProps {
+  active?: boolean;
+}
+interface DotProps {
+  active?: boolean;
+}
+
+export const StyledListItemButton = styled(
+  ListItemButton
+)<InputListItemButtonProps>(({ theme, active }) => ({
+  textDecoration: "none",
+  "&:hover, &:focus": {
+    backgroundColor: theme.palette.background.default,
+  },
+  "& svg": {
+    marginRight: 1,
+  },
+  ...(active && {
+    color: theme.palette.primary.main,
+  }),
+  color: theme.palette.text.secondary,
+  justifyContent: "flex-start",
+  letterSpacing: 0,
+  py: 1.25,
+  textTransform: "none",
+  width: "100%",
+}));
+
+export const StyledListItemIcon = styled(ListItemIcon)<InputListItemIconProps>(
+  ({ theme, active }) => ({
     marginRight: theme.spacing(1),
     color: theme.palette.text.secondary,
     "&:hover, &:focus": {
       color: theme.palette.primary.main,
     },
+    ...(active && {
+      color: theme.palette.primary.main,
+    }),
     transition: theme.transitions.create("color"),
     width: 24,
     display: "flex",
@@ -35,19 +57,22 @@ export const StyledListItemIcon = styled(ListItemIcon)<ListItemIconProps>(
   })
 );
 
-export const StyledListItemText = styled(ListItemText)<ListItemTextProps>(
-  ({ theme }) => ({
+export const StyledListItemText = styled(ListItemText)<InputListItemTextProps>(
+  ({ theme, active }) => ({
     padding: 0,
     color: theme.palette.text.secondary,
     "&:hover, &:focus": {
       color: theme.palette.primary.main,
     },
+    ...(active && {
+      color: theme.palette.text.primary,
+    }),
     transition: theme.transitions.create(["opacity", "color"]),
     fontSize: 16,
   })
 );
 
-export const Dot = styled("div")(({ theme }) => ({
+export const Dot = styled("div")<DotProps>(({ theme, active }) => ({
   width: 11,
   height: 11,
   backgroundColor: theme.palette.text.secondary,
@@ -56,4 +81,7 @@ export const Dot = styled("div")(({ theme }) => ({
   "&:hover, &:focus": {
     backgroundColor: theme.palette.primary.main,
   },
+  ...(active && {
+    backgroundColor: theme.palette.primary.main,
+  }),
 }));
