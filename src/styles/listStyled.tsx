@@ -26,18 +26,13 @@ export const StyledListItemButton = styled(
   "&:hover, &:focus": {
     backgroundColor: theme.palette.background.default,
   },
-  "& svg": {
-    marginRight: 1,
-  },
+  // "& svg": {
+  //   marginRight: 1,
+  // },
   ...(active && {
     color: theme.palette.primary.main,
   }),
   color: theme.palette.text.secondary,
-  justifyContent: "flex-start",
-  letterSpacing: 0,
-  py: 1.25,
-  textTransform: "none",
-  width: "100%",
 }));
 
 export const StyledListItemIcon = styled(ListItemIcon)<InputListItemIconProps>(
@@ -51,7 +46,7 @@ export const StyledListItemIcon = styled(ListItemIcon)<InputListItemIconProps>(
       color: theme.palette.primary.main,
     }),
     transition: theme.transitions.create("color"),
-    width: 24,
+    minWidth: 32,
     display: "flex",
     justifyContent: "center",
   })

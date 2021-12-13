@@ -1,3 +1,4 @@
+import { PaletteMode } from "@mui/material";
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 
@@ -7,6 +8,7 @@ export type PreferencesState = {
   isMobileDrawerOpen: boolean;
   isMiniMode: boolean;
   pageTitle: string;
+  mode: PaletteMode;
   searchText: string | undefined;
 };
 
@@ -16,6 +18,7 @@ const initialState: PreferencesState = {
   isMiniMode: false,
   isMobileDrawerOpen: false,
   pageTitle: "Dashboard",
+  mode: "light",
   searchText: undefined,
 };
 
@@ -43,6 +46,11 @@ export const preferencesSlice = createSlice({
       localStorage.setItem("searchText", payload);
     },
 
+    setMode: (state, { payload }) => {
+      state.mode = payload;
+      localStorage.setItem("mode", payload);
+    },
+
     changePageTitle: (state, { payload }) => {
       state.pageTitle = payload;
     },
@@ -50,7 +58,7 @@ export const preferencesSlice = createSlice({
   extraReducers: {},
 });
 
-export const { toggleThis, changePageTitle, setSearchText } =
+export const { toggleThis, changePageTitle, setSearchText, setMode } =
   preferencesSlice.actions;
 
 export const selectPreference = (state: RootState) =>

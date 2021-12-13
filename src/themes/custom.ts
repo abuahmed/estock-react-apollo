@@ -1,3 +1,6 @@
+//import { PaletteMode } from "@mui/material";
+//import blue from "@mui/material/colors/blue";
+//const mode: PaletteMode = "dark";
 const customTheme = {
   palette: {
     primary: {

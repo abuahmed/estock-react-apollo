@@ -14,15 +14,18 @@ export const StyledAccordionSummary = styled(
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.common.white,
   borderRadius: "4px",
-  "&.MuiButtonBase-root": {
-    "&.MuiAccordionSummary-root": {
-      "&.Mui-expanded": {
-        minHeight: 0,
-      },
-    },
+  // "&.MuiButtonBase-root": {
+  //   "&.MuiAccordionSummary-root": {
+  //     "&.Mui-expanded": {
+  //       minHeight: 0,
+  //     },
+  //   },
+  // },
+  "&.MuiAccordionSummary-root.Mui-expanded": {
+    minHeight: 0,
   },
-  "&.Mui-expanded": {
-    margin: 0,
+  "& .Mui-expanded": {
+    margin: "12px 0",
   },
 }));
 
