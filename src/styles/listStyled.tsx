@@ -46,7 +46,7 @@ export const StyledListItemIcon = styled(ListItemIcon)<InputListItemIconProps>(
       color: theme.palette.primary.main,
     }),
     transition: theme.transitions.create("color"),
-    minWidth: 32,
+    minWidth: 64,
     display: "flex",
     justifyContent: "center",
   })

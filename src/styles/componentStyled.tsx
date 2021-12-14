@@ -28,6 +28,17 @@ export const StyledAccordionSummary = styled(
     margin: "12px 0",
   },
 }));
+export const StyledAccordionSummary2 = styled(
+  AccordionSummary
+)<AccordionSummaryProps>(({ theme }) => ({
+  borderRadius: "4px",
+  "&.MuiAccordionSummary-root.Mui-expanded": {
+    minHeight: 0,
+  },
+  "& .Mui-expanded": {
+    margin: "6px 0",
+  },
+}));
 
 export const StyledCard = styled(Card)<CardProps>(({ theme }) => ({
   maxWidth: 400,

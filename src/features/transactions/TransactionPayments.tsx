@@ -1,6 +1,6 @@
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import { StyledAccordionSummary2 } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useAppSelector } from "../../app/hooks";
@@ -31,13 +31,15 @@ export const TransactionPayments = () => {
         (selectedHeader?.type === TransactionType.Sale ||
           selectedHeader?.type === TransactionType.Purchase) && (
           <Accordion sx={{ my: 1 }} expanded={true}>
-            <AccordionSummary
+            <StyledAccordionSummary2
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography>Payments</Typography>
-            </AccordionSummary>
+              <Typography variant="h6" color="primary">
+                Payments
+              </Typography>
+            </StyledAccordionSummary2>
             <AccordionDetails>
               <TableContainer component={Paper}>
                 <Table size="small" aria-label="a dense table">

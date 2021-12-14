@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
+import { StyledAccordionSummary2 } from "../../styles/componentStyled";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
@@ -142,13 +142,15 @@ export const TransactionLines = ({
   return (
     <>
       <Accordion sx={{ my: 1 }} expanded={true}>
-        <AccordionSummary
+        <StyledAccordionSummary2
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
         >
-          <Typography>Items</Typography>
-        </AccordionSummary>
+          <Typography variant="h6" color="primary">
+            Items
+          </Typography>
+        </StyledAccordionSummary2>
         <AccordionDetails>
           {selectedHeader?.status === TransactionStatus.Draft &&
             isPrivilegedTransaction(user?.roles as Role[], type, "Add") && (
