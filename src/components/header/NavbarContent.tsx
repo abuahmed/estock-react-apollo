@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import Search from "../search/Search";
 import { Box } from "@mui/material";
-// import Mode from "../mode/Mode";
+import Mode from "../mode/Mode";
 
 function NavbarContent() {
   const { user } = useAppSelector(selectAuth);
@@ -83,7 +83,7 @@ function NavbarContent() {
           <NotificationsIcon />
         </Badge>
       </IconButton> */}
-        {/* <Mode /> */}
+        <Mode />
 
         <IconButton
           edge="end"
