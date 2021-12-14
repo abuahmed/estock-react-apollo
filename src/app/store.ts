@@ -14,9 +14,13 @@ const mini = miniMode as boolean;
 // const userInfoFromStorage = JSON.parse(
 //   localStorage.getItem("userInfo") as string
 // ) as AuthUser;
+
+const mode = localStorage.getItem("mode")
+  ? localStorage.getItem("mode")
+  : "light";
 const preloadedState = {
   auth: { user: { ...userInfoFromStorage } } as AuthState,
-  preferences: { isMiniMode: mini } as PreferencesState,
+  preferences: { isMiniMode: mini, mode } as PreferencesState,
 };
 
 export const store = configureStore({
