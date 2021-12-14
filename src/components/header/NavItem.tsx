@@ -12,6 +12,8 @@ import {
   StyledListItemText,
 } from "../../styles/listStyled";
 import { NavItemProps } from "./types";
+import { selectPreference } from "../../features/preferences/preferencesSlice";
+import { useAppSelector } from "../../app/hooks";
 
 const voidFunction = () => {};
 
@@ -27,6 +29,7 @@ const NavItem = ({
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
+  const { isMiniMode } = useAppSelector(selectPreference);
 
   const active = href
     ? !!matchPath(
@@ -82,7 +85,7 @@ const NavItem = ({
         >
           <StyledListItemIcon active={active}>{icon}</StyledListItemIcon>
           <StyledListItemText primary={title} active={active} />
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {!isMiniMode && (open ? <ExpandLess /> : <ExpandMore />)}
         </StyledListItemButton>
         {children && (
           <Collapse in={open} timeout="auto" unmountOnExit sx={{ pl: 1 }}>
