@@ -39,6 +39,7 @@ const AppBarCustom = styled(MuiAppBar, {
       }),
     }),
   },
+  backgroundColor: theme.palette.primary.main,
 }));
 
 const DashboardNavbar = () => {
