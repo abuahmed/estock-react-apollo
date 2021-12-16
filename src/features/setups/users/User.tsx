@@ -12,16 +12,18 @@ import { Backspace } from "@mui/icons-material";
 
 import Toast from "../../../components/Layout/Toast";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { fetchRoles, getUser } from "../setupSlices";
+import { fetchRoles, getUser, setWarehouses } from "../setupSlices";
 import { changePageTitle } from "../../preferences/preferencesSlice";
-import { fetchWarehouses, selectSetups } from "../setupSlices";
+import { selectSetups } from "../setupSlices";
 import { UserWarehouses } from "./components/UserWarehouses";
 import { UserRoles } from "./components/UserRoles";
+import { selectAuth } from "../../auth/authSlice";
 
 export const User = () => {
   const { id: userId } = useParams() as {
     id: string;
   };
+  const { user } = useAppSelector(selectAuth);
 
   const { selectedUser, roles, warehouses, error } =
     useAppSelector(selectSetups);
@@ -31,8 +33,8 @@ export const User = () => {
   useEffect(() => {
     dispatch(changePageTitle(`Manage User`));
     dispatch(fetchRoles("all"));
-    dispatch(fetchWarehouses({ parent: "Organization", parentId: 2 }));
-  }, [dispatch]);
+    if (user?.id) dispatch(setWarehouses(user?.warehouses));
+  }, [dispatch, user]);
 
   useEffect(() => {
     if (userId && warehouses.length > 0 && roles.length > 0) {
@@ -52,13 +54,7 @@ export const User = () => {
           component={RouterLink}
           to={"/app/users"}
         >
-          <Typography
-            variant="h5"
-            component="h5"
-            sx={{ display: "flex", justifyItems: "center" }}
-          >
-            <Backspace /> back to users list
-          </Typography>
+          <Backspace />
         </Button>
         <Divider variant="middle" sx={{ my: 2 }} />
 
@@ -105,7 +101,7 @@ export const User = () => {
             id="panel1a-header"
           >
             <Typography variant="h5" component="div">
-              Assign Warehouses
+              Warehouses
             </Typography>
           </StyledAccordionSummary>
           <AccordionDetails>
@@ -120,7 +116,7 @@ export const User = () => {
             id="panel1a-header"
           >
             <Typography variant="h5" component="div">
-              Assign Roles
+              Roles
             </Typography>
           </StyledAccordionSummary>
           <AccordionDetails>
