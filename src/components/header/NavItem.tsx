@@ -11,11 +11,8 @@ import {
   StyledListItemText,
 } from "../../styles/listStyled";
 import { NavItemProps } from "./types";
-import {
-  selectPreference,
-  toggleThis,
-} from "../../features/preferences/preferencesSlice";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { toggleThis } from "../../features/preferences/preferencesSlice";
+import { useAppDispatch } from "../../app/hooks";
 
 const voidFunction = () => {};
 
@@ -33,7 +30,6 @@ const NavItem = ({
   const dispatch = useAppDispatch();
 
   const [open, setOpen] = React.useState(false);
-  const { isMiniMode } = useAppSelector(selectPreference);
 
   const active = href
     ? !!matchPath(

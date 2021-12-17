@@ -17,7 +17,7 @@ export const GET_DAILY_TRANSACTIONS_SUMMARY = gql`
     dailyTransactions(
       type: $type
       durationBegin: "2021-08-11"
-      durationEnd: "2021-12-11"
+      durationEnd: "2022-12-11"
       take: 7
       groupByDate: true
     ) {
@@ -33,7 +33,7 @@ export const GET_TOP_ITEMS = gql`
       includeSales: $includeSales
       includePurchases: $includePurchases
       durationBegin: "2021-08-11"
-      durationEnd: "2021-12-11"
+      durationEnd: "2022-12-11"
       status: Posted
     ) {
       itemId

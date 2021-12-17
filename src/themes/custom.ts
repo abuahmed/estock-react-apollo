@@ -4,6 +4,7 @@ import { PaletteMode } from "@mui/material";
 
 const primary = "#008000";
 const secondary = "#ff6d00";
+
 const warning = "#FFC260";
 const success = "#3CD4A0";
 const info = "#9013FE";
@@ -19,6 +20,7 @@ export const lightTheme = {
     warning: { main: warning },
     success: { main: success },
     info: { main: info },
+
     text: {
       primary: "#4A4A4A",
       secondary: "#6E6E6E",
@@ -35,6 +37,8 @@ export const darkTheme = {
     success: { main: tinycolor(success).darken(darkenRate).toHexString() },
     info: { main: tinycolor(info).darken(darkenRate).toHexString() },
     background: {
+      // default: `linear-gradient(to right, ${primary} 30%, ${secondary} 90%)`,
+      // paper: `linear-gradient(to bottom, ${secondary} 30%, ${primary} 90%)`,
       default: "#121212",
       paper: "#121212",
     },
