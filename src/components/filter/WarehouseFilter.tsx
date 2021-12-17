@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Autocomplete, TextField } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  fetchWarehouses,
-  selectSetups,
-} from "../../features/setups/setupSlices";
+import { selectSetups, setWarehouses } from "../../features/setups/setupSlices";
 import { Warehouse } from "../../features/setups/types/warehouseTypes";
+import { selectAuth } from "../../features/auth/authSlice";
 
 interface Props {
   setWarehouseId?: any;
@@ -19,11 +17,13 @@ export const WarehouseFilter = ({
   const [selectedWarehouse, setSelectedWarehouse] = useState<Warehouse>({
     displayName: "select",
   });
+  const { user } = useAppSelector(selectAuth);
+
   const { warehouses } = useAppSelector(selectSetups);
 
   useEffect(() => {
-    dispatch(fetchWarehouses({ parent: "Organization", parentId: 2 }));
-  }, [dispatch]);
+    if (user?.id) dispatch(setWarehouses(user?.warehouses));
+  }, [dispatch, user]);
   return (
     <>
       <Autocomplete

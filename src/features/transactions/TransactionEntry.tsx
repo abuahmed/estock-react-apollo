@@ -60,8 +60,8 @@ import { Role } from "../auth/types/authType";
 import {
   fetchBusinessPartners,
   fetchItems,
-  fetchWarehouses,
   selectSetups,
+  setWarehouses,
 } from "../setups/setupSlices";
 import { BusinessPartner, BusinessPartnerType } from "../setups/types/bpTypes";
 import { Warehouse } from "../setups/types/warehouseTypes";
@@ -109,15 +109,18 @@ export const TransactionEntry = ({ type }: HeaderProps) => {
     useAppSelector(selectTransactions);
 
   useEffect(() => {
-    console.log(id);
     setTransactionId(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   useEffect(() => {
+    if (user?.id) dispatch(setWarehouses(user?.warehouses));
+  }, [dispatch, user]);
+
+  useEffect(() => {
     dispatch(changePageTitle(`${type} Entry`));
     dispatch(fetchBusinessPartners({ type: bpType, skip: 0, take: -1 }));
-    dispatch(fetchWarehouses({ parent: "Organization", parentId: 2 }));
+
     dispatch(fetchItems({ skip: 0 }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, type]); //bpType
