@@ -5,18 +5,18 @@ import { ListItemIcon, ListItemIconProps } from "@mui/material";
 import { ListItemText, ListItemTextProps } from "@mui/material";
 
 interface InputListItemButtonProps extends ListItemButtonProps {
-  active?: boolean;
+  active: number;
 }
 
 interface InputListItemIconProps extends ListItemIconProps {
-  active?: boolean;
+  active: number;
 }
 
 interface InputListItemTextProps extends ListItemTextProps {
-  active?: boolean;
+  active: number;
 }
 interface DotProps {
-  active?: boolean;
+  active: number;
 }
 
 export const StyledListItemButton = styled(

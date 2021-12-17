@@ -30,9 +30,7 @@ const SidebarContent = () => {
   const { user } = useAppSelector(selectAuth);
   const { isDrawerOpen, isMobileDrawerOpen, isMiniMode } =
     useAppSelector(selectPreference);
-  const handleDrawerToggle = () => {
-    dispatch(toggleThis({ type: "Mobile", newValue: false }));
-  };
+
   const handleDrawerClose = () => {
     dispatch(toggleThis({ type: "Drawer", newValue: false }));
     dispatch(toggleThis({ type: "Mobile", newValue: false }));
@@ -145,7 +143,7 @@ const SidebarContent = () => {
 
       <Divider />
       <Box sx={{ px: 1, py: 0 }}>
-        <List onClick={handleDrawerToggle}>
+        <List>
           {SideBarItems(roles).map((item) => (
             <NavItem
               href={item.href}

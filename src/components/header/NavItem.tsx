@@ -1,7 +1,6 @@
 import React from "react";
 
 import { matchPath, useLocation, useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 import { Collapse, List, Tooltip } from "@mui/material";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -12,8 +11,11 @@ import {
   StyledListItemText,
 } from "../../styles/listStyled";
 import { NavItemProps } from "./types";
-import { selectPreference } from "../../features/preferences/preferencesSlice";
-import { useAppSelector } from "../../app/hooks";
+import {
+  selectPreference,
+  toggleThis,
+} from "../../features/preferences/preferencesSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 const voidFunction = () => {};
 
@@ -28,6 +30,8 @@ const NavItem = ({
 }: NavItemProps) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const [open, setOpen] = React.useState(false);
   const { isMiniMode } = useAppSelector(selectPreference);
 
@@ -48,7 +52,12 @@ const NavItem = ({
     setOpen(!open);
   };
 
+  const handleDrawerToggle = () => {
+    dispatch(toggleThis({ type: "Mobile", newValue: false }));
+  };
+
   const redirectRoute = (route: string) => {
+    handleDrawerToggle();
     navigate(route);
   };
 
@@ -56,16 +65,16 @@ const NavItem = ({
     return (
       <Tooltip title={title}>
         <StyledListItemButton
-          active={active}
+          active={active ? 1 : 0}
           onClick={!href ? click : () => redirectRoute(href)}
           {...rest}
           disableGutters
         >
-          <StyledListItemIcon active={active}>
-            {nested ? <Dot active={active} /> : icon}
+          <StyledListItemIcon active={active ? 1 : 0}>
+            {nested ? <Dot active={active ? 1 : 0} /> : icon}
           </StyledListItemIcon>
           <StyledListItemText
-            active={active}
+            active={active ? 1 : 0}
             primary={title
               .replace("View", "")
               .replace("Manage", "")
@@ -81,11 +90,13 @@ const NavItem = ({
         <StyledListItemButton
           disableGutters
           onClick={handleClick}
-          active={active}
+          active={active ? 1 : 0}
         >
-          <StyledListItemIcon active={active}>{icon}</StyledListItemIcon>
-          <StyledListItemText primary={title} active={active} />
-          {!isMiniMode && (open ? <ExpandLess /> : <ExpandMore />)}
+          <StyledListItemIcon active={active ? 1 : 0}>
+            {icon}
+          </StyledListItemIcon>
+          <StyledListItemText primary={title} active={active ? 1 : 0} />
+          {open ? <ExpandLess /> : <ExpandMore />}
         </StyledListItemButton>
         {children && (
           <Collapse in={open} timeout="auto" unmountOnExit sx={{ pl: 1 }}>
@@ -107,12 +118,6 @@ const NavItem = ({
       </>
     </Tooltip>
   );
-};
-
-NavItem.propTypes = {
-  href: PropTypes.string,
-  icon: PropTypes.elementType,
-  title: PropTypes.string,
 };
 
 export default NavItem;
