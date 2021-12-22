@@ -57,8 +57,8 @@ export const TopSales = ({ type }: PropTypes) => {
       {
         data: values,
         backgroundColor: bgColors,
-        borderWidth: 8,
-        borderColor: colors.common.white,
+        borderWidth: 2,
+        borderColor: "transparent",
         hoverBorderColor: colors.common.white,
       },
     ],
