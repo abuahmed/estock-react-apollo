@@ -4,8 +4,8 @@ import { setContext } from "@apollo/client/link/context";
 //import { useAppSelector } from "./hooks";
 
 const httpLink = createHttpLink({
-  uri: `https://estockserver.pinnasofts.com/graphql` as any,
-  //uri: `http://localhost:5500/graphql` as any,
+  //uri: `https://estockserver.pinnasofts.com/graphql` as any,
+  uri: `http://localhost:5500/graphql` as any,
 });
 
 const authLink = setContext((_, { headers }) => {

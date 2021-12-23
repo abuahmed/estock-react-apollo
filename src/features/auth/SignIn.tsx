@@ -106,17 +106,12 @@ export const SignIn = () => {
                       />
                       <Grid
                         container
+                        spacing={3}
                         justifyContent="space-between"
                         alignItems="center"
                         sx={{ width: "100%" }}
                       >
-                        <Grid
-                          item
-                          spacing={3}
-                          xs={12}
-                          sm={6}
-                          sx={{ textAlign: "left" }}
-                        >
+                        <Grid item xs={12} sm={6} sx={{ textAlign: "left" }}>
                           <FormControlLabel
                             style={{ marginBottom: "0" }}
                             control={
