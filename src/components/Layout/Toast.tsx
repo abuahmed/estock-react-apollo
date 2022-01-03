@@ -31,7 +31,10 @@ export default function Toast({ severity, children }: Props) {
   });
   const { vertical, horizontal, open } = state;
 
-  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+  const handleClose = (
+    event: Event | React.SyntheticEvent<any, Event>,
+    reason?: string
+  ) => {
     if (reason === "clickaway") {
       return;
     }

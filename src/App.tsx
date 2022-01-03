@@ -4,6 +4,7 @@ import { useAppSelector } from "./app/hooks";
 import routes from "./components/routes";
 import { selectAuth } from "./features/auth/authSlice";
 import { selectPreference } from "./features/preferences/preferencesSlice";
+
 import themes from "./themes/themes";
 
 function App() {
